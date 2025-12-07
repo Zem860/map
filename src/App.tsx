@@ -1,13 +1,13 @@
-import { getAllProducts } from './api/folder_user/products';
+import { getProducts } from './api/folder_user/products';
 import type { productData } from './type/product';
 import { useEffect, useState } from 'react'
 
 function App() {
   const [produc, setProduc] = useState<productData[]>()
   useEffect(()=>{
-
-    getAllProducts().then((res)=>{
-      setProduc(res.data)
+    const params ={page:"1", category:""} 
+    getProducts(params).then((res)=>{
+      setProduc(res.data.products)
       console.log(res.data);
     }).catch((err)=>{
       console.log(err);
