@@ -1,6 +1,7 @@
 import { getProducts } from './api/folder_user/products';
 import type { productData } from './type/product';
 import { useEffect, useState } from 'react'
+import {AdminHeader} from './components/Header'
 
 function App() {
   const [produc, setProduc] = useState<productData[]>()
@@ -17,6 +18,7 @@ function App() {
     
   return (
     <>
+    <AdminHeader />
     {produc?.map((item)=>{
       return (
         <div key={item.id}>
