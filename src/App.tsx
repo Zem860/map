@@ -2,6 +2,7 @@ import { getProducts } from './api/folder_user/products';
 import type { productData } from './type/product';
 import { useEffect, useState } from 'react'
 import {AdminHeader} from './components/Header'
+import { Sidebar } from './components/Sidebar';
 
 function App() {
   const [produc, setProduc] = useState<productData[]>()
@@ -18,8 +19,12 @@ function App() {
     
   return (
     <>
-    <AdminHeader />
-    {produc?.map((item)=>{
+
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="md:ml-64">
+        <AdminHeader />
+        <main className="p-4 pb-20 md:p-6 md:pb-6">{produc?.map((item)=>{
       return (
         <div key={item.id}>
           <h2>{item.title}</h2>
@@ -28,7 +33,11 @@ function App() {
           <img src={item.imageUrl} alt={item.title} width="200" />
         </div>
       )
-    })}
+    })}</main>
+      </div>
+    </div>
+ 
+    
     </>
   )
 }
