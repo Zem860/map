@@ -15,7 +15,6 @@
 // 提示：需要匯入 CreateProductParams, CreateProductResponse 等型別
 import axios from 'axios'
 
-
 const BASE_URL = import.meta.env.VITE_BASE_URL
 
 export const adminApi = axios.create({
@@ -46,6 +45,7 @@ adminApi.interceptors.response.use(
   },
 )
 
+export const apiUserLogin = (params:{username:string, password:string})=>adminApi.post(`admin/signin`, params)
 
 
 
