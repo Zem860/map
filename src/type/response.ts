@@ -12,3 +12,9 @@ products:productData[],
 pagination:Pagination,
 messagesss:unknown[]
 }
+
+
+export type UploadImageResponse = {
+    success:boolean,
+    imageUrl:string,
+}
