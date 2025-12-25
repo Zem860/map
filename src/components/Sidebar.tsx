@@ -23,7 +23,7 @@ const navItems = [
             {navItems.map((item)=>{
                 const isActive = window.location.pathname === item.path
                 return (
-                    <Link to={item.path} className={cn("flex itemss-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive?"bg-sidebar-primary text-sidebar-primary-foreground":"text-sidebar-foreground hover:bg-ssidebar-accent hover:text-sidebar-accent-foregrounds")}>
+                    <Link to={item.path} key={item.path} className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive?"bg-sidebar-primary text-sidebar-primary-foreground":"text-sidebar-foreground hover:bg-ssidebar-accent hover:text-sidebar-accent-foregrounds")}>
                     <item.icon className="h-5 w-5"/>
                     {item.name}
                     </Link>
