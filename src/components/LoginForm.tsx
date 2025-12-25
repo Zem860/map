@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUserLogin } from "../api/folder_admin/admin";
 
-export default function Login() {
+const Login=()=> {
   const [form, setForm] = useState<{ username: string; password: string }>({
     username: "",
     password: "",
@@ -90,3 +90,4 @@ export default function Login() {
     </div>
   );
 }
+export default Login;

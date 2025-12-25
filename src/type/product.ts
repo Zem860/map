@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 export type productData = {
     id:string,
     title:string,
@@ -34,6 +36,7 @@ export type CreateProductParams = {
     imagesUrl:string[],
 }
 
+
 export type UploadImageResponse = {
     success:boolean,
     imageUrl:string
@@ -45,4 +48,20 @@ export type ProductModalProps = {
     product?:productData| null; //為甚麼不是||
     onSave:(product:productData)=>void;
     mode?:'create' | 'edit';
+}
+
+export type UseProductImagesArgs = {
+  product?: productData
+  isOpen: boolean
+  maxImages?: number
+}
+
+export type ConfirmModalProps = {
+    isOpen:boolean;
+    onOpenChange:(isOpen:boolean)=>void;
+    mode?:'delete'|'edit'
+}
+
+export type BtnProps = {
+  children: ReactNode
 }

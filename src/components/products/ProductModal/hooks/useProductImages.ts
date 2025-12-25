@@ -19,7 +19,7 @@ export function useProductImages({
   const totalCount = uploadedImages.length + selectedFiles.length
   const isMax = totalCount >= maxImages
 
-  // init/reset when open/product changes
+  // 保證圖片在打開或關閉的情況會清理掉原來的檔案
   useEffect(() => {
     if (product) {
       setUploadedImages((product.imagesUrl || []).filter((u) => u !== ""))
@@ -34,9 +34,9 @@ export function useProductImages({
       return []
     })
     if (fileInputRef.current) fileInputRef.current.value = ""
-  }, [product, isOpen])
+  }, [isOpen])
 
-  // cleanup blob on unmount or previews change
+  // 只要preview那個有變動的話記得要把blob清掉因為blob會站瀏覽器記憶體
   useEffect(() => {
     return () => {
       selectedPreviews.forEach((p) => URL.revokeObjectURL(p))
@@ -54,7 +54,7 @@ export function useProductImages({
     setUploadedImages((prev) => [...prev, url].slice(0, maxImages))
     setImageUrlInput("")
   }
-  
+  //用於檔案上傳
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -67,14 +67,14 @@ export function useProductImages({
     setSelectedFiles((prev) => [...prev, file])
     setSelectedPreviews((prev) => [...prev, URL.createObjectURL(file)])
 
-    // allow re-select same filename
+    // input file的行為特性是，如果我把檔案刪掉了(選同一個檔案兩次)~他不會讓我onChange感應到
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
-
+  //刪除連結圖片
   const deleteUrlImage = (index: number) => {
     setUploadedImages((prev) => prev.filter((_, i) => i !== index))
   }
-
+  //刪除檔案
   const deleteSelectedFile = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index))
     setSelectedPreviews((prev) => {
@@ -84,7 +84,7 @@ export function useProductImages({
     })
   }
 
-  /** Save 才 upload，回傳「upload 後 URL」陣列（不含你手動貼的 URL） */
+  //Save 才 upload，回傳「upload 後 URL」陣列（不含你手動貼的 URL） 
   const uploadSelectedFiles = async (): Promise<string[]> => {
     const urls: string[] = []
     for (const file of selectedFiles) {
@@ -96,15 +96,15 @@ export function useProductImages({
     return urls
   }
 
-  /** 只清本次選檔（blob） */
-  const clearSelectedFiles = () => {
-    setSelectedFiles([])
-    setSelectedPreviews((prev) => {
-      prev.forEach((p) => URL.revokeObjectURL(p))
-      return []
-    })
-    if (fileInputRef.current) fileInputRef.current.value = ""
-  }
+  //用於未來可能會有清除按鈕
+  // const clearSelectedFiles = () => {
+  //   setSelectedFiles([])
+  //   setSelectedPreviews((prev) => {
+  //     prev.forEach((p) => URL.revokeObjectURL(p))
+  //     return []
+  //   })
+  //   if (fileInputRef.current) fileInputRef.current.value = ""
+  // }
 
   /** ✅ 全清：連結(URL) + blob + input 都清掉 */
   const clearAllImages = () => {
@@ -146,7 +146,7 @@ export function useProductImages({
     deleteSelectedFile,
 
     uploadSelectedFiles,
-    clearSelectedFiles,
+    // clearSelectedFiles,
     clearAllImages, 
   }
 }
