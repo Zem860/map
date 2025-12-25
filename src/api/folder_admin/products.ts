@@ -34,3 +34,7 @@ type editProductFunc = (id:string, params:CreateProductParams)=>Promise<AxiosRes
 
 export const editProduct: editProductFunc = (id, params) =>
   baseApi.put(`/admin/product/${id}`, { data: params })
+
+type deleteProductFunc = (id:string) =>Promise<AxiosResponse<MesssageResponse>>
+
+export const deleteProduct:deleteProductFunc = (id:string) => baseApi.delete(`/admin/product/${id}`)

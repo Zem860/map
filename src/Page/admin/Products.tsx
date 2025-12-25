@@ -1,13 +1,11 @@
-import { getProducts, createProduct, editProduct } from '../../api/folder_admin/products';
+import { getProducts, createProduct, editProduct, deleteProduct } from '../../api/folder_admin/products';
 import type { productData } from '../../type/product';
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { ProductModal } from '../../components/products/ProductModal/ProductModal';
-import ConfirmModal from '../../components/products/ConfirmModal/ConfirmModal';
 
 const Products = () => {
-
     const [produc, setProduc] = useState<productData[]>()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [currentProduct, setCurrentProduct] = useState<productData | null>(null)
@@ -35,6 +33,13 @@ const Products = () => {
         setIsModalOpen(false)
         // Here you would typically save to your backend/database
     }
+
+
+    const handleDelete = (id:string) => {
+        deleteProduct(id)
+    }  
+
+
     useEffect(() => {
 
         const params = { page: "1", category: "" }
@@ -45,18 +50,18 @@ const Products = () => {
             console.log(err);
         })
 
-    }, [])
+    }, [produc])
 
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
-    const handleOpenDeleteModal = () => {
-        setIsOpen(!isOpen)
-    }
+    // const handleOpenDeleteModal = () => {
+    //     setIsOpen(!isOpen)
+    // }
 
     return (<>
 
-        <Button onClick={handleOpenDeleteModal}></Button>
+        {/* <Button onClick={handleOpenDeleteModal}></Button> */}
         <Button onClick={()=>{handleOpenAddModal(null)}} className="bg-primary hover:bg-primary/90">
             <Plus className="size-4" />
             新增書籍
@@ -70,13 +75,14 @@ const Products = () => {
                     <img src={item.imageUrl} alt={item.title} width="200" />
                 </div>
                 <Button onClick={() => handleOpenAddModal(item)}>編輯  </Button>
+                <Button onClick={()=> handleDelete(item.id)}>刪除</Button>
                 </>
 
             )
         })}</main>
 
 
-        <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} />
+        {/* <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} /> */}
 
         <ProductModal
             isOpen={isModalOpen}
