@@ -17,6 +17,7 @@ const Products = () => {
             setCurrentProduct(null)
             setMode("create")
             setIsModalOpen(true)
+            return
         }
         setCurrentProduct(item)
         setMode("edit")
