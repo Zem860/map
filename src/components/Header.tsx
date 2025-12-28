@@ -21,7 +21,7 @@ export function AdminHeader() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 md:h-16 items-center gap-2 md:gap-4 border-b border-border bg-card px-4 md:px-6">
-      <Link to="/admin" className="flex items-center gap-2 md:hidden">
+      <Link to="/admin" className="flex items-center gap-2 lg:hidden">
         <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
           <span className="text-primary-foreground font-bold text-sm">A</span>
         </div>

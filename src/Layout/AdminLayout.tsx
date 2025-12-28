@@ -8,9 +8,9 @@ const AdminLayout = () => {
     return (
         <>
             <Sidebar />
-            <div className="md:ml-64">
+            <div className="lg:ml-64">
                 <AdminHeader />
-                <Outlet />
+                <div className="p-4"><Outlet /></div>
             </div>
         </>);
 }

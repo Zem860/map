@@ -11,7 +11,7 @@ export const Sidebar = () => {
 
   return (
     <>
-      <aside className="fixed top-0 left-0 z-40 hidden h-sscreen w-64 bg-sidebar border-r border-sidebar-border md:block">
+      <aside className="fixed top-0 left-0 z-40 hidden h-sscreen w-64 bg-sidebar border-r border-sidebar-border lg:block">
         <div className="flex h-16 items-center border-b border-sidebar-border px-6">
           <Link to="/admin" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -34,7 +34,7 @@ export const Sidebar = () => {
 
       </aside>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-sidebar-border bg-sidebar md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-sidebar-border bg-sidebar lg:hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.path
           return (
