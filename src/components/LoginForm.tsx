@@ -1,14 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUserLogin } from "../api/folder_admin/admin";
+import type { UserLoginInput } from "../type/user";
+import { Loader } from "./Loader";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
-const Login=()=> {
-  const [form, setForm] = useState<{ username: string; password: string }>({
+const Login = () => {
+
+  const [form, setForm] = useState<UserLoginInput>({
     username: "",
     password: "",
   });
 
+  const hasInfo = form.username.trim() !== "" || form.password.trim() !== ""
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
@@ -25,21 +36,24 @@ const Login=()=> {
     setError("");
     setLoading(true);
 
+    if (!hasInfo) {
+      setError("請填寫帳號密碼");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await apiUserLogin(form);
-      console.log("登入成功:", res.data);
-
-      // 🔥 跟你 Vue 版做一樣的事
       const { token, expired } = res.data;
 
       // 寫入 cookie，名稱要跟攔截器抓的一樣：hexToken
       document.cookie = `hexToken=${token}; expires=${new Date(
         expired
-      )}; path=/;`;
-
+      )}`;
       // 成功後導到後台頁面
-      navigate("/admin"); // 或 "/product-management"，看你路由怎麼設
-
+      navigate("/admin");
+      // setIsLoggedIn(true)
+      setError("");
     } catch (err) {
       console.error(err);
       setError("登入失敗，帳號或密碼錯誤");
@@ -48,45 +62,71 @@ const Login=()=> {
     }
   };
 
+  //   const handleLogout = () => {
+  //   setIsLoggedIn(false)
+
+  //   setError("")
+  // }
+
   return (
-    <div style={{ maxWidth: 320, margin: "80px auto", fontFamily: "sans-serif" }}>
-      <h2>登入</h2>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md shadow-lg">
+        {!isLoggedIn ? (<>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Login Here!</CardTitle>
+            <CardDescription className="text-center">Enter correct Account and Password</CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Account</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Account"
+                  name="username"
+                  value={form.username}
+                  onChange={handleChange}
+                  required
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" name="password" value={form.password} onChange={handleChange} required className="w-full" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full bg-primary text-primary-foreground hover:opacity-90" disabled={loading} >
+                {loading ? "Logging..." : "Login"}
+              </Button>
+            </CardFooter>
+          </form>
+        </>) : (
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label>帳號</label>
-          <input
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div>
+          <>
+           {/* <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold text-center">歡迎回來！</CardTitle>
+              <CardDescription className="text-center">您已成功登入系統</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="rounded-lg bg-muted p-4 text-center">
+                <p className="text-sm text-muted-foreground mb-1">登入帳號</p>
+                <p className="text-lg font-semibold">{form.username}</p>
+              </div>
+              <Alert className="bg-primary/10 border-primary/20">
+                <AlertDescription className="text-foreground">✓ 登入成功！歡迎使用系統</AlertDescription>
+              </Alert>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={handleLogout} variant="outline" className="w-full bg-transparent">
+                登出
+              </Button>
+            </CardFooter> */}
 
-        <div style={{ marginBottom: 12 }}>
-          <label>密碼</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ width: "100%", padding: 10, marginTop: 10 }}
-        >
-          {loading ? "登入中..." : "登入"}
-        </button>
-      </form>
+          </>
+        )}
+      </Card>
     </div>
   );
 }
