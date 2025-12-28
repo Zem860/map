@@ -14,10 +14,13 @@ const App = () => {
 
       {/* 後台（守門 + Layout） */}
       <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-        {/* /admin */}
+        {/* /admin */}        
         <Route index element={<div>Admin Dashboard</div>} />
+         {/* /admin/login */}
+         <Route path="Login" element = {<Login/>}/>
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
+        
       </Route>
 
       {/* 404 */}
