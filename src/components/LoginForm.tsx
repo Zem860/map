@@ -44,8 +44,14 @@ const Login = () => {
 
     try {
       const res = await apiUserLogin(form);
-      const { token, expired } = res.data;
+      const { success, message, token, expired } = res.data;
 
+      if (!success) {
+        throw new Error(message || "登入失敗");
+      }
+      if (!token || !expired) {
+        throw new Error("Login response missing token/expired");
+      }
       // 寫入 cookie，名稱要跟攔截器抓的一樣：hexToken
       document.cookie = `hexToken=${token}; expires=${new Date(
         expired
@@ -56,7 +62,7 @@ const Login = () => {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("登入失敗，帳號或密碼錯誤");
+      setError("Login failed. Please check your credentials and try again.");
     } finally {
       setLoading(false);
     }
@@ -69,43 +75,50 @@ const Login = () => {
   // }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md shadow-lg">
-        {!isLoggedIn ? (<>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Login Here!</CardTitle>
-            <CardDescription className="text-center">Enter correct Account and Password</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Account</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Account"
-                  name="username"
-                  value={form.username}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" name="password" value={form.password} onChange={handleChange} required className="w-full" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full bg-primary text-primary-foreground hover:opacity-90" disabled={loading} >
-                {loading ? "Logging..." : "Login"}
-              </Button>
-            </CardFooter>
-          </form>
-        </>) : (
+    loading ? <Loader /> :
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          {!isLoggedIn ? (<>
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold text-center">Login Here!</CardTitle>
+              <CardDescription className="text-center">Enter correct Account and Password</CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">Account</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Account"
+                    name="username"
+                    value={form.username}
+                    onChange={handleChange}
+                    required
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" name="password" value={form.password} onChange={handleChange} required className="w-full" />
+                </div>
+                {error && (
+                  <Alert className="mt-3">
+                    <AlertDescription className="text-destructive">{error}</AlertDescription>
+                  </Alert>
+                )}
 
-          <>
-           {/* <CardHeader className="space-y-1">
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:opacity-90 mt-4" disabled={loading} >
+                  {loading ? "Logging..." : "Login"}
+                </Button>
+              </CardFooter>
+            </form>
+          </>) : (
+
+            <>
+              {/* <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center">歡迎回來！</CardTitle>
               <CardDescription className="text-center">您已成功登入系統</CardDescription>
             </CardHeader>
@@ -124,10 +137,10 @@ const Login = () => {
               </Button>
             </CardFooter> */}
 
-          </>
-        )}
-      </Card>
-    </div>
+            </>
+          )}
+        </Card>
+      </div>
   );
 }
 export default Login;
