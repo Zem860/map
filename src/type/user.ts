@@ -5,3 +5,8 @@ export type UserLoginResponse = {
     token:string
     expired:number,
 }
+
+export type UserLoginInput = {
+    username:string
+    password:string
+}
