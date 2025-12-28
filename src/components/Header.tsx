@@ -1,6 +1,7 @@
 import { Bell, Search, User, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,12 @@ import {
 import { Link } from "react-router-dom"
 
 export function AdminHeader() {
+  const navigate = useNavigate();
+  const handleLogout = ()=>{
+    document.cookie = "hexToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    navigate("/login");
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-14 md:h-16 items-center gap-2 md:gap-4 border-b border-border bg-card px-4 md:px-6">
       <Link to="/admin" className="flex items-center gap-2 md:hidden">
@@ -26,8 +33,6 @@ export function AdminHeader() {
             <Settings className="h-5 w-5" />
           </Button>
         </Link>
-
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-9 w-9 md:h-10 md:w-10">
@@ -40,7 +45,7 @@ export function AdminHeader() {
             <DropdownMenuItem>About</DropdownMenuItem>
             <DropdownMenuItem>Setting</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="text-destructive">Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
