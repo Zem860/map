@@ -3,9 +3,8 @@ import { cn } from "@/lib/utils"
 import { LayoutDashboard, Package, ShoppingCart, Settings, BarChart3 } from "lucide-react";
 
 const navItems = [
-  { name: "儀表板", icon: LayoutDashboard, path: "/admin" },
-  { name: "產品管理", icon: Package, path: "/admin/products" }];
-
+  { name: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+  { name: "Products", icon: Package, path: "/admin/products" }];
 
   export const Sidebar = ()=>{
     return (
@@ -16,7 +15,7 @@ const navItems = [
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Package className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg text-sidebar-foreground">管理後台</span>
+            <span className="font-semibold text-lg text-sidebar-foreground">Admins</span>
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-4">
@@ -32,6 +31,25 @@ const navItems = [
         </nav>
 
         </aside>
+
+        <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-aaround border-t border-sidebar-border bg-sidebar md:hidden">
+            {navItems.map((item)=>{
+                const isActive = window.location.pathname === item.path
+                return (
+                    <Link to={item.path} key={item.path} 
+                    className={cn(
+                "flex flex-col items-center justify-center gap-1 px-3 py-2 text-xs font-medium transition-colors",
+                isActive ? "text-sidebar-primary" : "text-sidebar-foreground/70 hover:text-sidebar-foreground",
+              )}
+                    
+                    >
+                    <item.icon className="h-5 w-5"/>
+                    {item.name}
+                    </Link>
+                )
+            })}
+
+        </nav>
         </>
     )
   }
