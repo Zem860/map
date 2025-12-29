@@ -15,12 +15,19 @@ export type productData = {
     num:number
 }
 
-export type Pagination = {
+export type PaginationData = {
     total_pages:number,
     current_page:number,
     has_pre:boolean,
     has_next:boolean,
     category:string,
+}
+
+export type ProductDataResponse = {
+    success:boolean,
+    products:productData[],
+    pagination:PaginationData,
+    messages:string[],
 }
 
 export type CreateProductParams = {
@@ -34,6 +41,13 @@ export type CreateProductParams = {
     is_enabled:number,
     imageUrl:string,
     imagesUrl:string[],
+}
+
+export type PaginationProps = {
+    currentPage:number,
+    totalPages:number,
+    onPageChange:(page:number)=>void;
+    siblingCount?:number
 }
 
 

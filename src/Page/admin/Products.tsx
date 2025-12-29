@@ -1,5 +1,5 @@
 import { getProducts, createProduct, editProduct, deleteProduct } from '@/api/folder_admin/products';
-import type { productData } from '@/type/product';
+import type { productData, ProductDataResponse, PaginationData } from '@/type/product';
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Plus, MoreHorizontal } from "lucide-react"
@@ -8,10 +8,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "@/components/ui/badge"
 import { ProductModal } from '@/components/products/ProductModal/ProductModal';
 import { Loader } from '@/components/Loader';
+import  {PaginationDemo} from '@/components/Pagination';
 
 
 const Products = () => {
     const [produc, setProduc] = useState<productData[]>()
+    const [pagination, setPagination] = useState<PaginationData>()
+    const [page, setPage] = useState<number>(1)
+    const [category, setCategory] = useState<string>("")
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [currentProduct, setCurrentProduct] = useState<productData | null>(null)
     const [mode, setMode] = useState<"create" | "edit">("create")
@@ -59,11 +63,13 @@ const Products = () => {
 
 
     const getProduct = () => {
-        const params = { page: "1", category: "" }
+        const params = { page:page.toString(), category }
         setIsLoading(true)
         getProducts(params)
-            .then((res) => {
-                setProduc(res.data.products)
+            .then((res) => {  
+                const data: ProductDataResponse = res.data
+                setProduc(data.products)
+                setPagination(data.pagination)
             })
             .catch((err) => {
                 console.log(err)
@@ -76,7 +82,7 @@ const Products = () => {
 
     useEffect(() => {
         getProduct();
-    }, [])
+    }, [page, category])
 
     // const handleOpenDeleteModal = () => {
     //     setIsOpen(!isOpen)
@@ -200,6 +206,8 @@ const Products = () => {
                     </TableBody>
                 </Table>
             </div>
+            <PaginationDemo page={page} totalPages={pagination?.total_pages as number} onPageChange ={setPage} />
+
             {/* <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} /> */}
 
             <ProductModal

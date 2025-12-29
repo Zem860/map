@@ -1,4 +1,4 @@
-import type { productData, Pagination } from "./product";
+import type { productData, PaginationData } from "./product";
 export type MesssageResponse = {
 
     success:boolean,
@@ -9,8 +9,8 @@ export type MesssageResponse = {
 export type GetProductsResponse = {
 success:boolean,
 products:productData[],
-pagination:Pagination,
-messagesss:unknown[]
+pagination:PaginationData,
+messages:string[]
 }
 
 
