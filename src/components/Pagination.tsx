@@ -17,16 +17,12 @@ export function PaginationDemo({ pagination, onPageChange }: Props) {
 
     const { total_pages, current_page, has_pre, has_next } = pagination
 
-
-    // 產生「要顯示的頁碼」：前 1~5 或 中間 3 個
+    // 做出中間的page頁面
     const pages: number[] = (() => {
-        // 前段：直接顯示 1~5（但不超過 total_pages）
         if (current_page <= 5) {
             const end = Math.min(5, total_pages)
             return Array.from({ length: end }, (_, i) => i + 1)
         }
-
-        // 中段：顯示 current-1, current, current+1（不超界）
         const start = Math.max(1, current_page - 1)
         const end = Math.min(total_pages, current_page + 1)
 
@@ -68,8 +64,7 @@ export function PaginationDemo({ pagination, onPageChange }: Props) {
                     </PaginationItem>
 
                 ))}
-
-                {/* 右側：如果 pages 沒到最後，就補 … + last */}
+                {/* 做點點點 */}
                 {showRightDots && (
                     <>
                         <PaginationItem>

@@ -1,3 +1,5 @@
+//TODO修正content的資料收集方式
+//TODOstock的顯示是錯誤的
 import { getProducts, createProduct, editProduct, deleteProduct } from '@/api/folder_admin/products';
 import type { productData, ProductDataResponse, PaginationData } from '@/type/product';
 import { useEffect, useState } from 'react'
