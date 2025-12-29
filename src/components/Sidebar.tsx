@@ -52,7 +52,7 @@ export const Sidebar = ({ open, onOpenChange }: SidebarDrawerProps) => {
         </Sheet>
       </div>
 
-      <aside className="fixed top-0 left-0 z-40 hidden h-sscreen w-64 bg-sidebar border-r border-sidebar-border lg:block">
+      <aside className="fixed top-0 left-0 z-40 hidden h-screen w-64 bg-sidebar border-r border-sidebar-border lg:block">
         <div className="flex h-16 items-center border-b border-sidebar-border px-6">
           <Link to="/admin" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">

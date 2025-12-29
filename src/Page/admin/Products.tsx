@@ -87,7 +87,6 @@ const Products = () => {
     // const handleOpenDeleteModal = () => {
     //     setIsOpen(!isOpen)
     // }
-
     return (<>
         {isLoading ? <Loader /> : <>
 
@@ -206,12 +205,9 @@ const Products = () => {
                     </TableBody>
                 </Table>
             </div>
-
-
-            <PaginationDemo page={page} totalPages={pagination?.total_pages as number} onPageChange={setPage} />
-
-
-
+            {pagination && (
+                <PaginationDemo pagination={pagination} onPageChange={setPage} />
+            )}
             {/* <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} /> */}
 
             <ProductModal

@@ -1,68 +1,95 @@
+import type { PaginationData } from "@/type/product"
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationLink,
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationLink,
 } from "@/components/ui/pagination"
 
 type Props = {
-  page: number
-  totalPages: number
-  onPageChange: (page: number) => void
+    pagination: PaginationData
+    onPageChange: (page: number) => void
 }
 
-const FIRST_PAGE = 1
+export function PaginationDemo({ pagination, onPageChange }: Props) {
 
-export function PaginationDemo({
-  page,
-  totalPages,
-  onPageChange,
-}: Props) {
+    const { total_pages, current_page, has_pre, has_next } = pagination
 
-  const isFirst = page === FIRST_PAGE
-  const isLast = page === totalPages
 
-  const go = (p: number) =>
-    onPageChange(Math.min(Math.max(FIRST_PAGE, p), totalPages))
+    // 產生「要顯示的頁碼」：前 1~5 或 中間 3 個
+    const pages: number[] = (() => {
+        // 前段：直接顯示 1~5（但不超過 total_pages）
+        if (current_page <= 5) {
+            const end = Math.min(5, total_pages)
+            return Array.from({ length: end }, (_, i) => i + 1)
+        }
 
-  return (
-    <Pagination className="mt-4">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            onClick={(e) => {
-              e.preventDefault()
-              go(page - FIRST_PAGE)
-            }}
-            aria-disabled={isFirst}
-            className={isFirst ? "pointer-events-none opacity-40" : ""}
-          />
-        </PaginationItem>
+        // 中段：顯示 current-1, current, current+1（不超界）
+        const start = Math.max(1, current_page - 1)
+        const end = Math.min(total_pages, current_page + 1)
 
-        {/* 只顯示目前頁 */}
-        <PaginationItem>
-          <PaginationLink
-            isActive
-            onClick={(e) => e.preventDefault()}
-            className="bg-primary text-primary-foreground hover:bg-primary"
-          >
-            {page}
-          </PaginationLink>
-        </PaginationItem>
+        const arr: number[] = []
+        for (let i = start; i <= end; i++) arr.push(i)
+        return arr
+    })()
 
-        <PaginationItem>
-          <PaginationNext
-            onClick={(e) => {
-              e.preventDefault()
-              go(page + FIRST_PAGE)
-            }}
-            aria-disabled={isLast}
-            className={isLast ? "pointer-events-none opacity-40" : ""}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  )
+    const showRightDots = pages[pages.length - 1] < total_pages - 1 // <last-1 才需要 "… last"
+
+    return (
+
+        <Pagination className="mt-4">
+
+            <PaginationContent>
+                <PaginationItem>
+                    <PaginationPrevious
+                        onClick={() => has_pre && onPageChange(current_page - 1)}
+                        className={!has_pre ? "pointer-events-none opacity-40" : ""}
+                    />
+                </PaginationItem>
+                {/* RWD調整 */}
+                <PaginationItem className="sm:hidden" >
+                    <PaginationLink
+                        isActive={true}
+                        onClick={() => onPageChange(current_page)}
+                    >
+                        {current_page}
+                    </PaginationLink>
+                </PaginationItem>
+                {pages.map((p) => (
+                    <PaginationItem className="sm:block hidden" key={p}>
+                        <PaginationLink
+                            isActive={p === current_page}
+                            onClick={() => onPageChange(p)}
+                        >
+                            {p}
+                        </PaginationLink>
+                    </PaginationItem>
+
+                ))}
+
+                {/* 右側：如果 pages 沒到最後，就補 … + last */}
+                {showRightDots && (
+                    <>
+                        <PaginationItem>
+                            <span className="px-2 text-muted-foreground">…</span>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink onClick={() => onPageChange(total_pages)}>
+                                {total_pages}
+                            </PaginationLink>
+                        </PaginationItem>
+                    </>
+                )}
+
+                <PaginationItem>
+                    <PaginationNext
+                        onClick={() => has_next && onPageChange(current_page + 1)}
+                        className={!has_next ? "pointer-events-none opacity-40" : ""}
+                    />
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
+    )
 }
