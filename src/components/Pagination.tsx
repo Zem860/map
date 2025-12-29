@@ -28,7 +28,7 @@ export function PaginationDemo({
     onPageChange(Math.min(Math.max(FIRST_PAGE, p), totalPages))
 
   return (
-    <Pagination className="mt-6">
+    <Pagination className="mt-4">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious

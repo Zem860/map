@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "@/components/ui/badge"
 import { ProductModal } from '@/components/products/ProductModal/ProductModal';
 import { Loader } from '@/components/Loader';
-import  {PaginationDemo} from '@/components/Pagination';
+import { PaginationDemo } from '@/components/Pagination';
 
 
 const Products = () => {
@@ -63,10 +63,10 @@ const Products = () => {
 
 
     const getProduct = () => {
-        const params = { page:page.toString(), category }
+        const params = { page: page.toString(), category }
         setIsLoading(true)
         getProducts(params)
-            .then((res) => {  
+            .then((res) => {
                 const data: ProductDataResponse = res.data
                 setProduc(data.products)
                 setPagination(data.pagination)
@@ -206,7 +206,11 @@ const Products = () => {
                     </TableBody>
                 </Table>
             </div>
-            <PaginationDemo page={page} totalPages={pagination?.total_pages as number} onPageChange ={setPage} />
+
+
+            <PaginationDemo page={page} totalPages={pagination?.total_pages as number} onPageChange={setPage} />
+
+
 
             {/* <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} /> */}
 
