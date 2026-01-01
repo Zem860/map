@@ -3,24 +3,34 @@ import Login from "./Page/admin/Login"
 import AdminProducts from "./Page/admin/Products"
 import AdminRoute from "./routes/AdminRoute"
 import AdminLayout from "./Layout/AdminLayout"
-
+import Home from "./Page/public/Home"
+import Shop from "./Page/public/Shop"
+import PublicLayout from "./Layout/PublicLayout"
 const App = () => {
   return (
     <Routes>
-      <Route index element={<div>Home Page</div>}></Route>
+
+
+      <Route element={<PublicLayout />}>
+        <Route index element={<Home />}></Route>
+        <Route path="/shop" element={<Shop />}></Route>
+      </Route>
 
       {/* 登入頁 */}
       <Route path="/login" element={<Login />} />
 
       {/* 後台（守門 + Layout） */}
-      <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-        {/* /admin */}        
+      <Route path="/admin"
+        element={<AdminRoute>
+          <AdminLayout />
+        </AdminRoute>}>
+        {/* /admin */}
         <Route index element={<div>Admin Dashboard</div>} />
          {/* /admin/login */}
          <Route path="login" element = {<Login/>}/>
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
-        
+
       </Route>
 
       {/* 404 */}
