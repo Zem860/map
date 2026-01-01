@@ -1,5 +1,5 @@
 // layouts/AdminLayout.tsx
-import { Outlet, Link } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 import { AdminHeader } from "@/components/Header";
 import { Sidebar } from '@/components/Sidebar';

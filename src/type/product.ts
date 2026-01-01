@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 
 export type SidebarDrawerProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export type productData = {
@@ -64,7 +64,7 @@ export type UploadImageResponse = {
 export type ProductModalProps = {
     isOpen: boolean;
     onOpenChange:(isOpen:boolean)=>void;
-    product?:productData| null; //為甚麼不是||
+    product?:productData| null; 
     onSave:(product:productData)=>void;
     mode?:'create' | 'edit';
 }
@@ -83,4 +83,14 @@ export type ConfirmModalProps = {
 
 export type BtnProps = {
   children: ReactNode
+}
+
+export type DatePickerProps = {
+    lable?:string,
+    value?:string, // yyyy-mm-dd
+    onChange?:(value:string)=>void,
+    id?:string,
+    placeholder?:string,
+    disabled?:boolean,
+    className:string,
 }
