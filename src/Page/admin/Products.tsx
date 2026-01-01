@@ -1,8 +1,3 @@
-//TODO修正content的資料收集方式
-//TODOstock的顯示是錯誤的
-import { getProducts, createProduct, editProduct, deleteProduct } from '@/api/folder_admin/products';
-import type { productData, ProductDataResponse, PaginationData } from '@/type/product';
-import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Plus, MoreHorizontal } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -10,97 +5,47 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "@/components/ui/badge"
 import { ProductModal } from '@/components/products/ProductModal/ProductModal';
 import { Loader } from '@/components/Loader';
-import { PaginationDemo } from '@/components/Pagination';
-
-
+import { PaginationDemo } from '@/components/util/Pagination';
+import CategoryPicker from '@/components/products/SearchArea/CategoryPicker';
+import { useProducts } from "@/components/products/hook/useProductsHook"
 const Products = () => {
-    const [produc, setProduc] = useState<productData[]>()
-    const [pagination, setPagination] = useState<PaginationData>()
-    const [page, setPage] = useState<number>(1)
-    const [category, setCategory] = useState<string>("")
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [currentProduct, setCurrentProduct] = useState<productData | null>(null)
-    const [mode, setMode] = useState<"create" | "edit">("create")
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+     const {
+    products,
+    pagination,
+    categories,
+    isLoading,
+    searchData,
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat("zh-TW", {
-            style: "currency",
-            currency: "TWD",
-            minimumFractionDigits: 0,
-        }).format(price)
-    }
+    isModalOpen,
+    setIsModalOpen,
+    currentProduct,
+    mode,
+    formatPrice,
+    handleCategoryChange,
+    handlePageChange,
+    openCreateModal,
+    openEditModal,
+    handleSave,
+    handleDelete,
+  } = useProducts()
 
-    const handleOpenAddModal = (item: productData | null) => {
-        if (!item) {
-            setCurrentProduct(null)
-            setMode("create")
-            setIsModalOpen(true)
-            return
-        }
-        setCurrentProduct(item)
-        setMode("edit")
-        setIsModalOpen(true)
-    }
-
-    const handleSave = (product: productData) => {
-        setIsLoading(true)
-        if (mode === "create") {
-            createProduct(product).then(() => { getProduct(); }).catch((err) => { console.log(err) })
-
-        } else {
-            // edit product logic here
-            editProduct(product.id, product).then(() => { getProduct(); }).catch((err) => { console.log(err) })
-        }
-
-        setIsModalOpen(false)
-        // Here you would typically save to your backend/database
-    }
-
-
-    const handleDelete = (id: string) => {
-        setIsLoading(true)
-        deleteProduct(id).then(() => { getProduct() }).then(() => { getProduct(); }).catch((err) => { console.log(err) })
-    }
-
-
-    const getProduct = () => {
-        const params = { page: page.toString(), category }
-        setIsLoading(true)
-        getProducts(params)
-            .then((res) => {
-                const data: ProductDataResponse = res.data
-                setProduc(data.products)
-                setPagination(data.pagination)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-            .finally(() => {
-                setIsLoading(false)
-            })
-    }
-
-
-    useEffect(() => {
-        getProduct();
-    }, [page, category])
-
-    // const handleOpenDeleteModal = () => {
-    //     setIsOpen(!isOpen)
-    // }
     return (<>
         {isLoading ? <Loader /> : <>
 
-            <div className='space-y-4 mb-4 flex items-center justify-end'>
-                <Button onClick={() => { handleOpenAddModal(null) }} className=" ml-auto  bg-primary hover:bg-primary/90">
+            <div className='space-y-4 mb-4 flex items-center justify-between'>
+                <CategoryPicker
+                    searchData={searchData}
+                    onCategoryChange={handleCategoryChange}
+                    categories={categories}
+                />
+                <Button onClick={() => { openCreateModal() }} className=" ml-auto  bg-primary hover:bg-primary/90">
                     <Plus className="size-4" />
                     新增書籍
                 </Button>
             </div>
             <div className='grid gap-3 md:hidden'>
                 {
-                    produc?.map(item => {
+                    products?.map(item => {
                         return (
                             <div key={item.id} className='rounded-lg border border-border bg-card p-4'>
                                 <div className='flex gap-3'>
@@ -121,7 +66,7 @@ const Products = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => handleOpenAddModal(item)}>編輯</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => openEditModal(item)}>編輯</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleDelete(item.id)}>刪除</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -136,22 +81,17 @@ const Products = () => {
                                             {item.is_enabled ? 'enabled' : 'not enabled'}
                                         </Badge>
                                     </div>
-                                    <div className="mt-2 flex items-center justify-between text-sm">
-                                        <span className="font-semibold text-primary">{formatPrice(item.price)}</span>
-                                        <span className="text-muted-foreground">stock: {item.num}</span>
-                                    </div>
                                 </div>
-
                             </div>
                         )
                     })
                 }
             </div>
-
             <div className="hidden md:block rounded-lg border border-border bg-card">
                 <Table >
                     <TableHeader>
                         <TableRow className='hover:bg-transparent'>
+                            <TableHead className='w-20'>Id</TableHead>
                             <TableHead className='w-20'>Image</TableHead>
                             <TableHead className="w-[150px]">Title</TableHead>
                             <TableHead className='w-20'>Category</TableHead>
@@ -162,9 +102,12 @@ const Products = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {produc?.map((item) => {
+                        {products?.map((item) => {
                             return (
                                 <TableRow key={item.id}>
+                                    <TableCell>
+                                        {item.num}
+                                    </TableCell>
                                     <TableCell>
                                         <div className='relative h-12 w-12 overflow-hidden rounded-md bg-muted'>
                                             <img src={item.imageUrl} alt={item.title} className='object-cover' />
@@ -195,7 +138,7 @@ const Products = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => handleOpenAddModal(item)}>編輯</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => openEditModal(item)}>編輯</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleDelete(item.id)}>刪除</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -208,7 +151,7 @@ const Products = () => {
                 </Table>
             </div>
             {pagination && (
-                <PaginationDemo pagination={pagination} onPageChange={setPage} />
+                <PaginationDemo pagination={pagination} onPageChange={handlePageChange} />
             )}
             {/* <ConfirmModal isOpen={isOpen} onOpenChange={handleOpenDeleteModal} /> */}
 

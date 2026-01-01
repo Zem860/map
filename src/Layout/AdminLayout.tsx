@@ -7,7 +7,7 @@ import { Sidebar } from '@/components/Sidebar';
 const AdminLayout = () => {
     return (
         <>
-            <Sidebar />
+            <Sidebar open={false} onOpenChange={()=>{}} />
             <div className="lg:ml-64">
                 <AdminHeader />
                 <div className="p-4"><Outlet /></div>

@@ -17,6 +17,7 @@ import { useState } from "react"
 import { useProductForm } from "./hooks/useProductForm"
 import { useProductImages } from "./hooks/useProductImages"
 import { buildProductPayload } from "./utils/product.mapper"
+import DatePicker from "@/components/util/DatePicker"
 
 export const ProductModal = ({
   isOpen,
@@ -64,11 +65,39 @@ export const ProductModal = ({
     }
   }
 
+  type ProductContent = {
+    author?: string
+    isbn?: string
+    publisher?: string
+    publishDate?: string
+    pages?: number
+  }
+
+
   const formTitle = mode === "create" ? "新增書籍" : "編輯書籍"
+  const getContentJson = (): ProductContent => {
+    try {
+      return formData.content ? (JSON.parse(formData.content) as ProductContent) : ({} as ProductContent)
+    } catch {
+      return {} as ProductContent
+    }
+  }
+
+
+  const setContentField = (key: keyof ProductContent, value: any) => {
+    const cur = getContentJson()
+    const next = { ...cur, [key]: value }
+    // ✅ 直接寫回 formData.content（仍是 string）
+    handleInputChange({
+      target: { name: "content", value: JSON.stringify(next) },
+    } as any)
+  }
+
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:!max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{formTitle}</DialogTitle>
         </DialogHeader>
@@ -134,17 +163,43 @@ export const ProductModal = ({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="num">庫存數量</Label>
-                <Input
-                  id="num"
-                  name="num"
-                  type="number"
-                  value={formData.num}
-                  onChange={handleInputChange}
-                  placeholder="0"
-                />
-              </div>
+              <Input
+                id="author"
+                type="text"
+                value={getContentJson().author ?? ""}
+                onChange={(e) => setContentField("author", e.target.value)}
+                placeholder="Author"
+              />
+
+              <Input
+                id="isbn"
+                type="text"
+                value={getContentJson().isbn ?? ""}
+                onChange={(e) => setContentField("isbn", e.target.value)}
+                placeholder="978-..."
+              />
+
+              <Input
+                id="publisher"
+                type="text"
+                value={getContentJson().publisher ?? ""}
+                onChange={(e) => setContentField("publisher", e.target.value)}
+                placeholder="Publisher"
+              />
+
+              <DatePicker
+                label="Publish Date"
+                value={getContentJson().publishDate ?? ""}
+                onChange={(val) => setContentField("publishDate", val)}
+              />
+
+             <Input
+                id="pages"
+                type="number"
+                value={getContentJson().pages ?? 0}
+                onChange={(e) => setContentField("pages", e.target.value)}
+                placeholder="Pages"
+              />
 
               <div className="flex items-center gap-3">
                 <Label htmlFor="is_enabled" className="mb-0">
@@ -214,7 +269,7 @@ export const ProductModal = ({
               <Label>圖片預覽（儲存後才會上傳檔案）</Label>
               <div className="grid grid-cols-2 gap-3">
                 {/* 已有 URL 圖 */}
-                {images.uploadedImages.map((image:string, index:number) => (
+                {images.uploadedImages.map((image: string, index: number) => (
                   <div
                     key={`url-${index}`}
                     className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
@@ -244,7 +299,7 @@ export const ProductModal = ({
                 ))}
 
                 {/* 本次選檔 blob 預覽 */}
-                {images.selectedPreviews.map((p:string, i:number) => {
+                {images.selectedPreviews.map((p: string, i: number) => {
                   const idx = images.uploadedImages.length + i
                   return (
                     <div
@@ -290,19 +345,6 @@ export const ProductModal = ({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* content/description */}
-        <div className="space-y-2">
-          <Label htmlFor="content">書籍內容</Label>
-          <Textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleInputChange}
-            placeholder="請輸入書籍內容簡介"
-            rows={3}
-          />
         </div>
 
         <div className="space-y-2">

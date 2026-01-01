@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 
 export type SidebarDrawerProps = {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export type productData = {
@@ -26,6 +26,12 @@ export type PaginationData = {
     has_pre:boolean,
     has_next:boolean,
     category:string,
+}
+
+export type SearchData = {
+    page:number,
+    category:string,
+    title?: string
 }
 
 export type ProductDataResponse = {
@@ -81,9 +87,6 @@ export type ConfirmModalProps = {
     mode?:'delete'|'edit'
 }
 
-export type BtnProps = {
-  children: ReactNode
-}
 
 export type DatePickerProps = {
     lable?:string,

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiUserLogin } from "../api/folder_admin/admin";
-import type { UserLoginInput } from "../type/user";
-import { Loader } from "./Loader";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { apiUserLogin } from "@/api/folder_admin/admin";
+import type { UserLoginInput } from "@/type/user";
+import { Loader } from "../Loader";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const Login = () => {

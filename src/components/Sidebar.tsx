@@ -1,9 +1,8 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { LayoutDashboard, Package } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import type { SidebarDrawerProps } from '@/type/product'
-
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/admin" },
   { name: "Products", icon: Package, path: "/admin/products" }];
@@ -17,6 +16,9 @@ export const Sidebar = ({ open, onOpenChange }: SidebarDrawerProps) => {
         <Sheet open={open} onOpenChange={onOpenChange}>
           <SheetContent side="left" className="w-72 p-0">
             <SheetHeader className="border-b border-sidebar-border px-6 py-4">
+              <SheetDescription className="sr-only">
+                Admin navigation sidebar
+              </SheetDescription>
               <SheetTitle>
                 <Link to="/admin" className="flex items-center gap-2" onClick={() => onOpenChange(false)}>
                   <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
