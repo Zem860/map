@@ -32,13 +32,13 @@ type RandomUserApiResponse = { results: RandomUser[] }
 const latLngCache: Record<string, [number, number]> = {}
 const countryIso2Cache: Record<string, string> = {}
 
-// 你不用懂 cca2：這個函式只會回傳「兩碼國碼」(TW/JP/US…)，拿來給 Open-Meteo 用
+// 回傳國碼
 async function getIso2(countryName: string): Promise<string | null> {
   const key = countryName.trim().toLowerCase()
   if (countryIso2Cache[key]) return countryIso2Cache[key]
 
   try {
-    // restcountries 回來的欄位名字叫 cca2（你不用記，只要知道它是 ISO2）
+    // restcountries欄位名字叫 cca2=ISO2
     const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fields=cca2`
     const res = await fetch(url)
     if (!res.ok) return null
@@ -115,7 +115,7 @@ export const LeafletMap: React.FC = () => {
         const user = data.results?.[0]
         if (!user || disposed) return
         const fullName = `${user.name.title} ${user.name.first} ${user.name.last}`
-        // const query = { city: 'Magong', country: 'Taiwan' }
+        // const query = { city: 'Taipei', country: 'Taiwan' }
         const query = {
           city: user.location.city,
           country: user.location.country,
@@ -164,8 +164,8 @@ export const LeafletMap: React.FC = () => {
       }
     }
 
-    void fetchUser()
-    const id = window.setInterval(() => void fetchUser(), 10_000)
+    fetchUser()
+    const id = setInterval(() => fetchUser(), 10_000)
 
     return () => {
       disposed = true
