@@ -1,5 +1,8 @@
+import LeafletMap from "@/components/LeafletMap";
 const Home = () => {
-    return ( <>HOMEPAGE</> );
+    return ( <>
+    <LeafletMap />
+    </> );
 }
  
 export default Home;
