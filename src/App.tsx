@@ -6,6 +6,7 @@ import AdminLayout from "./Layout/AdminLayout"
 import Home from "./Page/public/Home"
 import Shop from "./Page/public/Shop"
 import PublicLayout from "./Layout/PublicLayout"
+import UserForm from "./Page/public/UserForm"
 const App = () => {
   return (
     <Routes>
@@ -14,6 +15,7 @@ const App = () => {
       <Route element={<PublicLayout />}>
         <Route index element={<Home />}></Route>
         <Route path="/shop" element={<Shop />}></Route>
+        <Route path="/form" element={<UserForm />}></Route>
       </Route>
 
       {/* 登入頁 */}

@@ -5,7 +5,9 @@ const PublicLayout = () => {
 
         <div className="min-h-screen bg-background">
             <Navbar />
-            <Outlet />
+            <main className="pt-20"> {/* 根据 Header 高度调整 */}
+                <Outlet />
+            </main>
         </div>
     </>);
 }

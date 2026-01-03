@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// 修正 Leaflet 預設 marker icon（Vite + bundler 常見問題）
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
@@ -23,54 +22,67 @@ type RandomUser = {
     city: string
     state: string
     country: string
-    coordinates: {
-      latitude: string
-      longitude: string
-    }
+    coordinates: { latitude: string; longitude: string }
   }
 }
 
-type RandomUserApiResponse = {
-  results: RandomUser[]
-}
+type RandomUserApiResponse = { results: RandomUser[] }
 
-type RestCountry = {
-  latlng?: [number, number]
-}
+// ---- 小 cache：避免一直查同樣的地點 / 國家 ----
+const latLngCache: Record<string, [number, number]> = {}
+const countryIso2Cache: Record<string, string> = {}
 
-// ⭐ 用國家名稱查座標 + 簡單快取（避免每 10 秒都打一次）
-const countryLatLngCache: Record<string, [number, number]> = {}
-
-const getCountryLatLng = async (country: string): Promise<[number, number] | null> => {
-  if (countryLatLngCache[country]) {
-    return countryLatLngCache[country]
-  }
+// 你不用懂 cca2：這個函式只會回傳「兩碼國碼」(TW/JP/US…)，拿來給 Open-Meteo 用
+async function getIso2(countryName: string): Promise<string | null> {
+  const key = countryName.trim().toLowerCase()
+  if (countryIso2Cache[key]) return countryIso2Cache[key]
 
   try {
-    const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(
-      country,
-    )}?fields=latlng`
+    // restcountries 回來的欄位名字叫 cca2（你不用記，只要知道它是 ISO2）
+    const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fields=cca2`
     const res = await fetch(url)
-    if (!res.ok) {
-      console.warn('[country] http error', res.status, country)
-      return null
-    }
-
-    const data: RestCountry[] = await res.json()
-    if (!data.length || !data[0].latlng || data[0].latlng.length < 2) {
-      console.warn('[country] no latlng for', country, data)
-      return null
-    }
-
-    const [lat, lng] = data[0].latlng
-    if (Number.isNaN(lat) || Number.isNaN(lng)) return null
-
-    countryLatLngCache[country] = [lat, lng]
-    return [lat, lng]
-  } catch (e) {
-    console.warn('[country] fetch error', country, e)
+    if (!res.ok) return null
+    const data = await res.json()
+    const iso2 = data?.[0]?.cca2
+    if (!iso2) return null
+    countryIso2Cache[key] = iso2
+    return iso2
+  } catch {
     return null
   }
+}
+
+// Open-Meteo：用城市名 +（可選）國碼查座標
+async function geocodeCity(city: string, iso2?: string | null): Promise<[number, number] | null> {
+  const cacheKey = `${(iso2 ?? '').toLowerCase()}__${city.trim().toLowerCase()}`
+  if (latLngCache[cacheKey]) return latLngCache[cacheKey]
+
+  try {
+    const url =
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}` +
+      `&count=1&language=en&format=json` +
+      (iso2 ? `&country=${encodeURIComponent(iso2)}` : '')
+
+    const res = await fetch(url)
+    if (!res.ok) return null
+
+    const data = await res.json()
+    const item = data?.results?.[0]
+    const lat = item?.latitude
+    const lon = item?.longitude
+    if (typeof lat !== 'number' || typeof lon !== 'number') return null
+
+    const latLng: [number, number] = [lat, lon]
+    latLngCache[cacheKey] = latLng
+    return latLng
+  } catch {
+    return null
+  }
+}
+
+async function resolveLatLng(input: { city: string; country: string }): Promise<[number, number] | null> {
+  const iso2 = await getIso2(input.country) // 這行你不用管它怎麼拿到的
+  return await geocodeCity(input.city, iso2)
 }
 
 export const LeafletMap: React.FC = () => {
@@ -79,62 +91,51 @@ export const LeafletMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (!mapContainerRef.current) return
+    const container = mapContainerRef.current
+    if (!container) return
 
-    // 初始化地圖（只做一次）
+    let disposed = false
+
     if (!mapRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [20, 0],
-        zoom: 2,
-      })
-
+      const map = L.map(container, { center: [20, 0], zoom: 2 })
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap',
       }).addTo(map)
-
       mapRef.current = map
     }
 
     const fetchUser = async () => {
       const map = mapRef.current
-      if (!map) return
+      if (!map || disposed) return
 
       try {
         const res = await fetch('https://randomuser.me/api/')
         const data: RandomUserApiResponse = await res.json()
-        const user = data.results[0]
-        if (!user) return
-
+        const user = data.results?.[0]
+        if (!user || disposed) return
         const fullName = `${user.name.title} ${user.name.first} ${user.name.last}`
+        // const query = { city: 'Magong', country: 'Taiwan' }
+        const query = {
+          city: user.location.city,
+          country: user.location.country,
+        }
 
-        console.log(
-          '[fetchUser]',
-          fullName,
-          '-',
-          user.location.city,
-          user.location.state,
-          user.location.country,
-          'raw coords:',
-          user.location.coordinates,
-        )
+        // ✅ 用你指定的 city/country 查座標
+        let latLng = await resolveLatLng(query)
 
-        // 1️⃣ 先試著用「國家名稱」查中心座標
-        let latLng = await getCountryLatLng(user.location.country)
-
-        // 2️⃣ restcountries 失敗時，退回 randomuser 原始座標
+        // ✅ fallback：randomuser 原始座標（保留你原本邏輯）
         if (!latLng) {
           const rawLat = parseFloat(user.location.coordinates.latitude)
           const rawLng = parseFloat(user.location.coordinates.longitude)
           if (!Number.isNaN(rawLat) && !Number.isNaN(rawLng)) {
-            console.warn('[fallback] use randomuser raw coordinates')
             latLng = [rawLat, rawLng]
           } else {
-            console.warn('[skip] no valid coordinates')
             return
           }
         }
 
+        if (disposed) return
         const [lat, lng] = latLng
 
         const html = `
@@ -150,7 +151,6 @@ export const LeafletMap: React.FC = () => {
           </div>
         `
 
-        // 一個 marker：移動位置 + 更新 popup
         if (!markerRef.current) {
           markerRef.current = L.marker([lat, lng]).addTo(map)
         } else {
@@ -158,23 +158,17 @@ export const LeafletMap: React.FC = () => {
         }
 
         markerRef.current.bindPopup(html).openPopup()
-        map.setView([lat, lng], 4, { animate: true })
+        map.setView([lat, lng], 7, { animate: true })
       } catch (err) {
-        console.error('[fetchUser] error:', err)
+        if (!disposed) console.error('[fetchUser] error:', err)
       }
     }
 
-    // 先跑一次
     void fetchUser()
+    const id = window.setInterval(() => void fetchUser(), 10_000)
 
-    // ⭐ 每 10 秒戳一次 API
-    const id = window.setInterval(() => {
-      console.log('[interval] fetchUser at', new Date().toISOString())
-      void fetchUser()
-    }, 10 * 1000)
-
-    // 清理
     return () => {
+      disposed = true
       window.clearInterval(id)
       if (mapRef.current) {
         mapRef.current.remove()
@@ -184,16 +178,7 @@ export const LeafletMap: React.FC = () => {
     }
   }, [])
 
-  return (
-    <div
-      ref={mapContainerRef}
-      style={{
-        width: '500px',
-        height: '500px', // 正方形
-        border: '1px solid #ddd',
-      }}
-    />
-  )
+  return <div ref={mapContainerRef} style={{ width: '500px', height: '500px', border: '1px solid #ddd' }} />
 }
 
 export default LeafletMap
