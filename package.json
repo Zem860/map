@@ -1,5 +1,5 @@
 {
-  "name": "map",
+  "name": "leaflet-randomuser",
   "private": true,
   "version": "0.0.0",
   "type": "module",
