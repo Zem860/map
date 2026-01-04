@@ -10,16 +10,18 @@ export const baseApi = axios.create({
 })
 
 // 我之後看看要不要只有admin加這條
+// 改成只有特定 API 端點才帶 token
 baseApi.interceptors.request.use(
   (config) => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
-      "$1",
-    );
-
-    if (token) {
-      // 六角後台只要純 token，不需要 Bearer
-      config.headers.Authorization = token;
+    // 只有 admin 路徑才使用 cookie 中的 token
+    if (config.url?.includes('/admin')) {
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
+        "$1",
+      );
+      if (token) {
+        config.headers.Authorization = token;
+      }
     }
     return config;
   },
