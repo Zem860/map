@@ -10,8 +10,6 @@ import UserForm from "./Page/public/UserForm"
 const App = () => {
   return (
     <Routes>
-
-
       <Route element={<PublicLayout />}>
         <Route index element={<Home />}></Route>
         <Route path="/shop" element={<Shop />}></Route>
