@@ -18,15 +18,6 @@ const Home = () => {
                     <p className="text-lg md:text-xl text-muted-foreground mb-8 text-pretty leading-relaxed">
                         From timeless classics to contemporary masterpieces. Explore the greatest works in English literature.
                     </p>
-                    <div className="flex flex-wrap gap-4 justify-center">
-                        <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                            Browse Collection
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                        <Button size="lg" variant="outline">
-                            New Releases
-                        </Button>
-                    </div>
                 </div>
             </div>
         </section>
