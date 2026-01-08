@@ -1,10 +1,25 @@
 import LeafletMap from "@/components/LeafletMap";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Calendar } from "lucide-react";
-import { Link } from "react-router-dom";
+import { BookCard } from "@/components/products/BookCard";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { getProducts } from "@/api/folder_user/products";
+import type { productData } from "@/type/product";
 const Home = () => {
+    const [newArrivals, setNewArrival] = useState<productData[]>([])
+    useEffect(() => {
+        try {
+            getProducts({ page: "1", category: "" }).then((res) => {
+                const data = res.data.products.slice(0,5)
+                setNewArrival(data)
+            })
+        } catch {
+
+        }
+    }, [])
+
     return (<>
         {/* Hero Section */}
         <section className="relative bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
@@ -25,7 +40,6 @@ const Home = () => {
         </section>
         <section className="py-16 bg-secondary/30">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
                 <Card className="border-2 shadow-xl h-full">
                     <CardHeader className="text-center pb-6">
                         <CardTitle className="text-2xl font-serif font-bold text-balance">Watch People Shop</CardTitle>
@@ -71,6 +85,38 @@ const Home = () => {
                     </CardContent>
                 </Card>
             </div>
+        </section>
+
+        <section className="py-16">
+                <div className="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 className="text-3xl font-serif font-bold mb-2 flex items-center gap-2">
+                            <TrendingUp className="h-6 w-6 text-primary" />
+                            New Arrivals
+                        </h2>
+                        <p className="text-muted-foreground">The most popular books this week</p>
+                    </div>
+                    <Button variant="ghost" className="hidden md:flex">
+                        View All
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    {
+                        newArrivals.map((item:productData) => {
+                            const contentData = JSON.parse(item.content || '{}')
+
+                            return <BookCard
+                                title={item.title}
+                                author={contentData.author}
+                                price={String(item.price)}
+                                originalPrice={String(item.origin_price)}
+                                imageQuery={item.imageUrl}
+                            />
+                        })
+                    }
+                </div>
         </section>
     </>);
 }
