@@ -178,7 +178,7 @@ export const LeafletMap: React.FC = () => {
     }
   }, [])
 
-  return <div ref={mapContainerRef} style={{ width: '500px', height: '500px', border: '1px solid #ddd' }} />
+  return <div ref={mapContainerRef} style={{ height: '500px', border: '1px solid #ddd' }} />
 }
 
 export default LeafletMap

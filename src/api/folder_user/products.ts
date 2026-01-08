@@ -23,4 +23,3 @@ type postUserInfoFunc = (params: OrderParams) => Promise<AxiosResponse<GetOrderR
 
 export const postOrder: postUserInfoFunc = (params: OrderParams) =>
   baseApi.post('/order', params)
-
