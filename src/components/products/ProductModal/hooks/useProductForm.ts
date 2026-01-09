@@ -15,6 +15,7 @@ const EMPTY_PRODUCT = (): productData => ({
   is_enabled: 1,
   imageUrl: "",
   imagesUrl: [""],
+  rating:0
 })
 
 type UseProductFormArgs = {
@@ -38,7 +39,7 @@ export function useProductForm({ product, isOpen }: UseProductFormArgs) {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "origin_price" || name === "price" || name === "num"
+        name === "origin_price" || name === "price" || name === "num" || name=="rating"
           ? Number(value)
           : value,
     }))

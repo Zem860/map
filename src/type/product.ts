@@ -18,6 +18,7 @@ export type productData = {
     imageUrl:string,
     imagesUrl:string[],
     num:number
+    rating:number
 }
 
 export type PaginationData = {

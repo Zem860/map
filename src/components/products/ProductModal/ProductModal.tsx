@@ -97,7 +97,7 @@ export const ProductModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:!max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{formTitle}</DialogTitle>
         </DialogHeader>
@@ -162,45 +162,67 @@ export const ProductModal = ({
                   placeholder="volume, set"
                 />
               </div>
-
-              <Input
-                id="author"
-                type="text"
-                value={getContentJson().author ?? ""}
-                onChange={(e) => setContentField("author", e.target.value)}
-                placeholder="Author"
-              />
-
-              <Input
-                id="isbn"
-                type="text"
-                value={getContentJson().isbn ?? ""}
-                onChange={(e) => setContentField("isbn", e.target.value)}
-                placeholder="978-..."
-              />
-
-              <Input
-                id="publisher"
-                type="text"
-                value={getContentJson().publisher ?? ""}
-                onChange={(e) => setContentField("publisher", e.target.value)}
-                placeholder="Publisher"
-              />
-
-              <DatePicker
-                label="Publish Date"
-                value={getContentJson().publishDate ?? ""}
-                onChange={(val) => setContentField("publishDate", val)}
-              />
-
-             <Input
-                id="pages"
-                type="number"
-                value={getContentJson().pages ?? 0}
-                onChange={(e) => setContentField("pages", e.target.value)}
-                placeholder="Pages"
-              />
-
+              <div className="space-y-2">
+                <Label htmlFor="author">Author</Label>
+                <Input
+                  id="author"
+                  type="text"
+                  value={getContentJson().author ?? ""}
+                  onChange={(e) => setContentField("author", e.target.value)}
+                  placeholder="Author"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="isbn">ISBN</Label>
+                <Input
+                  id="isbn"
+                  type="text"
+                  value={getContentJson().isbn ?? ""}
+                  onChange={(e) => setContentField("isbn", e.target.value)}
+                  placeholder="978-..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="publisher">Publisher</Label>
+                <Input
+                  id="publisher"
+                  type="text"
+                  value={getContentJson().publisher ?? ""}
+                  onChange={(e) => setContentField("publisher", e.target.value)}
+                  placeholder="Publisher"
+                />
+              </div>
+              <div className="space-y-2">
+                <DatePicker
+                  id="publishDate"
+                  label="Publish Date"
+                  value={getContentJson().publishDate ?? ""}
+                  onChange={(val) => setContentField("publishDate", val)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pages">Pages</Label>
+                <Input
+                  id="pages"
+                  type="number"
+                  value={getContentJson().pages ?? 0}
+                  onChange={(e) => setContentField("pages", e.target.value)}
+                  placeholder="Pages"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rating">Rating</Label>
+                <Input
+                  id="rating"
+                  type="number"
+                  name="rating"
+                  min={0}
+                  max={5}
+                  value={formData.rating}
+                  onChange={handleInputChange}
+                  placeholder="0"
+                />
+              </div>
               <div className="flex items-center gap-3">
                 <Label htmlFor="is_enabled" className="mb-0">
                   啟用
