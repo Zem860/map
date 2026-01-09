@@ -106,13 +106,13 @@ const Home = () => {
                     {
                         newArrivals.map((item:productData) => {
                             const contentData = JSON.parse(item.content || '{}')
-
                             return <BookCard
                                 title={item.title}
                                 author={contentData.author}
                                 price={String(item.price)}
                                 originalPrice={String(item.origin_price)}
                                 imageQuery={item.imageUrl}
+                                rating={item.rating}
                             />
                         })
                     }

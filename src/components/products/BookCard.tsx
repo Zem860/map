@@ -8,10 +8,10 @@ interface BookCardProps {
   price: string
   originalPrice?: string
   imageQuery: string
-//   rating?: number
+  rating: number
 }
 
-export function BookCard({ title, author, price, originalPrice, imageQuery }: BookCardProps) {
+export function BookCard({ title, author, price, originalPrice, imageQuery, rating }: BookCardProps) {
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
       <CardContent className="p-4">
@@ -25,14 +25,14 @@ export function BookCard({ title, author, price, originalPrice, imageQuery }: Bo
         <h3 className="font-serif font-semibold text-base leading-tight mb-1 line-clamp-2">{title}</h3>
         <p className="text-sm text-muted-foreground mb-2">{author}</p>
         <div className="flex items-center gap-1 mb-2">
-          {/* <div className="flex">
+          <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} className={`text-xs ${i < Math.floor(rating) ? "text-primary" : "text-muted"}`}>
                 ★
               </span>
             ))}
-          </div> */}
-          {/* <span className="text-xs text-muted-foreground">({rating})</span> */}
+          </div> 
+           <span className="text-xs text-muted-foreground">({rating})</span>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
