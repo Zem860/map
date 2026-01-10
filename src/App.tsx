@@ -17,7 +17,7 @@ const App = () => {
         {/* /admin */}        
         <Route index element={<div>Admin Dashboard</div>} />
          {/* /admin/login */}
-         <Route path="Login" element = {<Login/>}/>
+         <Route path="login" element = {<Login/>}/>
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
         

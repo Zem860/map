@@ -5,9 +5,10 @@ import tailwindcss from "@tailwindcss/vite"
 import path from "node:path"
 
 export default defineConfig({
+  base:process.env.NODE_ENV ==='production'?'/map/':'/',
   plugins: [
     react(),
-    tailwindcss(), // ⭐ 這行讓 @import "tailwindcss" 真的被處理
+    tailwindcss(),
   ],
   resolve: {
     alias: {
