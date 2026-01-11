@@ -1,4 +1,5 @@
 import type { productData, PaginationData } from "./product";
+import type { cartData } from "./cart";
 export type MesssageResponse = {
 
     success: boolean,
@@ -18,6 +19,9 @@ export type GetProductResponse = {
     success: boolean,
     product: productData,
 }
+
+export type PostCartResponse = MesssageResponse & cartData
+
 
 
 export type UploadImageResponse = {

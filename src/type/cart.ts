@@ -1,5 +1,5 @@
 import type { productData } from "./product"
-// import type { couponData } from "./coupon"
+import type { couponData } from "./coupon"
 export type cartData = {
     data: {
         product_id: string,
@@ -31,7 +31,7 @@ export type CartItem = {
     total: number
     final_total: number
     product: productData
-    // coupon?: couponData
+    coupon?: couponData
 }
 
 /** /cart 回傳的 data 區塊 */
