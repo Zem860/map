@@ -7,6 +7,7 @@ import Home from "./Page/public/Home"
 import Shop from "./Page/public/Shop"
 import PublicLayout from "./Layout/PublicLayout"
 import UserForm from "./Page/public/UserForm"
+import ProductDetail from './Page/public/ProductDetail'
 const App = () => {
   return (
     <Routes>
@@ -14,6 +15,7 @@ const App = () => {
         <Route index element={<Home />}></Route>
         <Route path="/shop" element={<Shop />}></Route>
         <Route path="/form" element={<UserForm />}></Route>
+        <Route path="shop/:id" element={<ProductDetail />} />
       </Route>
 
       {/* 登入頁 */}
@@ -30,7 +32,6 @@ const App = () => {
          <Route path="login" element = {<Login/>}/>
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
-
       </Route>
 
       {/* 404 */}
