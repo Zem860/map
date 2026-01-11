@@ -7,66 +7,67 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/api/folder_user/products";
 import type { productData } from "@/type/product";
+import { Link } from "react-router-dom";
 const Home = () => {
-    const featuredCategories = [
-        { label: "Literature", icon: "📖", hint: "Classics & Modern" },
-        { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds" },
-        { label: "History & Biography", icon: "🏛️", hint: "Real Stories" },
-        { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age" },
-    ]
+  const featuredCategories = [
+    { label: "Literature", icon: "📖", hint: "Classics & Modern" },
+    { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds" },
+    { label: "History & Biography", icon: "🏛️", hint: "Real Stories" },
+    { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age" },
+  ]
 
-    const [newArrivals, setNewArrival] = useState<productData[]>([])
-    useEffect(() => {
-        try {
-            getProducts({ page: "1", category: "" }).then((res) => {
-                const data = res.data.products.slice(0, 5)
-                setNewArrival(data)
-            })
-        } catch {
+  const [newArrivals, setNewArrival] = useState<productData[]>([])
+  useEffect(() => {
+    try {
+      getProducts({ page: "1", category: "" }).then((res) => {
+        const data = res.data.products.slice(0, 5)
+        setNewArrival(data)
+      })
+    } catch {
 
-        }
-    }, [])
+    }
+  }, [])
 
-    return (<>
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
-            <div className="">
-                <div className="max-w-3xl mx-auto text-center">
-                    <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        Free Worldwide Shipping
-                    </Badge>
-                    <h1 className="text-4xl md:text-6xl font-serif font-bold text-balance mb-6 leading-tight">
-                        Discover the World of English Literature
-                    </h1>
-                    <p className="text-lg md:text-xl text-muted-foreground mb-8 text-pretty leading-relaxed">
-                        From timeless classics to contemporary masterpieces. Explore the greatest works in English literature.
-                    </p>
-                </div>
-            </div>
-        </section>
-        <section className="py-16 bg-secondary/30">
-            <div className="container mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <Card className="border-2 shadow-xl h-full">
-                        <CardHeader className="text-center pb-6">
-                            <CardTitle className="text-2xl font-serif font-bold text-balance">Watch People Shop</CardTitle>
-                            <p className="text-muted-foreground mt-2">See where readers are discovering books in real-time</p>
-                        </CardHeader>
-                        <CardContent className="flex justify-center pb-6">
-                            <div className="w-full">
-                                <LeafletMap />
-                            </div>
-                        </CardContent>
-                    </Card>
-                    {/* <LeafletMap /> */}
-                    <Card className="border-2 shadow-xl">
-                        <CardHeader>
-                            <CardTitle className="text-2xl font-serif font-bold">Latest Articles</CardTitle>
-                            <p className="text-muted-foreground text-sm">Discover insights and stories from the literary world</p>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {/* {articles.map((article) => (
+  return (<>
+    {/* Hero Section */}
+    <section className="relative bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
+      <div className="">
+        <div className="max-w-3xl mx-auto text-center">
+          <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
+            <Sparkles className="h-3 w-3 mr-1" />
+            Free Worldwide Shipping
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-balance mb-6 leading-tight">
+            Discover the World of English Literature
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 text-pretty leading-relaxed">
+            From timeless classics to contemporary masterpieces. Explore the greatest works in English literature.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section className="py-16 bg-secondary/30">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card className="border-2 shadow-xl h-full">
+            <CardHeader className="text-center pb-6">
+              <CardTitle className="text-2xl font-serif font-bold text-balance">Watch People Shop</CardTitle>
+              <p className="text-muted-foreground mt-2">See where readers are discovering books in real-time</p>
+            </CardHeader>
+            <CardContent className="flex justify-center pb-6">
+              <div className="w-full">
+                <LeafletMap />
+              </div>
+            </CardContent>
+          </Card>
+          {/* <LeafletMap /> */}
+          <Card className="border-2 shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-2xl font-serif font-bold">Latest Articles</CardTitle>
+              <p className="text-muted-foreground text-sm">Discover insights and stories from the literary world</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* {articles.map((article) => (
                                 <Link key={article.id} href={`/articles/${article.id}`} className="block group">
                                     <div className="border rounded-lg p-4 hover:border-primary hover:bg-primary/5 transition-all">
                                         <div className="flex items-start justify-between gap-2 mb-2">
@@ -90,186 +91,80 @@ const Home = () => {
                                     </div>
                                 </Link>
                             ))} */}
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        </section>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
 
-        <section className="py-12 border-y bg-muted/30">
-            <div className="container mx-auto">
-                <h2 className="text-xl font-serif font-semibold mb-6 text-center">
-                    Explore by Category
-                </h2>
+    <section className="py-12 border-y bg-muted/30">
+      <div className="container mx-auto">
+        <h2 className="text-xl font-serif font-semibold mb-6 text-center">
+          Explore by Category
+        </h2>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-                    {featuredCategories.map((c) => (
-                        <Button
-                            key={c.label}
-                            variant="outline"
-                            className="
+          {featuredCategories.map((c) => (
+            <Button
+              key={c.label}
+              variant="outline"
+              className="
             h-24 flex-col gap-1
             bg-background
             hover:bg-primary/5 hover:border-primary
             transition-colors
           "
-                        >
-                            <span className="text-2xl">{c.icon}</span>
-                            <span className="text-sm font-medium">{c.label}</span>
-                            <span className="text-xs text-muted-foreground">{c.hint}</span>
-                        </Button>
-                    ))}
-                </div>
-            </div>
-        </section>
-
-        <section className="py-16">
-            <div className="container mx-auto">
-
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 className="text-3xl font-serif font-bold mb-2 flex items-center gap-2">
-                            <TrendingUp className="h-6 w-6 text-primary" />
-                            New Arrivals
-                        </h2>
-                        <p className="text-muted-foreground">The most popular books this week</p>
-                    </div>
-                    <Button variant="ghost" className="hidden md:flex">
-                        View All
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                    {
-                        newArrivals.map((item: productData) => {
-                            const contentData = JSON.parse(item.content || '{}')
-                            return <BookCard
-                                title={item.title}
-                                author={contentData.author}
-                                price={String(item.price)}
-                                originalPrice={String(item.origin_price)}
-                                imageQuery={item.imageUrl}
-                                rating={item.rating}
-                            />
-                        })
-                    }
-                </div>
-            </div>
-        </section>
-
-          <footer className="border-t py-12 bg-background">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold mb-4">Shop</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Classics
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contemporary
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Poetry
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Drama
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Help</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Shipping Info
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Returns
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contact Us
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">About</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Our Story
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Press
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Blog
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Connect</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Newsletter
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2025 Literary Haven. Free shipping worldwide on all orders.</p>
-          </div>
+            >
+              <span className="text-2xl">{c.icon}</span>
+              <span className="text-sm font-medium">{c.label}</span>
+              <span className="text-xs text-muted-foreground">{c.hint}</span>
+            </Button>
+          ))}
         </div>
-      </footer>
- 
-    </>);
+      </div>
+    </section>
+
+    <section className="py-16">
+      <div className="container mx-auto">
+
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-serif font-bold mb-2 flex items-center gap-2">
+              <TrendingUp className="h-6 w-6 text-primary" />
+              New Arrivals
+            </h2>
+            <p className="text-muted-foreground">The most popular books this week</p>
+          </div>
+          <Button variant="ghost" className="hidden md:flex">
+            View All
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {
+
+            newArrivals.map((item: productData) => {
+              const contentData = JSON.parse(item.content || '{}')
+              return <Link key={item.id} to={`/shop/${item.id}`}>
+                <BookCard
+
+                  title={item.title}
+                  author={contentData.author}
+                  price={String(item.price)}
+                  originalPrice={String(item.origin_price)}
+                  imageQuery={item.imageUrl}
+                  rating={item.rating}
+                />
+
+              </Link>
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+  </>);
 }
 
 export default Home;

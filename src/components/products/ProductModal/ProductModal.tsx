@@ -12,7 +12,7 @@ import { Input } from "../../ui/input"
 import { Label } from "../../ui/label"
 import { Switch } from "../../ui/switch"
 import { Textarea } from "../../ui/textarea"
-import type { productData, ProductModalProps } from "@/type/product"
+import type { productData, ProductModalProps, ProductContent } from "@/type/product"
 import { useState } from "react"
 import { useProductForm } from "./hooks/useProductForm"
 import { useProductImages } from "./hooks/useProductImages"
@@ -65,13 +65,7 @@ export const ProductModal = ({
     }
   }
 
-  type ProductContent = {
-    author?: string
-    isbn?: string
-    publisher?: string
-    publishDate?: string
-    pages?: number
-  }
+
 
 
   const formTitle = mode === "create" ? "新增書籍" : "編輯書籍"
