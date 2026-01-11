@@ -14,6 +14,12 @@ export type GetProductsResponse = {
 }
 
 
+export type GetProductResponse = {
+    success: boolean,
+    product: productData,
+}
+
+
 export type UploadImageResponse = {
     success: boolean,
     imageUrl: string,

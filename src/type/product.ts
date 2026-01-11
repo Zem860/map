@@ -40,6 +40,14 @@ export type ProductDataResponse = {
     messages:string[],
 }
 
+  export type ProductContent = {
+    author?: string
+    isbn?: string
+    publisher?: string
+    publishDate?: string
+    pages?: number
+  }
+
 export type CreateProductParams = {
     title:string,
     category:string,
