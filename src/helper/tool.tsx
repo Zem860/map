@@ -1,5 +1,5 @@
 import { getAllProducts } from "@/api/folder_admin/products";
-import type { productData } from "@/type/product";
+import type { productData, ProductContent } from "@/type/product";
 
 export const getCategoryCombos = async (): Promise<string[]> => {
   try {
@@ -13,3 +13,12 @@ export const getCategoryCombos = async (): Promise<string[]> => {
     return [];
   }
 };
+
+
+export const productContentParser = (product: productData) => {
+  const contentObj: ProductContent =
+    typeof product.content === "string"
+      ? JSON.parse(product.content)
+      : product.content;
+  return contentObj
+}

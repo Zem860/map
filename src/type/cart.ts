@@ -35,7 +35,7 @@ export type CartItem = {
 }
 
 /** /cart 回傳的 data 區塊 */
-export type shoppingCartData = {
+export type CartData = {
     data: {
         carts: CartItem[]
         total: number

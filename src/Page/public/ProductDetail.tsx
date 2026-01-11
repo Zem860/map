@@ -9,6 +9,7 @@ import { productContentParser } from "@/helper/tool";
 import type { productData, ProductContent } from "@/type/product";
 import { postCart } from "@/api/folder_user/cart";
 import Qtybar from "@/components/util/Qtybar";
+import { useCartStore } from "@/store/cartStore";
 
 const ProductDetail = () => {
     const pathObj = useLocation();
@@ -16,6 +17,7 @@ const ProductDetail = () => {
     const [productObj, setProductObj] = useState<ProductContent>()
     const [isLoading, setIsLoading] = useState(false)
     const [qty, setQty] = useState(0)
+    const addToCart = useCartStore((s) => s.addToCart);
     useEffect(() => {
         const { pathname } = { ...pathObj }
         const id = pathname.split("/")[2]
@@ -90,7 +92,7 @@ const ProductDetail = () => {
                                             )}
                                         </div>
                                         <div className="space-y-3">
-                                            <Button size="lg" className="w-full" onClick={() => { postCart({ product_id: product.id as string, qty }); }}>
+                                            <Button size="lg" className="w-full" onClick={() => { addToCart(product.id, qty) }}>
                                                 <ShoppingCart className="mr-2 h-5 w-5" />
                                                 Add to Cart
                                             </Button>
