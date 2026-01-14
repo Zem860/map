@@ -9,6 +9,7 @@ import type { productData } from "@/type/product";
 import { useProductStore } from "@/store/productStore";
 import { Link } from "react-router-dom";
 import { Loader } from "@/components/Loader";
+import Invatation from "@/components/Invitation";
 const Home = () => {
   const featuredCategories = [
     { label: "Literature", icon: "📖", hint: "Classics & Modern" },
@@ -159,6 +160,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <Invatation />
 
     </>
   );
