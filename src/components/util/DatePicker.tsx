@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils"
 import { useMemo, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-// 轉 YYYY-MM-DD
+// 轉 YYYY-MM-DD（純函式，不需要 hook）
 const toYmd = (d: Date) => {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, "0")
   const day = String(d.getDate()).padStart(2, "0")
-  console.log(y, m , day)
   return `${y}-${m}-${day}`
 }
+
 
 // 避免 new Date("YYYY-MM-DD") 時區坑
 const parseYmd = (s?: string) => {
@@ -45,6 +45,7 @@ const DatePicker = ({
   const [open, setOpen] = useState(false)
 
   const selectedDate = useMemo(() => parseYmd(value), [value])
+  const displayValue = useMemo(() => selectedDate ? toYmd(selectedDate) : "", [selectedDate])
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -63,7 +64,7 @@ const DatePicker = ({
             disabled={disabled}
             className={cn("justify-between font-normal", !selectedDate && "text-muted-foreground")}
           >
-            {selectedDate ? toYmd(selectedDate) : placeholder}
+            {displayValue || placeholder}
             <ChevronDownIcon className="h-4 w-4 opacity-70" />
           </Button>
         </PopoverTrigger>
