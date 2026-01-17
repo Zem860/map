@@ -1,27 +1,39 @@
-import { Dialog, DialogContent,DialogHeader, DialogTitle, DialogFooter } from "../../ui/dialog"
-import type { ConfirmModalProps } from "@/type/product";
-import ConfirmButton from "./ConfirmButton";
-const ConfirmModal = ({
-    isOpen,
-    onOpenChange,
-    mode = "delete",
-}: ConfirmModalProps) => {
-    const text = mode === "delete" ? "確認刪除?" : "確認編輯"
-    return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>
-                {mode === "delete" ? "你確定要刪除嗎?" : "確定要修改嗎?"}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../ui/dialog"
+import { Button } from "../../ui/button"
 
-                </DialogTitle>
-            </DialogHeader>
-            {mode === "delete" ? "你確定要刪除嗎?" : "確定要修改嗎?"}
-            <DialogFooter>
-            <ConfirmButton >{text}</ConfirmButton>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>);
+type ConfirmModalProps = {
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
+  title: string
+  message: string
+  onConfirm: () => void
 }
 
-export default ConfirmModal; 
+const ConfirmModal = ({
+  isOpen,
+  onOpenChange,
+  title,
+  message,
+  onConfirm,
+}: ConfirmModalProps) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <p className="text-muted-foreground">{message}</p>
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={onConfirm}>
+            {"Yes"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default ConfirmModal
