@@ -9,8 +9,6 @@ import { PaginationDemo } from '@/components/util/Pagination'
 import CategoryPicker from '@/components/products/SearchArea/CategoryPicker'
 import { useProducts } from "@/components/products/hook/useProductsHook"
 import ConfirmModal from "@/components/products/ConfirmModal/ConfirmModal"
-import { useState } from "react"
-import type { productData } from "@/type/product"
 
 const Products = () => {
   const {
@@ -28,74 +26,27 @@ const Products = () => {
     handlePageChange,
     openCreateModal,
     openEditModal,
-    handleSave,
-    handleDelete,
+    askDelete,
+    askSave,
+    confirmModal, // ✅ 從 hook 取得
   } = useProducts()
-
-  const [confirmOpen, setConfirmOpen] = useState(false)
-  const [confirmLoading, setConfirmLoading] = useState(false)
-  const [confirmConfig, setConfirmConfig] = useState<{
-    title: string
-    message: string
-    action: () => Promise<void>
-  } | null>(null)
-
-
-  // 開啟刪除確認
-// 統一的確認彈窗觸發器
-// type: 'delete' | 'create' | 'edit'
-// data: 如果是刪除就傳 ID，如果是新增/修改就傳 product 物件
-const askConfirm = (type, data) => {
-  let title = "";
-  let message = "";
-  let action = null;
-
-  if (type === 'delete') {
-    title = "確認刪除";
-    message = `您確定要刪除「${data.title}」嗎？此操作無法復原。`;
-    action = async () => await handleDelete(data.id);
-  } 
-  else if (type === 'create') {
-    title = "確認新增";
-    message = `確定要建立新產品「${data.title}」嗎？`;
-    action = async () => await handleSave(data);
-  } 
-  else {
-    title = "確認修改";
-    message = `確定要儲存對「${data.title}」的變更嗎？`;
-    action = async () => await handleSave(data);
-  }
-
-  // 設定到 State 裡
-  setConfirmConfig({
-    title,
-    message,
-    action: async () => {
-      await action();
-      setConfirmOpen(false); // 關閉確認視窗
-      if (isModalOpen) setIsModalOpen(false); // 如果有開啟編輯視窗也一併關閉
-    }
-  });
-  
-  setConfirmOpen(true);
-};
 
   return (
     <>
+      <div className='space-y-4 mb-4 flex items-center justify-between'>
+        <CategoryPicker
+          searchData={searchData}
+          onCategoryChange={handleCategoryChange}
+          categories={categories}
+        />
+        <Button onClick={openCreateModal} className="ml-auto bg-primary hover:bg-primary/90">
+          <Plus className="size-4" />
+          新增書籍
+        </Button>
+      </div>
+
       {isLoading ? <Loader /> : (
         <>
-          <div className='space-y-4 mb-4 flex items-center justify-between'>
-            <CategoryPicker
-              searchData={searchData}
-              onCategoryChange={handleCategoryChange}
-              categories={categories}
-            />
-            <Button onClick={openCreateModal} className="ml-auto bg-primary hover:bg-primary/90">
-              <Plus className="size-4" />
-              新增書籍
-            </Button>
-          </div>
-
           {/* 手機版 */}
           <div className='grid gap-3 md:hidden'>
             {products?.map(item => (
@@ -185,7 +136,7 @@ const askConfirm = (type, data) => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditModal(item)}>編輯</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => askConfirm('delete', { id: item.id, title: item.title })}>刪除</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => askDelete(item.id, item.title)}>刪除</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -194,29 +145,31 @@ const askConfirm = (type, data) => {
               </TableBody>
             </Table>
           </div>
-
-          {pagination && (
-            <PaginationDemo pagination={pagination} onPageChange={handlePageChange} />
-          )}
-
-          <ProductModal
-            isOpen={isModalOpen}
-            onOpenChange={setIsModalOpen}
-            product={currentProduct}
-            onSave={(product) => askConfirm(mode === 'create' ? 'create' : 'edit', product)}
-            mode={mode}
-          />
-
-          {/* 通用確認 Modal */}
-          <ConfirmModal
-            isOpen={confirmOpen}
-            onOpenChange={setConfirmOpen}
-            title={confirmConfig?.title ?? ""}
-            message={confirmConfig?.message ?? ""}
-            onConfirm={confirmConfig?.action}
-          />
         </>
       )}
+
+      {pagination && (
+        <PaginationDemo pagination={pagination} onPageChange={handlePageChange} />
+      )}
+
+      <ProductModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        product={currentProduct}
+        onSave={askSave}
+        mode={mode}
+      />
+
+      {/* ✅ 簡化：直接用 confirmModal 的狀態 */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onOpenChange={confirmModal.handleOpenChange}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        isLoading={confirmModal.isLoading}
+        error={confirmModal.error}
+        onConfirm={confirmModal.handleConfirm}
+      />
     </>
   )
 }

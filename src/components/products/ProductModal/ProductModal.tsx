@@ -97,7 +97,7 @@ export const ProductModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="product-modal-description">
         <DialogHeader>
           <DialogTitle className="text-xl">{formTitle}</DialogTitle>
         </DialogHeader>

@@ -98,3 +98,9 @@ export type DatePickerProps = {
     disabled?:boolean,
     className:string,
 }
+
+export type ConfirmConfig = {
+  title: string
+  message: string
+  onSuccess?: () => void 
+}

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { getProducts, createProduct, editProduct, deleteProduct } from "@/api/folder_admin/products"
 import type { productData, ProductDataResponse, PaginationData, SearchData } from "@/type/product"
 import { getCategoryCombos } from "@/helper/tool"
+import { useConfirm } from "./useConfirm"
 
 export const useProducts = () => {
   const [products, setProducts] = useState<productData[] | undefined>(undefined)
@@ -19,7 +20,7 @@ export const useProducts = () => {
     title: "",
   })
 
-  // categories
+  const confirmModal = useConfirm()
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -90,40 +91,49 @@ export const useProducts = () => {
     getProduct()
   }, [getProduct])
 
-  const handleSave = useCallback(
+  const saveProduct = useCallback(
     async (product: productData) => {
-      setIsLoading(true)
-      try {
-        if (mode === "create") {
-          await createProduct(product)
-        } else {
-          await editProduct(product.id, product)
-        }
-        setIsModalOpen(false)
-        await getProduct()
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setIsLoading(false)
+      if (mode === "create") {
+        await createProduct(product)
+      } else {
+        await editProduct(product.id, product)
       }
+      await getProduct()
     },
     [mode, getProduct],
   )
 
-  const handleDelete = useCallback(
+  const removeProduct = useCallback(
     async (id: string) => {
-      setIsLoading(true)
-      try {
-        await deleteProduct(id)
-        await getProduct()
-      } catch (err) {
-        console.log(err)
-      } finally {
-        setIsLoading(false)
-      }
+      await deleteProduct(id)
+      await getProduct()
     },
     [getProduct],
   )
+
+  const askDelete = useCallback((id: string, title: string) => {
+    confirmModal.confirm(
+      {
+        title: "確認刪除",
+        message: `您確定要刪除「${title}」嗎？此操作無法復原。`,
+      },
+      () => removeProduct(id)
+    )
+  }, [confirmModal, removeProduct])
+
+  const askSave = useCallback((product: productData) => {
+    const isCreate = mode === "create"
+    confirmModal.confirm(
+      {
+        title: isCreate ? "確認新增" : "確認修改",
+        message: isCreate
+          ? `確定要建立新產品「${product.title}」嗎？`
+          : `確定要儲存對「${product.title}」的變更嗎？`,
+        onSuccess: () => setIsModalOpen(false), // 成功後關閉 ProductModal
+      },
+      () => saveProduct(product)
+    )
+  }, [mode, confirmModal, saveProduct])
 
   return {
     // data
@@ -146,8 +156,11 @@ export const useProducts = () => {
     handleTitleChange,
     openCreateModal,
     openEditModal,
-    handleSave,
-    handleDelete,
+    askDelete,  // ✅ 改用這個
+    askSave,    // ✅ 改用這個
     refresh: getProduct,
+
+    // ✅ confirm modal 狀態
+    confirmModal,
   }
 }
