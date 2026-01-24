@@ -1,26 +1,19 @@
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
+import { useCartStore } from "@/store/cartStore"
+import type { StepperProps } from "@/type/cart"
 
-export interface Step {
-  title: string
-  description?: string
-}
-
-interface StepperProps {
-  steps: Step[]
-  currentStep: number
-  className?: string
-}
-
-export function Stepper({ steps, currentStep, className }: StepperProps) {
+export function Stepper({ currentStep, className }: StepperProps) {
+  const stepperContent = useCartStore((state) => state.stepperContent);
   return (
+    <>
     <div className={cn("w-full bg-primary py-6 px-4", className)}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between relative">
           {/* Connection line */}
           <div className="absolute left-0 right-0 top-6 h-0.5 bg-primary/60" />
 
-          {steps.map((step, index) => {
+          {stepperContent.map((step, index) => {
             const stepNumber = index + 1
             const isActive = stepNumber === currentStep
             const isCompleted = stepNumber < currentStep
@@ -55,6 +48,6 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
           })}
         </div>
       </div>
-    </div>
+    </div></>
   )
 }

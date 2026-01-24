@@ -1,6 +1,6 @@
 // stores/cart.ts
 import { create } from "zustand"
-import type { CartItem } from "@/type/cart"
+import type { CartItem, Step } from "@/type/cart"
 import { getCart,postCart } from "@/api/folder_user/cart" // 👈 你要有 addCart(POST /cart)
 
 type CartStore = {
@@ -8,6 +8,7 @@ type CartStore = {
   carts: CartItem[]
   isLoading: boolean
   error?: unknown
+  stepperContent: Step[]
   fetchCart: () => Promise<void>
   addToCart: (productId: string, qty?: number) => Promise<void>
 }
@@ -16,7 +17,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   count: 0,
   carts: [],
   isLoading: false,
-
+  stepperContent: [{ title: "Shopping Cart", description: "Review your selected items" }, { title: "Shipping Details", description: "Provide your shipping information" }, { title: "Payment", description: "Confirm your payment details" }],
   fetchCart: async () => {
     set({ isLoading: true, error: undefined })
     try {
