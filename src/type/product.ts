@@ -110,3 +110,14 @@ export type ConfirmConfig = {
   message: string
   onSuccess?: () => void 
 }
+
+
+export type ProductImageGalleryProps = {
+  images: string[]
+  title: string
+}
+
+export type BreadCrumbProps = {
+  lastLabel?:string;
+  categoryLabel?:string;
+};
