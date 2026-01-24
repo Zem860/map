@@ -23,10 +23,10 @@ const Navbar = () => {
                     </Link>
                 </nav>
                 <div className='flex items-center gap-2'>
-                    <Button variant={"ghost"} size={"icon"} className='relative'>
+                    <Link to="/cart" className='relative'>
                         <ShoppingCart />
-                        <span className='absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center'>{cartCount}</span>
-                    </Button>
+                        <span className='absolute  -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center'>{cartCount}</span>
+                    </Link>
                 </div>
             </div>
         </header>

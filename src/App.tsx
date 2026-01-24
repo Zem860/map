@@ -8,6 +8,7 @@ import Shop from "./Page/public/Shop"
 import PublicLayout from "./Layout/PublicLayout"
 import UserForm from "./Page/public/UserForm"
 import ProductDetail from './Page/public/ProductDetail'
+import Cart from "./Page/public/Cart"
 const App = () => {
   return (
     <Routes>
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/shop" element={<Shop />}></Route>
         <Route path="/form" element={<UserForm />}></Route>
         <Route path="shop/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart/>}></Route>
       </Route>
 
       {/* 登入頁 */}
