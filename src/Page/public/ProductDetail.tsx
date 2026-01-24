@@ -129,10 +129,6 @@ const ProductDetail = () => {
                                                     <dt className="text-muted-foreground">Category</dt>
                                                     <dd className="font-medium">{product.category}</dd>
                                                 </div>
-                                                <div className="flex justify-between py-2">
-                                                    <dt className="text-muted-foreground">Language</dt>
-                                                    <dd className="font-medium">English</dd>
-                                                </div>
                                             </dl>
                                         </CardContent>
                                     </Card>
