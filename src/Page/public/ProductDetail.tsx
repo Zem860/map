@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ShoppingCart, Star } from "lucide-react";
+import { BookOpen, Package, ShoppingCart, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getProduct } from "@/api/folder_user/products";
 import { Loader } from "@/components/Loader";
 import { productContentParser } from "@/helper/tool";
 import type { productData, ProductContent } from "@/type/product";
-import { postCart } from "@/api/folder_user/cart";
+import ProductImageGallery from "@/components/products/ImageGallery";
 import Qtybar from "@/components/util/Qtybar";
 import { useCartStore } from "@/store/cartStore";
+import BreadcrumbNav from "@/components/BreadCrumbs";
 
 const ProductDetail = () => {
     const pathObj = useLocation();
@@ -41,20 +42,13 @@ const ProductDetail = () => {
     return (
         isLoading ? <Loader /> :
             product ?
-                <div className="min-h-screen">
+                <div className="container mx-auto">
                     <div className="container mx-auto px-4 py-8">
-                        {/* <BreadcrumbNav
-          items={[{ label: "Shop", href: "/shop" }, { label: book.category, href: "/shop" }, { label: book.title }]}
-        /> */}
-
+                        <div className="space-y-4 mb-8">
+                            <BreadcrumbNav lastLabel={product.title} />
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-                            <div className="space-y-4">
-                                <div className="aspect-[3/4] relative bg-muted rounded-lg overflow-hidden">
-                                    <img src={product?.imageUrl} alt={product?.title} />
-
-                                </div>
-                            </div>
-
+                            <ProductImageGallery images={product.imagesUrl} title={product.title} />
                             <div className="space-y-6">
                                 <div>
                                     <p className="text-sm text-muted-foreground uppercase tracking-wide mb-2">{product?.category}</p>
@@ -73,7 +67,6 @@ const ProductDetail = () => {
                                         <span className="text-sm font-medium">{product?.rating as number}</span>
                                     </div>
                                 </div>
-
                                 <Card>
                                     <CardContent className="p-6">
                                         <div className="flex items-baseline gap-3 mb-6">
@@ -97,34 +90,68 @@ const ProductDetail = () => {
                                                 Add to Cart
                                             </Button>
                                         </div>
-
                                         <Qtybar qty={qty} setQty={setQty} />
-
                                     </CardContent>
                                 </Card>
-                                <div className="space-y-4">
-                                    <h2 className="font-serif text-xl font-bold">Product Details</h2>
-                                    <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                                        <dt className="text-muted-foreground">ISBN</dt>
-                                        <dd className="font-medium">{productObj?.isbn}</dd>
-                                        <dt className="text-muted-foreground">Publisher</dt>
-                                        <dd className="font-medium">{productObj?.publisher}</dd>
-                                        <dt className="text-muted-foreground">Publication Date</dt>
-                                        <dd className="font-medium">{productObj?.publishDate}</dd>
-                                        <dt className="text-muted-foreground">Pages</dt>
-                                        <dd className="font-medium">{productObj?.pages}</dd>
-                                    </dl>
+                                <div className="space-y-6">
+                                    <Card>
+                                        <CardContent className="p-6">
+                                            <div className="flex items-center gap-2 mb-4">
+                                                <Package className="h-5 w-5 text-primary" />
+                                                <h3 className="font-serif text-lg font-bold">Product Details</h3>
+                                            </div>
+                                            <dl className="space-y-3 text-sm">
+                                                {productObj?.isbn && (
+                                                    <div className="flex justify-between py-2 border-b border-dashed">
+                                                        <dt className="text-muted-foreground">ISBN</dt>
+                                                        <dd className="font-medium">{productObj?.isbn}</dd>
+                                                    </div>
+                                                )}
+                                                {productObj?.publisher && (
+                                                    <div className="flex justify-between py-2 border-b border-dashed">
+                                                        <dt className="text-muted-foreground">Publisher</dt>
+                                                        <dd className="font-medium">{productObj?.publisher}</dd>
+                                                    </div>
+                                                )}
+                                                {productObj?.publishDate && (
+                                                    <div className="flex justify-between py-2 border-b border-dashed">
+                                                        <dt className="text-muted-foreground">Publication Date</dt>
+                                                        <dd className="font-medium">{productObj?.publishDate}</dd>
+                                                    </div>
+                                                )}
+                                                {productObj?.pages && (
+                                                    <div className="flex justify-between py-2 border-b border-dashed">
+                                                        <dt className="text-muted-foreground">Pages</dt>
+                                                        <dd className="font-medium">{productObj?.pages}</dd>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between py-2 border-b border-dashed">
+                                                    <dt className="text-muted-foreground">Category</dt>
+                                                    <dd className="font-medium">{product.category}</dd>
+                                                </div>
+                                                <div className="flex justify-between py-2">
+                                                    <dt className="text-muted-foreground">Language</dt>
+                                                    <dd className="font-medium">English</dd>
+                                                </div>
+                                            </dl>
+                                        </CardContent>
+                                    </Card>
                                 </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <h2 className="font-serif text-2xl font-bold mb-4">About This Book</h2>
-                                        <p className="text-muted-foreground leading-relaxed">{product?.description}</p>
-                                    </div>
-                                </div>
+                            </div>
+                            <div className="lg:col-span-2 space-y-8">
+                                <Card>
+                                    <CardContent className="p-6 lg:p-8">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <BookOpen className="h-5 w-5 text-primary" />
+                                            <h2 className="font-serif text-2xl font-bold">About This Book</h2>
+                                        </div>
+                                        <p className="text-muted-foreground leading-relaxed text-lg">{product.description}</p>
+                                    </CardContent>
+                                </Card>
                             </div>
                         </div>
                     </div>
-                </div> : <div>Something goes wrong</div>
+                </div> : <></>
     );
 }
 
