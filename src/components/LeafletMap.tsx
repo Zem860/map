@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import type { productData } from '@/type/product'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -85,11 +86,10 @@ async function resolveLatLng(input: { city: string; country: string }): Promise<
   return await geocodeCity(input.city, iso2)
 }
 
-export const LeafletMap: React.FC = () => {
+export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) => {
   const mapRef = useRef<L.Map | null>(null)
   const markerRef = useRef<L.Marker | null>(null)
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-
   useEffect(() => {
     const container = mapContainerRef.current
     if (!container) return
@@ -106,6 +106,7 @@ export const LeafletMap: React.FC = () => {
     }
 
     const fetchUser = async () => {
+      const picked = products[Math.floor(Math.random() * products.length)];
       const map = mapRef.current
       if (!map || disposed) return
 
@@ -114,7 +115,7 @@ export const LeafletMap: React.FC = () => {
         const data: RandomUserApiResponse = await res.json()
         const user = data.results?.[0]
         if (!user || disposed) return
-        const fullName = `${user.name.title} ${user.name.first} ${user.name.last}`
+        // const fullName = `${user.name.title} ${user.name.first} ${user.name.last}`
         // const query = { city: 'Taipei', country: 'Taiwan' }
         const query = {
           city: user.location.city,
@@ -139,16 +140,13 @@ export const LeafletMap: React.FC = () => {
         const [lat, lng] = latLng
 
         const html = `
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <div style="font-size:14px; line-height:1.5; max-width:260px;">
-            <img src="${user.picture.thumbnail}"
-                 style="width:40px;height:40px;border-radius:50%;margin-bottom:6px;" />
-            <div><strong>${fullName}</strong></div>
-            <div>${user.location.city || '-'}, ${user.location.state || '-'}</div>
-            <div>${user.location.country}</div>
-            <br/>
-            <div>Email: ${user.email}</div>
-            <div>Cell: ${user.cell}</div>
+            <div>Someone from <strong>${user.location.city || '-'}, ${user.location.country || '-'}</strong></div>
+            <div>just bought <strong>${picked.title}</strong> by <strong>${JSON.parse(picked.content || '{}').author}</strong></div>
           </div>
+                      <img src="${picked.imageUrl}" style="width:40px;height:40px;margin-bottom:6px;" />
+</div>
         `
 
         if (!markerRef.current) {
@@ -165,7 +163,7 @@ export const LeafletMap: React.FC = () => {
     }
 
     fetchUser()
-    const id = setInterval(() => fetchUser(), 10_000)
+    const id = setInterval(() => { fetchUser(); }, 10_000)
 
     return () => {
       disposed = true

@@ -54,7 +54,7 @@ const Home = () => {
               </CardHeader>
               <CardContent className="flex justify-center pb-6">
                 <div className="w-full">
-                  <LeafletMap />
+                  <LeafletMap products={products}/>
                 </div>
               </CardContent>
             </Card>
