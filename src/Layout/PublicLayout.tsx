@@ -10,7 +10,7 @@ const PublicLayout = () => {
         fetchCart(); // ✅ 這裡只是一般 function 呼叫
     }, [fetchCart]);
     return (<>
-        <div className="min-h-screen">
+        <div className="min-h-screen flex flex-col">
             <Navbar />
             <Outlet />
             <Footer />
