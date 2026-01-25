@@ -6,7 +6,6 @@ export const API_PATH = import.meta.env.VITE_API_PATH
 
 export const baseApi = axios.create({
       baseURL: `${BASE_URL}/v2/api/${API_PATH}`, 
-
 })
 
 // 我之後看看要不要只有admin加這條
