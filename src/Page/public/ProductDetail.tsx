@@ -90,7 +90,9 @@ const ProductDetail = () => {
                                                 Add to Cart
                                             </Button>
                                         </div>
-                                        <Qtybar qty={qty} setQty={setQty} />
+                                        <div className="mt-5">
+                                            <Qtybar qty={qty} setQty={setQty} />
+                                        </div>
                                     </CardContent>
                                 </Card>
                                 <div className="space-y-6">
