@@ -5,7 +5,7 @@ import { ShoppingBag, Trash2, X, Tag } from "lucide-react";
 import { Loader } from "@/components/Loader";
 import Qtybar from "@/components/util/Qtybar";
 import { Card, CardContent } from "@/components/ui/card";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { productContentParser } from "@/helper/tool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +16,10 @@ const Cart = () => {
     const editCartNum = useCartStore((s) => s.editCartNum);
     const clearCart = useCartStore((s) => s.clearCart);
     const totalItems = useCartStore((s) => s.count);
-
     const isLoading = useCartStore((s) => s.isLoading);
+    const navigate = useNavigate();
     return (
         <>
-
             {isLoading && <Loader />}
             {cart.length === 0 ?
                 <Card className="border-border">
@@ -241,7 +240,7 @@ const Cart = () => {
                                         className="w-full mt-6"
                                         size="lg"
                                         disabled={cart.length === 0}
-                                    >
+                                        onClick={() => navigate("../form")}                                    >
                                         Proceed to Checkout
                                     </Button>
 
