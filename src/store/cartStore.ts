@@ -1,7 +1,7 @@
 // stores/cart.ts
 import { create } from "zustand"
 import type { CartItem, Step, UpdateQtyParams } from "@/type/cart"
-import { getCart,postCart,deleteProductFromCartFunc, updateCartQtyFunc } from "@/api/folder_user/cart" 
+import { getCart,postCart,deleteProductFromCartFunc, updateCartQtyFunc, clearCart } from "@/api/folder_user/cart" 
 
 type CartStore = {
   count: number
@@ -13,6 +13,7 @@ type CartStore = {
   addToCart: (productId: string, qty?: number) => Promise<void>
   removeFromCart:(product_id:string)=> Promise<void>
   editCartNum:({product_id, qty}: UpdateQtyParams)=>Promise<void>
+  clearCart:()=>Promise<void>
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -75,4 +76,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
       throw err
     }
   },
+  clearCart:async()=>{
+    set({isLoading:true, error:undefined})
+    try{
+      await clearCart()
+      await get().fetchCart()
+      set({isLoading:false})
+    }catch(err){
+      set({error:err, isLoading:false})
+      throw err
+    }
+  }
 }))

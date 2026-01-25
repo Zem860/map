@@ -15,3 +15,6 @@ export const deleteProductFromCartFunc:deleteProductFromCartFunc =(product_id:st
 
 type updateCartQtyFunc = (params:UpdateQtyParams)=>Promise<AxiosResponse<UpdateCartResponse>>
 export const updateCartQtyFunc = (params:UpdateQtyParams)=>baseApi.put(`/cart/${params.product_id}`, {data:params})
+
+type clearCartFunc = ()=>Promise<AxiosResponse<MesssageResponse>>
+export const clearCart:clearCartFunc = ()=>baseApi.delete('/carts')
