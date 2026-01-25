@@ -42,6 +42,7 @@ export type CartData = {
         final_total: number
     }
 }
+export type UpdateQtyParams = Pick<CartItem, 'product_id' | 'qty'>
 
 export type Step = {
   title: string
