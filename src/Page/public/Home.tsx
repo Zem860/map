@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     fetchProducts()
   }, [fetchProducts])
-  const newArrivals = products.slice(5) 
+  const newArrivals = products.slice().reverse().slice(0, 5); 
   if (isLoading) return <Loader />
   return (
     <>
