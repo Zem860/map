@@ -48,18 +48,10 @@ const UserForm = () => {
         postOrder(submittedData).then(res=>console.log(res)).catch(err=>console.log(err))
     }
 
-
-    const steps = [
-        { title: "Shopping Cart" },
-        { title: "Complete Your Information" },
-        { title: "Confirm Payment" },
-    ]
-
-
     return (
         <>
             <div className="w-full max-w-2xl mx-auto px-4 py-12">
-                <Stepper steps={steps} currentStep={2} className={'mb-10'} />
+                <Stepper currentStep={2} className={'mb-10'} />
                 <h1 className="text-3xl font-serif font-bold text-center mb-8 text-balance">Complete Your Information</h1>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
