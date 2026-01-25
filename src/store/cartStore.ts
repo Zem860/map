@@ -1,7 +1,7 @@
 // stores/cart.ts
 import { create } from "zustand"
 import type { CartItem, Step } from "@/type/cart"
-import { getCart,postCart } from "@/api/folder_user/cart" // 👈 你要有 addCart(POST /cart)
+import { getCart,postCart,deleteProductFromCartFunc } from "@/api/folder_user/cart" 
 
 type CartStore = {
   count: number
@@ -11,6 +11,7 @@ type CartStore = {
   stepperContent: Step[]
   fetchCart: () => Promise<void>
   addToCart: (productId: string, qty?: number) => Promise<void>
+  removeFromCart:(product_id:string)=> Promise<void>
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -45,4 +46,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
       throw err
     }
   },
+  removeFromCart:async (product_id:string)=>{
+    set({isLoading:true, error:undefined})
+    try{
+      await deleteProductFromCartFunc(product_id)
+      await get().fetchCart()
+      set({isLoading:false})
+    }catch(err){
+      set({error:err, isLoading:false})
+      throw err
+    }    
+  }
 }))
