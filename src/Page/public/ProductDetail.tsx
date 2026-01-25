@@ -17,7 +17,7 @@ const ProductDetail = () => {
     const [product, setProduct] = useState<productData>()
     const [productObj, setProductObj] = useState<ProductContent>()
     const [isLoading, setIsLoading] = useState(false)
-    const [qty, setQty] = useState(0)
+    const [qty, setQty] = useState(1);
     const addToCart = useCartStore((s) => s.addToCart);
     useEffect(() => {
         const { pathname } = { ...pathObj }
