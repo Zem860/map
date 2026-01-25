@@ -20,7 +20,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   count: 0,
   carts: [],
   isLoading: false,
-  stepperContent: [{ title: "Shopping Cart", description: "Review your selected items" }, { title: "Shipping Details", description: "Provide your shipping information" }, { title: "Payment", description: "Confirm your payment details" }],
+  stepperContent: [{ title: "Shopping Cart", description: "Review your selected items" }, { title: "Shipping Details", description: "Provide your shipping information" }, { title: "Payment Confirm", description: "Confirm your payment details" }],
   fetchCart: async () => {
     set({ isLoading: true, error: undefined })
     try {
