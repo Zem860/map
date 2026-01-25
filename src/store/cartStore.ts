@@ -1,7 +1,7 @@
 // stores/cart.ts
 import { create } from "zustand"
-import type { CartItem, Step } from "@/type/cart"
-import { getCart,postCart,deleteProductFromCartFunc } from "@/api/folder_user/cart" 
+import type { CartItem, Step, UpdateQtyParams } from "@/type/cart"
+import { getCart,postCart,deleteProductFromCartFunc, updateCartQtyFunc } from "@/api/folder_user/cart" 
 
 type CartStore = {
   count: number
@@ -12,6 +12,7 @@ type CartStore = {
   fetchCart: () => Promise<void>
   addToCart: (productId: string, qty?: number) => Promise<void>
   removeFromCart:(product_id:string)=> Promise<void>
+  editCartNum:({product_id, qty}: UpdateQtyParams)=>Promise<void>
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -38,7 +39,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   addToCart: async (productId, qty = 1) => {
     set({ isLoading: true, error: undefined })
     try {
-      await postCart({ product_id:productId, qty: 1 }); // hexschool 格式
+      await postCart({ product_id:productId, qty });
       await get().fetchCart()
       set({ isLoading: false })
     } catch (err) {
@@ -56,5 +57,22 @@ export const useCartStore = create<CartStore>((set, get) => ({
       set({error:err, isLoading:false})
       throw err
     }    
-  }
+  },
+  editCartNum: async ({product_id, qty}: UpdateQtyParams) => {
+    set({ isLoading: true, error: undefined })
+    try{
+      if(qty < 1) {
+        // await deleteProductFromCartFunc(product_id)
+        return;
+      } else {
+        await updateCartQtyFunc({ product_id, qty });
+      }
+      await get().fetchCart()
+      set({ isLoading: false })
+    }
+    catch(err){
+      set({ error: err, isLoading: false })
+      throw err
+    }
+  },
 }))
