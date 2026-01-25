@@ -90,7 +90,7 @@ const ProductDetail = () => {
                                                 Add to Cart
                                             </Button>
                                         </div>
-                                        <div className="mt-5">
+                                        <div className="mt-5 flex items-center justify-between  w-fit">
                                             <Qtybar qty={qty} setQty={setQty} />
                                         </div>
                                     </CardContent>
