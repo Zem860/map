@@ -33,6 +33,11 @@ export type SearchData = {
     title?: string
 }
 
+export type PaginationParam = {
+    page: number,
+    category: string,
+}
+
 export type ProductDataResponse = {
     success:boolean,
     products:productData[],
