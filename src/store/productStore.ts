@@ -14,7 +14,7 @@ type ProductStore = {
 }
 
 
-export const useProductStore = create<ProductStore>((set, get) => ({
+export const useProductStore = create<ProductStore>((set, _) => ({
     isLoading: false,
     isCategoryLoading: false,
     pagination: {} as PaginationData,

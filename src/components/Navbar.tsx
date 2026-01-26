@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { ShoppingCart, BookOpen } from 'lucide-react'
-import { Button } from './ui/button'
 import { useCartStore } from '@/store/cartStore'
 
 const Navbar = () => {
