@@ -19,7 +19,7 @@ export type GetProductResponse = {
 
 export type PostCartResponse = MesssageResponse & cartData;
 export type UpdateCartResponse = MesssageResponse & UpdateQtyParams;
-export type getCartResponse = MesssageResponse & CartData[];
+export type getCartResponse = MesssageResponse & CartData;
 
 export type UploadImageResponse = {
     success: boolean,
