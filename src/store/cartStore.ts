@@ -9,7 +9,7 @@ type CartStore = {
   isLoading: boolean
   error?: unknown
   stepperContent: Step[]
-  fetchCart: () => Promise<void>
+  fetchCart: (silent?: boolean) => Promise<void>
   addToCart: (productId: string, qty?: number) => Promise<void>
   removeFromCart:(product_id:string)=> Promise<void>
   editCartNum:(id: string, params: UpdateQtyParams)=>Promise<void>
@@ -21,8 +21,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
   carts: [],
   isLoading: false,
   stepperContent: [{ title: "Shopping Cart", description: "Review your selected items" }, { title: "Shipping Details", description: "Provide your shipping information" }, { title: "Payment Confirm", description: "Confirm your payment details" }],
-  fetchCart: async () => {
-    set({ isLoading: true, error: undefined })
+  fetchCart: async (silent = false) => {
+    if (!silent) {
+      set({ isLoading: true, error: undefined })
+    }
     try {
       const res = await getCart()
       const carts = (res.data.data.carts ?? []) as CartItem[]
@@ -60,20 +62,19 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }    
   },
   editCartNum: async (id: string, { product_id, qty }: UpdateQtyParams) => {
-    set({ isLoading: true, error: undefined })
+    // 不設置全局 isLoading，由呼叫端自行處理 loading 狀態
     try{
       if(qty < 1) {
-        // await deleteProductFromCartFunc(product_id)
         return;
       } else {
         await updateCartQtyFunc(id, { product_id, qty });
       }
-      await get().fetchCart()
-      set({ isLoading: false })
+      // 使用 silent mode 不觸發全局 loading
+      await get().fetchCart(true)
     }
     catch(err){
-      set({ error: err, isLoading: false })
-      throw err
+      set({ error: err })
+      throw err 
     }
   },
   clearCart:async()=>{

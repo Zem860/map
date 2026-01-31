@@ -9,6 +9,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { productContentParser } from "@/helper/tool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const Cart = () => {
     const cart = useCartStore((s) => s.carts);
@@ -18,6 +19,18 @@ const Cart = () => {
     const totalItems = useCartStore((s) => s.count);
     const isLoading = useCartStore((s) => s.isLoading);
     const navigate = useNavigate();
+    //做使用者體驗好的增加商品數量和減少商品數量
+    const [loadingIds, setLoadingIds] = useState<string[]>([]);
+    const handleQtyChange = async (itemId: string, productId: string, newQty: number) => {
+        setLoadingIds(prev => [...prev, itemId]);     
+        try {
+            await editCartNum(itemId, { product_id: productId, qty: newQty });
+        } finally {
+            setLoadingIds(prev => prev.filter(id => id !== itemId));
+        }
+    };
+    // 檢查某商品是否正在 loading
+    const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
     return (
         <>
             {isLoading && <Loader />}
@@ -66,7 +79,11 @@ const Cart = () => {
                                                 </div>
                                                 {/* Quantity */}
                                                 <div className="inline-flex items-center justify-between">
-                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum(item.id, { product_id: item.product_id, qty: newQty })} />
+                                                    <Qtybar 
+                                                        qty={item.qty} 
+                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)} 
+                                                        loading={isItemLoading(item.id)}
+                                                    />
                                                     <div className="text-right">
                                                         <p className="font-semibold text-primary">${item.product.origin_price}</p>
                                                         <p className="text-xs text-muted-foreground">Total: ${(item.product.price * item.qty).toFixed(0)}</p>
@@ -118,7 +135,11 @@ const Cart = () => {
                                             {/* Quantity */}
                                             <td className="py-6 text-center">
                                                 <div className="inline-flex mx-auto justify-center">
-                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum(item.id, { product_id: item.product_id, qty: newQty })} />
+                                                    <Qtybar 
+                                                        qty={item.qty} 
+                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)} 
+                                                        loading={isItemLoading(item.id)}
+                                                    />
                                                 </div>
                                             </td>
 
