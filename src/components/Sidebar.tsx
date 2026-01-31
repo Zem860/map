@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Package } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import type { SidebarDrawerProps } from '@/type/product'
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/admin" },
-  { name: "Products", icon: Package, path: "/admin/products" }];
+  { name: "Products", icon: Package, path: "/admin/products" },
+  {name:"Orders", icon:ShoppingCart, path: "/admin/orders"}
+];
 
 export const Sidebar = ({ open, onOpenChange }: SidebarDrawerProps) => {
   const { pathname } = useLocation()

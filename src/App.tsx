@@ -10,6 +10,7 @@ import UserForm from "./Page/public/UserForm"
 import ProductDetail from './Page/public/ProductDetail'
 import Cart from "./Page/public/Cart"
 import CheckoutPage from "./Page/public/CheckoutPage"
+import Order from "./Page/admin/Order"
 const App = () => {
   return (
     <Routes>
@@ -36,6 +37,7 @@ const App = () => {
          <Route path="login" element = {<Login/>}/>
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
+        <Route path="orders" element={<Order />} />
       </Route>
 
       {/* 404 */}

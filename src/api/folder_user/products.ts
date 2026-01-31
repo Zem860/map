@@ -2,6 +2,7 @@ import { baseApi } from "../api";
 import type { AxiosResponse } from "axios";
 import type { GetProductsResponse, GetProductResponse, GetOrderResponse } from "../../type/response";
 import type { OrderParams } from "@/type/order";
+import { adminApi } from "../folder_admin/admin";
 
 export const getAllProducts = async (): Promise<AxiosResponse> => {
   return baseApi.get(`/products/all`);
@@ -28,3 +29,4 @@ type postUserInfoFunc = (params: OrderParams) => Promise<AxiosResponse<GetOrderR
 
 export const postOrder: postUserInfoFunc = (params: OrderParams) =>
   baseApi.post('/order', params)
+
