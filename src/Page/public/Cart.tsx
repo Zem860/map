@@ -66,7 +66,7 @@ const Cart = () => {
                                                 </div>
                                                 {/* Quantity */}
                                                 <div className="inline-flex items-center justify-between">
-                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum({ product_id: item.id, qty: newQty })} />
+                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum(item.id, { product_id: item.product_id, qty: newQty })} />
                                                     <div className="text-right">
                                                         <p className="font-semibold text-primary">${item.product.origin_price}</p>
                                                         <p className="text-xs text-muted-foreground">Total: ${(item.product.price * item.qty).toFixed(0)}</p>
@@ -118,7 +118,7 @@ const Cart = () => {
                                             {/* Quantity */}
                                             <td className="py-6 text-center">
                                                 <div className="inline-flex mx-auto justify-center">
-                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum({ product_id: item.product.id, qty: newQty })} />
+                                                    <Qtybar qty={item.qty} setQty={(newQty) => editCartNum(item.id, { product_id: item.product_id, qty: newQty })} />
                                                 </div>
                                             </td>
 

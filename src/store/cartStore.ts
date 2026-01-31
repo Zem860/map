@@ -12,7 +12,7 @@ type CartStore = {
   fetchCart: () => Promise<void>
   addToCart: (productId: string, qty?: number) => Promise<void>
   removeFromCart:(product_id:string)=> Promise<void>
-  editCartNum:({product_id, qty}: UpdateQtyParams)=>Promise<void>
+  editCartNum:(id: string, params: UpdateQtyParams)=>Promise<void>
   clearCart:()=>Promise<void>
 }
 
@@ -59,14 +59,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
       throw err
     }    
   },
-  editCartNum: async ({product_id, qty}: UpdateQtyParams) => {
+  editCartNum: async (id: string, { product_id, qty }: UpdateQtyParams) => {
     set({ isLoading: true, error: undefined })
     try{
       if(qty < 1) {
         // await deleteProductFromCartFunc(product_id)
         return;
       } else {
-        await updateCartQtyFunc({ product_id, qty });
+        await updateCartQtyFunc(id, { product_id, qty });
       }
       await get().fetchCart()
       set({ isLoading: false })

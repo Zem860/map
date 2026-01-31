@@ -13,8 +13,8 @@ export const getCart:getCartFunc = ()=>baseApi.get('/cart')
 type deleteProductFromCartFunc = (product_id:string)=>Promise<AxiosResponse<MesssageResponse>>
 export const deleteProductFromCartFunc:deleteProductFromCartFunc =(product_id:string)=>baseApi.delete(`/cart/${product_id}`)
 
-type updateCartQtyFunc = (params:UpdateQtyParams)=>Promise<AxiosResponse<UpdateCartResponse>>
-export const updateCartQtyFunc = (params:UpdateQtyParams)=>baseApi.put(`/cart/${params.product_id}`, {data:params})
+type updateCartQtyFunc = (id:string, params:UpdateQtyParams)=>Promise<AxiosResponse<UpdateCartResponse>>
+export const updateCartQtyFunc = (id:string, params:UpdateQtyParams)=>baseApi.put(`/cart/${id}`, {data:params})
 
 type clearCartFunc = ()=>Promise<AxiosResponse<MesssageResponse>>
 export const clearCart:clearCartFunc = ()=>baseApi.delete('/carts')
