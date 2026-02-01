@@ -11,28 +11,28 @@ import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Stepper } from '@/components/Stepper';
-import { postOrder } from '@/api/folder_user/products';
 import type { OrderParams } from '@/type/order';
 import { useNavigate } from 'react-router-dom';
-
-const navigate = useNavigate();
+import { useUserStore } from '@/store/userStore';
 
 const UserForm = () => {
+    const navigate = useNavigate();
+    const userStore = useUserStore();
+    const userInfo = userStore.userInfo?.data?.user;
     const form = useForm({
         defaultValues: {
-            firstName: "",
-            lastName: "",
-            tel: "",
-            email: "",
-            country: "",
-            city: "",
-            address: "",
-            message: "",
+            firstName: userInfo?.name?.split(", ")[0] || "",
+            lastName: userInfo?.name?.split(", ")[1] || "",
+            tel: userInfo?.tel || "",
+            email: userInfo?.email || "",
+            country: userInfo?.address?.split(", ")[0] || "",
+            city: userInfo?.address?.split(", ")[1] || "",
+            address: userInfo?.address?.split(", ")[2] || "",
+            message: userStore.userInfo?.data?.message || "",
         },
-        mode: "onTouched",
-    })
+    });
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = (data: any) => {
         const fullAddress = `${data.country}, ${data.city}, ${data.address}`;
         const nameData = `${data.firstName}, ${data.lastName}`
         const msg = data.message
@@ -47,18 +47,13 @@ const UserForm = () => {
                 message: msg
             }
         };
-        try {
-            await postOrder(submittedData).then(res => {
-                navigate("/payment");
-            }).catch(err => console.log(err))
-        } catch (err) {
-            console.log(err)
-        }
-
+        userStore.updateUserInfo(submittedData);
+        navigate("/payment");
     };
 
     return (
         <>
+            <Button onClick={() => navigate("/cart")}>Back to Cart</Button>
             <div className="w-full max-w-2xl mx-auto px-4 py-12">
                 <Stepper currentStep={2} className={'mb-10'} />
                 <h1 className="text-3xl font-serif font-bold text-center mb-8 text-balance">Complete Your Information</h1>
@@ -74,7 +69,7 @@ const UserForm = () => {
                                         First Name <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="First Name" {...field} />
+                                        <Input {...field} placeholder="First Name" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -90,7 +85,7 @@ const UserForm = () => {
                                         Last Name <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="Last Name" {...field} />
+                                        <Input {...field} placeholder="Last Name" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -112,7 +107,7 @@ const UserForm = () => {
                                         Telephone <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="Telephone" {...field} />
+                                        <Input {...field} placeholder="Telephone" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -134,7 +129,7 @@ const UserForm = () => {
                                         Email <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="Email" type="email" {...field} />
+                                        <Input {...field} placeholder="Email" type="email" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -151,7 +146,7 @@ const UserForm = () => {
                                         Country <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="Country" {...field} />
+                                        <Input {...field} placeholder="Country" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -167,7 +162,7 @@ const UserForm = () => {
                                         City <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="City" {...field} />
+                                        <Input {...field} placeholder="City" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -183,7 +178,7 @@ const UserForm = () => {
                                         Address <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input placeholder="Address" {...field} />
+                                        <Input {...field} placeholder="Address" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
