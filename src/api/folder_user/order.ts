@@ -6,3 +6,8 @@ type getSingleOrderFunc = (orderId: string) => Promise<AxiosResponse<CustomerOrd
 export const getSingleOrder:getSingleOrderFunc = (orderId) => {
     return baseApi.get<CustomerOrderApiResponse>(`/order/${orderId}`)
 }
+
+type payFunc = (orderId: string) => Promise<AxiosResponse>
+export const pay:payFunc = (orderId) => {
+    return baseApi.post(`/pay/${orderId}`)
+}

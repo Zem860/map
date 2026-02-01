@@ -57,15 +57,18 @@ const UserForm = () => {
 
     useEffect(() => {
         cartStore.fetchCart();
-        if (cartStore.carts.data.carts.length===0) {
+        if (cartStore.carts.data.carts.length === 0) {
             navigate("/cart");
         }
     }, []);
 
     return (
         <>
-            <Button onClick={() => navigate("/cart")}>Back to Cart</Button>
-            <div className="w-full max-w-2xl mx-auto px-4 py-12">
+
+            <Link to="/cart" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                <ChevronLeft className="h-4 w-4" />
+                Back to Cart
+            </Link>            <div className="w-full max-w-2xl mx-auto px-4 py-12">
                 <Stepper currentStep={2} className={'mb-10'} />
                 <Link to="/cart" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
                     <ChevronLeft className="h-4 w-4" />

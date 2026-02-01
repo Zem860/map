@@ -7,8 +7,9 @@ import { Link, useNavigate, useSearchParams } from "react-router";
 import { ChevronLeft, ChevronRight, CreditCard, MapPin, ShoppingBag, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { postOrder } from "@/api/folder_user/products";
-import type { OrderParams, UserInfo } from "@/type/order";
+import type { OrderParams } from "@/type/order";
 import { useOrderStore } from "@/store/orderStore";
+import { pay } from "@/api/folder_user/order";
 const Payment = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -44,6 +45,7 @@ const Payment = () => {
         try {
             const res = await postOrder(submittedData);
             const postedOrderId = res.data.orderId;
+            await pay(postedOrderId);
             // 用 URL query 参数保存 orderId
             navigate(`/payment?orderId=${postedOrderId}`);
             window.location.reload();
@@ -53,7 +55,6 @@ const Payment = () => {
     }
 
     useEffect(() => {
-        console.log("OrderNum:", orderNum);
         orderStore.clearOrderData();
         cartStore.fetchCart();
         if (!userInfo && !orderNum) {
@@ -67,8 +68,7 @@ const Payment = () => {
         if (!orderNum) return;
         try {
             await orderStore.fetchOrder(orderNum);
-            await cartStore.clearCart();
-            await userStore.clearUserInfo();
+            userStore.clearUserInfo();
             console.log("Fetched order data:", orderStore.orderData);
         } catch (error) {
             console.error("Failed to fetch order details:", error);
@@ -89,9 +89,9 @@ const Payment = () => {
                     <div className="container mx-auto px-4 py-8 lg:py-12">
                         <Stepper currentStep={orderNum ? 4:3} className="my-4" />
 
-                        <Link to="/checkout" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                        <Link to="/form" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
                             <ChevronLeft className="h-4 w-4" />
-                            Back to Information
+                            Back to User Form
                         </Link>
                         <h1 className="text-3xl font-serif font-bold text-center mb-8">Confirm Your Payment</h1>
 
