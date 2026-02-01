@@ -1,11 +1,11 @@
 // stores/cart.ts
 import { create } from "zustand"
-import type { CartItem, Step, UpdateQtyParams } from "@/type/cart"
+import type { CartData, CartItem, Step, UpdateQtyParams } from "@/type/cart"
 import { getCart,postCart,deleteProductFromCartFunc, updateCartQtyFunc, clearCart } from "@/api/folder_user/cart" 
 
 type CartStore = {
   count: number
-  carts: CartItem[]
+  carts: CartData
   isLoading: boolean
   error?: unknown
   stepperContent: Step[]
@@ -18,7 +18,7 @@ type CartStore = {
 
 export const useCartStore = create<CartStore>((set, get) => ({
   count: 0,
-  carts: [],
+  carts: { data: { carts: [], total: 0, final_total: 0 } },
   isLoading: false,
   stepperContent: [{ title: "Shopping Cart", description: "Review your selected items" }, { title: "Shipping Details", description: "Provide your shipping information" }, { title: "Payment Confirm", description: "Confirm your payment details" }],
   fetchCart: async (silent = false) => {
@@ -27,10 +27,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
     try {
       const res = await getCart()
-      const carts = (res.data.data.carts ?? []) as CartItem[]
+      const cartContent = (res.data.data.carts ?? []) as CartItem[]
+      const total = res.data.data.total ?? 0
+      const final_total = res.data.data.final_total ?? 0
       set({
-        carts,
-        count: carts.reduce((sum, item) => sum + (item.qty ?? 0), 0),
+        carts: { data: { carts: cartContent, total, final_total } },
+        count: cartContent.reduce((sum, item) => sum + (item.qty ?? 0), 0),
         isLoading: false,
       })
     } catch (err) {

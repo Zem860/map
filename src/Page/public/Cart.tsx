@@ -9,7 +9,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { productContentParser } from "@/helper/tool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Cart = () => {
     const cart = useCartStore((s) => s.carts);
@@ -29,12 +29,16 @@ const Cart = () => {
             setLoadingIds(prev => prev.filter(id => id !== itemId));
         }
     };
+
+    useEffect(()=>{
+        console.log("cart changed", cart);
+    },[])
     // 檢查某商品是否正在 loading
     const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
     return (
         <>
             {isLoading && <Loader />}
-            {cart.length === 0 ?
+            {cart.data.carts.length === 0 ?
                 <Card className="border-border">
                     <CardContent className="p-12 text-center">
                         <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -55,7 +59,7 @@ const Cart = () => {
                         <section className="flex-1 min-w-0">
                             {/* Mobile */}
                             <div className="lg:hidden space-y-4">
-                                {cart.map((item) => (
+                                {cart.data.carts.map((item) => (
                                     <div key={item.id} className="bg-card rounded-lg 
                             shadow-md border border-border overflow-hidden">
                                         <div className="flex p-4 gap-4">
@@ -95,6 +99,7 @@ const Cart = () => {
 
                                 ))}
                             </div>
+
                             {/* Desktop */}
                             <table className="w-full hidden lg:table-auto lg:table mt-8 border-collapse">
                                 <thead>
@@ -107,7 +112,7 @@ const Cart = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cart.map((item) => (
+                                    {cart.data.carts.map((item) => (
                                         <tr key={item.id} className="border-b border-border">
                                             {/* Product */}
 
@@ -253,14 +258,14 @@ const Cart = () => {
 
                                         <div className="flex justify-between pt-3 text-lg">
                                             <span className="font-bold text-foreground">Total</span>
-                                            <span className="font-bold text-primary">${(123546).toFixed(0)}</span>
+                                            <span className="font-bold text-primary">${(cart.data.final_total).toFixed(0)}</span>
                                         </div>
                                     </div>
 
                                     <Button
                                         className="w-full mt-6"
                                         size="lg"
-                                        disabled={cart.length === 0}
+                                        disabled={cart.data.carts.length === 0}
                                         onClick={() => navigate("../form")}                                    >
                                         Proceed to Checkout
                                     </Button>
