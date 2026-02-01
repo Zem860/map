@@ -19,6 +19,7 @@ const ProductDetail = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [qty, setQty] = useState(1);
     const addToCart = useCartStore((s) => s.addToCart);
+    const isCartLoading = useCartStore((s) => s.isLoading);
     useEffect(() => {
         const { pathname } = { ...pathObj }
         const id = pathname.split("/")[2]
@@ -85,9 +86,9 @@ const ProductDetail = () => {
                                             )}
                                         </div>
                                         <div className="space-y-3">
-                                            <Button size="lg" className="w-full" onClick={() => { addToCart(product.id, qty) }}>
+                                            <Button size="lg" className="w-full" disabled={isCartLoading} onClick={() => { addToCart(product.id, qty) }}>
                                                 <ShoppingCart className="mr-2 h-5 w-5" />
-                                                Add to Cart
+                                                {isCartLoading ? "Adding..." : "Add to Cart"}
                                             </Button>
                                         </div>
                                         <div className="mt-5 flex items-center justify-between  w-fit">

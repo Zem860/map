@@ -12,13 +12,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Stepper } from '@/components/Stepper';
 import type { OrderParams } from '@/type/order';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/store/userStore';
+import { ChevronLeft } from 'lucide-react';
+import { useEffect } from 'react';
+import { useCartStore } from '@/store/cartStore';
 
 const UserForm = () => {
     const navigate = useNavigate();
     const userStore = useUserStore();
     const userInfo = userStore.userInfo?.data?.user;
+    const cartStore = useCartStore();
     const form = useForm({
         defaultValues: {
             firstName: userInfo?.name?.split(", ")[0] || "",
@@ -51,11 +55,22 @@ const UserForm = () => {
         navigate("/payment");
     };
 
+    useEffect(() => {
+        cartStore.fetchCart();
+        if (cartStore.carts.data.carts.length===0) {
+            navigate("/cart");
+        }
+    }, []);
+
     return (
         <>
             <Button onClick={() => navigate("/cart")}>Back to Cart</Button>
             <div className="w-full max-w-2xl mx-auto px-4 py-12">
                 <Stepper currentStep={2} className={'mb-10'} />
+                <Link to="/cart" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                    <ChevronLeft className="h-4 w-4" />
+                    Back to Cart
+                </Link>
                 <h1 className="text-3xl font-serif font-bold text-center mb-8 text-balance">Complete Your Information</h1>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

@@ -9,7 +9,6 @@ import PublicLayout from "./Layout/PublicLayout"
 import UserForm from "./Page/public/UserForm"
 import ProductDetail from './Page/public/ProductDetail'
 import Cart from "./Page/public/Cart"
-import CheckoutPage from "./Page/public/CheckoutPage"
 import AdminOrder from "./Page/admin/Order"
 import Payment from "./Page/public/Payment"
 const App = () => {
@@ -21,8 +20,8 @@ const App = () => {
         <Route path="/form" element={<UserForm />}></Route>
         <Route path="shop/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart/>}></Route>
-        <Route path="/checkout" element={<CheckoutPage/>}></Route>
         <Route path="/payment" element={<Payment/>}></Route>
+        <Route path="/payment/:orderId" element={<Payment/>}></Route>
       </Route>
 
       {/* 登入頁 */}
