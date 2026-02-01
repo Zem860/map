@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/components/products/hook/useConfirm";
 import ConfirmModal from "@/components/products/ConfirmModal/ConfirmModal";
 import { Loader } from "@/components/Loader";
-const Order = () => {
+const AdminOrder = () => {
     const [orders, setOrder] = useState<Order[] | undefined>(undefined);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -210,4 +210,4 @@ const Order = () => {
         </>);
 }
 
-export default Order;
+export default AdminOrder;

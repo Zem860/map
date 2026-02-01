@@ -13,6 +13,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Stepper } from '@/components/Stepper';
 import { postOrder } from '@/api/folder_user/products';
 import type { OrderParams } from '@/type/order';
+import { useNavigate } from 'react-router-dom';
+
+const navigate = useNavigate();
 
 const UserForm = () => {
     const form = useForm({
@@ -29,24 +32,30 @@ const UserForm = () => {
         mode: "onTouched",
     })
 
-    const onSubmit = (data: any) => {
+    const onSubmit = async (data: any) => {
         const fullAddress = `${data.country}, ${data.city}, ${data.address}`;
         const nameData = `${data.firstName}, ${data.lastName}`
         const msg = data.message
-        const submittedData:OrderParams = {
-           data:{
-             user:{
-                name:nameData,
-                email:data.email,
-                tel:data.tel,
-                address:fullAddress
-            },
-            message:msg
-           }
+        const submittedData: OrderParams = {
+            data: {
+                user: {
+                    name: nameData,
+                    email: data.email,
+                    tel: data.tel,
+                    address: fullAddress
+                },
+                message: msg
+            }
         };
-        
-        postOrder(submittedData).then(res=>console.log(res)).catch(err=>console.log(err))
-    }
+        try {
+            await postOrder(submittedData).then(res => {
+                navigate("/payment");
+            }).catch(err => console.log(err))
+        } catch (err) {
+            console.log(err)
+        }
+
+    };
 
     return (
         <>
