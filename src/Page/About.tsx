@@ -16,7 +16,7 @@ export default function About() {
               In an increasingly digital world, we remain devoted to the tactile—the weight of a hardcover, the scent of fresh ink, and the quiet intimacy of a well-worn page.
             </p>
             <p>
-              <strong className="text-foreground font-semibold">BookHaven</strong> was founded on a singular, powerful idea: that the distance between a reader and a great book should never be measured by the cost of shipping.
+              <strong className="text-foreground font-semibold">Books</strong> was founded on a singular, powerful idea: that the distance between a reader and a great book should never be measured by the cost of shipping.
             </p>
           </div>
         </section>
@@ -31,7 +31,7 @@ export default function About() {
               When <span className="italic">Book Depository</span> closed its doors in 2023, the global community of readers lost more than just a bookstore—they lost a bridge. 
             </p>
             <p>
-              We remember that iconic teal package and the promise it held. BookHaven was born to carry that torch forward, ensuring that readers in Taipei, Tokyo, London, or beyond still have a home.
+              We remember that iconic teal package and the promise it held. Books was born to carry that torch forward, ensuring that readers in Taipei, Tokyo, London, or beyond still have a home.
             </p>
             <p className="text-foreground font-medium pt-2">
               To every reader who once waited for a teal envelope—welcome home.
@@ -73,7 +73,7 @@ export default function About() {
         </section>
       </article>
       <footer className="py-20 text-center text-xs text-muted-foreground/60 tracking-widest uppercase">
-        <p>© 2026 BookHaven. Reading Without Borders.</p>
+        <p>© 2026 Books. Reading Without Borders.</p>
       </footer>
     </main>
   )
