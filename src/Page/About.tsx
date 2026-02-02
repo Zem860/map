@@ -4,10 +4,8 @@ import {Link} from "react-router-dom"
 export default function About() {
   return (
     <main className="min-h-screen bg-[#FDFCFB] text-[#2C2C2C] selection:bg-primary/20">
-
       {/* Narrative Container */}
-      <article className="mx-auto max-w-2xl px-6 py-20 md:py-32 space-y-28">
-        
+      <article className="mx-auto max-w-2xl px-6 py-20 md:py-32 space-y-28">      
         {/* Section 1: Philosophy */}
         <section className="space-y-8">
           <h1 className="font-serif text-4xl md:text-6xl leading-[1.1] text-balance tracking-tight">
@@ -22,7 +20,6 @@ export default function About() {
             </p>
           </div>
         </section>
-
         {/* Section 2: The Tribute (The Soul of the Page) */}
         <section className="relative py-12 px-8 bg-muted/40 rounded-2xl border-l-4 border-primary">
           <span className="text-xs font-bold uppercase tracking-widest text-primary mb-4 block">
@@ -41,7 +38,6 @@ export default function About() {
             </p>
           </div>
         </section>
-
         {/* Section 3: The Promise */}
         <section className="space-y-12">
           <h2 className="font-serif text-3xl text-foreground">Our Commitment</h2>
@@ -62,7 +58,6 @@ export default function About() {
             </div>
           </div>
         </section>
-
         {/* Final CTA */}
         <section className="pt-20 text-center space-y-10 border-t border-border">
           <div className="space-y-4">
@@ -77,7 +72,6 @@ export default function About() {
           </Link>
         </section>
       </article>
-
       <footer className="py-20 text-center text-xs text-muted-foreground/60 tracking-widest uppercase">
         <p>© 2026 BookHaven. Reading Without Borders.</p>
       </footer>
