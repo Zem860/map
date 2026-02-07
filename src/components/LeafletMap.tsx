@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -7,6 +7,8 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import type { productData } from '@/type/product'
+import { useMapStore, MapService } from '@/store/mapStore'
+import type { MapProduct, StoreContext } from '@/store/mapStore'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -15,74 +17,83 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
-// ---- 2. Types 定義 (清楚定義資料結構) ----
-type SimulationResult = {
-  city: string
-  country: string
-  lat: number
-  lng: number
+// ---- Helper: productData → MapProduct ----
+function toMapProduct(product: productData): MapProduct {
+  const author = (() => {
+    try {
+      return JSON.parse(product.content || '{}').author || 'Unknown'
+    } catch {
+      return 'Unknown'
+    }
+  })()
+  return {
+    title: product.title,
+    imageUrl: product.imageUrl,
+    author,
+  }
 }
 
-// ---- 3. Service Layer (負責髒活：API 抓取與座標轉換) ----
-// 將這些邏輯放在 Component 之外，保持 Component 乾淨
-const LocationService = {
-  cache: {} as Record<string, [number, number]>,
-
-  // 取得隨機 User (只抓需要的欄位)
-  async fetchRandomUser() {
-    try {
-      const res = await fetch('https://randomuser.me/api/?inc=location,name&noinfo')
-      const data = await res.json()
-      return data.results?.[0]
-    } catch (err) {
-      console.error('RandomUser API Error:', err)
-      return null
-    }
-  },
-
-  // 精準座標查詢 (Open-Meteo)
-  async resolveCoordinates(city: string, country: string): Promise<[number, number] | null> {
-    const key = `${city}-${country}`.toLowerCase()
-    if (this.cache[key]) return this.cache[key]
-
-    try {
-      // 同時搜尋 city 與 country 可以大幅提高精準度
-      const query = `${city}, ${country}`
-      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-        query
-      )}&count=1&language=en&format=json`
-
-      const res = await fetch(url)
-      const data = await res.json()
-      const item = data.results?.[0]
-
-      if (item && item.latitude && item.longitude) {
-        const coords: [number, number] = [item.latitude, item.longitude]
-        this.cache[key] = coords
-        return coords
-      }
-    } catch (err) {
-      console.warn('Geocoding Error:', err)
-    }
-    return null
-  },
-}
-
-// ---- 4. Main Component ----
+// ---- Main Component ----
 export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) => {
-  // Map Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markerRef = useRef<L.Marker | null>(null)
+  // 用來追蹤地圖是否已經初始化完成
+  const mapReadyRef = useRef(false)
 
-  // ✅ 這就是你之後要放在 Store 的變數
-  // 目前先用 local state 模擬，你可以直接拿這個 state 去做結帳邏輯
-  const [currentStoreContext, setCurrentStoreContext] = useState<{
-    city: string
-    country: string
-  } | null>(null)
+  // 從 store 訂閱
+  const currentContext = useMapStore((s) => s.currentContext)
+  const currentProduct = useMapStore((s) => s.currentProduct)
+  const isPaused = useMapStore((s) => s.isPaused)
+  const isRandom = useMapStore((s) => s.isRandom)
 
-  // 初始化地圖 (只執行一次)
+  // ---- 共用的地圖 UI 更新函式 ----
+  const showPopupOnMap = useCallback(
+    (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
+      const map = mapInstanceRef.current
+      if (!map) return
+
+      const { lat, lng, city, country } = ctx
+      const labelText = 'Someone just bought this in'
+      const labelColor = '#d32f2f'
+
+      const popupHtml = `
+        <div style="font-family: system-ui; min-width: 220px;">
+          <div style="display:flex; gap:10px; margin-bottom:8px; align-items: start;">
+             <img src="${product.imageUrl}" style="width:48px; height:64px; object-fit:cover; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
+             <div>
+               <div style="font-weight:bold; font-size:14px; line-height: 1.2; margin-bottom: 2px;">${product.title}</div>
+               <div style="font-size:12px; color:#666;">by ${product.author}</div>
+             </div>
+          </div>
+          <div style="font-size:13px; border-top: 1px solid #eee; padding-top: 6px; color: #444;">
+            <strong>${labelText}</strong><br/>
+            <span style="color:${labelColor}; font-weight:bold;">${city}, ${country}</span>
+          </div>
+        </div>
+      `
+
+      // 更新 / 建立 marker
+      if (!markerRef.current) {
+        markerRef.current = L.marker([lat, lng]).addTo(map)
+      } else {
+        markerRef.current.setLatLng([lat, lng])
+      }
+
+      // 使用 Leaflet 的 popup API，直接開在指定座標
+      const popup = L.popup({ maxWidth: 260 })
+        .setLatLng([lat, lng])
+        .setContent(popupHtml)
+
+      popup.openOn(map)
+
+      // 再飛動畫，視覺上會從目前位置飛到新點
+      map.flyTo([lat, lng], 6, { duration: 2 })
+    },
+    []
+  )
+
+  // ---- 初始化地圖 (只執行一次) ----
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return
 
@@ -93,53 +104,60 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
     }).addTo(map)
 
     mapInstanceRef.current = map
+    mapReadyRef.current = true
+
+    // ✅ 地圖剛初始化：如果 store 裡有 persisted 資料，馬上顯示 popup
+    const { currentContext: ctx, currentProduct: prod, isPaused: paused } =
+      useMapStore.getState()
+    if (ctx && prod) {
+      // 等地圖 tile 載入完再 flyTo，避免動畫卡頓
+      setTimeout(() => {
+        showPopupOnMap(ctx, prod, paused)
+      }, 300)
+    }
+
+    // 頁面載入時檢查暫停倒計時是否需要恢復
+    useMapStore.getState().checkAndResume()
 
     return () => {
       map.remove()
       mapInstanceRef.current = null
+      mapReadyRef.current = false
     }
-  }, [])
+  }, [showPopupOnMap])
 
-  // 模擬邏輯 (每 10 秒執行一次)
+  // ---- 每 10 秒 random simulation ----
   useEffect(() => {
     let isMounted = true
 
     const runSimulation = async () => {
+      // ⛔ 如果 store 暫停中，跳過
+      if (useMapStore.getState().isPaused) return
       if (!mapInstanceRef.current || products.length === 0) return
 
-      // 1. 隨機選書
       const pickedProduct = products[Math.floor(Math.random() * products.length)]
 
-      // 2. 抓 User
-      const user = await LocationService.fetchRandomUser()
+      const user = await MapService.fetchRandomUser()
       if (!user || !isMounted) return
 
       const { city, country } = user.location
+      const coords = await MapService.resolveCoordinates(city, country)
+      if (!coords || !isMounted) return
 
-      // 3. 抓精準座標 (忽略 RandomUser 給的假座標)
-      const coords = await LocationService.resolveCoordinates(city, country)
-      
-      // 如果查不到座標，這次就跳過，避免標在地圖奇怪的地方
-      if (!coords || !isMounted) return 
+      // 再次確認沒被暫停（async 期間狀態可能改變）
+      if (useMapStore.getState().isPaused) return
 
-      const [lat, lng] = coords
+      const [lat, lng] = coords 
+      const mapProduct = toMapProduct(pickedProduct)
 
-      // 4. ✅ 更新變數 (模擬 Store 更新)
-      // 這裡你可以想像成: dispatch(setStoreLocation({ city, country }))
-      setCurrentStoreContext({ city, country })
-
-      // 5. 更新地圖 UI
-      updateMapUI(mapInstanceRef.current, markerRef, {
-        lat,
-        lng,
-        city,
-        country,
-      }, pickedProduct)
+      // 寫入 store（包含書的資料）
+      console.log('[LeafletMap] updateContext:', { city, country, lat, lng }, mapProduct)
+      useMapStore.getState().updateContext({ city, country, lat, lng }, mapProduct)
     }
 
     // 立即執行一次，然後設 Interval
     runSimulation()
-    const intervalId = setInterval(runSimulation, 10000)
+    const intervalId = setInterval(runSimulation, 10_000)
 
     return () => {
       isMounted = false
@@ -147,78 +165,61 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
     }
   }, [products])
 
-  // Helper: 更新地圖與 Marker (抽離出來讓 useEffect 更乾淨)
-  const updateMapUI = (
-    map: L.Map,
-    markerRef: React.MutableRefObject<L.Marker | null>,
-    location: SimulationResult,
-    product: productData
-  ) => {
-    const { lat, lng, city, country} = location
-    const author = JSON.parse(product.content || '{}').author || 'Unknown'
+  // ---- 監聽 store 的 currentContext / currentProduct 變化 → 更新地圖 popup ----
+  useEffect(() => {
+    console.log('[LeafletMap] store changed:', { currentContext, currentProduct, isPaused, mapReady: mapReadyRef.current })
+    if (!currentContext || !currentProduct) return
+    if (!mapReadyRef.current) return
 
-    const popupHtml = `
-      <div style="font-family: system-ui; min-width: 220px;">
-        <div style="display:flex; gap:10px; margin-bottom:8px; align-items: start;">
-           <img src="${product.imageUrl}" style="width:48px; height:64px; object-fit:cover; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
-           <div>
-             <div style="font-weight:bold; font-size:14px; line-height: 1.2; margin-bottom: 2px;">${product.title}</div>
-             <div style="font-size:12px; color:#666;">by ${author}</div>
-           </div>
-        </div>
-        <div style="font-size:13px; border-top: 1px solid #eee; padding-top: 6px; color: #444;">
-          <strong>Someone</strong> just bought this in <br/>
-          <span style="color:#d32f2f; font-weight:bold;">${city}, ${country}</span>
-        </div>
-      </div>
-    `
-
-    if (!markerRef.current) {
-      markerRef.current = L.marker([lat, lng]).addTo(map)
-    } else {
-      markerRef.current.setLatLng([lat, lng])
-    }
-
-    markerRef.current.bindPopup(popupHtml).openPopup()
-    
-    // 使用 flyTo 會有更精緻的飛行動畫
-    map.flyTo([lat, lng], 6, { duration: 2 })
-  }
+    showPopupOnMap(currentContext, currentProduct, isPaused)
+  }, [currentContext, currentProduct, isPaused, showPopupOnMap])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      {/* ✅ 變數顯示區塊 
-         這區塊模擬之後你在結帳頁面或是 Store 裡面會拿到的資料
-      */}
-      <div style={{ 
-        padding: '12px', 
-        background: '#f8f9fa', 
-        border: '1px solid #e9ecef', 
-        borderRadius: '8px',
-        fontSize: '14px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <span>🛒 Current Store Context:</span>
-        {currentStoreContext ? (
-          <strong style={{ color: '#2e7d32' }}>
-            {currentStoreContext.city}, {currentStoreContext.country}
-          </strong>
+      {/* ✅ 狀態顯示區塊：顯示書名 + 圖片 + 地點 */}
+      <div
+        style={{
+          padding: '12px',
+          background: isPaused ? '#e8f5e9' : '#f8f9fa',
+          border: `1px solid ${isPaused ? '#a5d6a7' : '#e9ecef'}`,
+          borderRadius: '8px',
+          fontSize: '14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <span>{!isRandom ? '🎉 Real Purchase:' : '🛒 Current Store Context:'}</span>
+        {currentContext && currentProduct ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img
+              src={currentProduct.imageUrl}
+              alt={currentProduct.title}
+              style={{ width: 24, height: 32, objectFit: 'cover', borderRadius: 3 }}
+            />
+            <div>
+              <strong style={{ color: !isRandom ? '#1b5e20' : '#2e7d32' }}>
+                {currentProduct.title}
+              </strong>
+              <span style={{ color: '#666', marginLeft: 8, fontSize: 13 }}>
+                {currentContext.city}, {currentContext.country}
+              </span>
+            </div>
+          </div>
         ) : (
           <span style={{ color: '#999' }}>Waiting for incoming order...</span>
         )}
       </div>
 
-      <div 
-        ref={mapContainerRef} 
-        style={{ 
-          height: '500px', 
-          width: '100%', 
-          borderRadius: '8px', 
+      <div
+        ref={mapContainerRef}
+        style={{
+          height: '500px',
+          width: '100%',
+          borderRadius: '8px',
           overflow: 'hidden',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
-        }} 
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        }}
       />
     </div>
   )

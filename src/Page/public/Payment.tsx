@@ -10,6 +10,13 @@ import { postOrder } from "@/api/folder_user/products";
 import type { OrderParams } from "@/type/order";
 import { useOrderStore } from "@/store/orderStore";
 import { pay } from "@/api/folder_user/order";
+import { useMapStore } from "@/store/mapStore";
+import type { MapProduct } from "@/store/mapStore";
+
+// 確認付款並通知 mapStore
+const confirmPaymentOnMap = async (city: string, country: string, product: MapProduct) => {
+    await useMapStore.getState().confirmPayment(city, country, product)
+}
 const Payment = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -28,7 +35,7 @@ const Payment = () => {
 
     // 从 URL 获取 orderId
     const orderNum = searchParams.get("orderId") || "";
-    const handleSubmitOrder = async () => {
+       const handleSubmitOrder = async () => {
         if (!userInfo) return;
         if (!paymentMethod) {
             setErrorMessage("Please select a payment method.");
@@ -46,6 +53,29 @@ const Payment = () => {
             const res = await postOrder(submittedData);
             const postedOrderId = res.data.orderId;
             await pay(postedOrderId);
+
+            // ✅ 付款成功 → 解析 address 並通知 mapStore（帶上書的資料）
+            const addressParts = userInfo.address.split(", ")
+            const country = addressParts[0] || ""
+            const city = addressParts[1] || ""
+
+            // 從購物車取第一本書的資訊
+            const firstItem = cartItems[0]
+            if (country && city && firstItem) {
+                const mapProduct: MapProduct = {
+                    title: firstItem.product.title,
+                    imageUrl: firstItem.product.imageUrl,
+                    author: (() => {
+                        try {
+                            return JSON.parse(firstItem.product.content || '{}').author || 'Unknown'
+                        } catch {
+                            return 'Unknown'
+                        }
+                    })(),
+                }
+                await confirmPaymentOnMap(city, country, mapProduct)
+            }
+
             // 用 URL query 参数保存 orderId
             navigate(`/payment?orderId=${postedOrderId}`);
             window.location.reload();
