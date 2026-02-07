@@ -49,7 +49,7 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
 
   // ---- 共用的地圖 UI 更新函式 ----
   const showPopupOnMap = useCallback(
-    (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
+    (ctx: StoreContext, product: MapProduct) => {
       const map = mapInstanceRef.current
       if (!map) return
 
