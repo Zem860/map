@@ -76,8 +76,8 @@ const Payment = () => {
                 await confirmPaymentOnMap(city, country, mapProduct)
             }
 
-            // 用 URL query 参数保存 orderId
             navigate(`/payment?orderId=${postedOrderId}`);
+            userStore.clearUserInfo();
         } catch (error) {
             console.error("Failed to submit order:", error);
         }
@@ -91,7 +91,7 @@ const Payment = () => {
         } else {
             getOrder();
         }
-    }, []);
+    }, [orderNum]);
 
     const getOrder = async () => {
         if (!orderNum) return;

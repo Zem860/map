@@ -37,17 +37,19 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
   const currentContext = useMapStore((s) => s.currentContext)
   const currentProduct = useMapStore((s) => s.currentProduct)
   const isPaused = useMapStore((s) => s.isPaused)
-  const isRandom = useMapStore((s) => s.isRandom)
+  // const isRandom = useMapStore((s) => s.isRandom)
 
   const showPopupOnMap = useCallback(
-    (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
+    (ctx: StoreContext, product: MapProduct, 
+      // isRealPurchase: boolean
+    ) => {
       const map = mapInstanceRef.current
       if (!map) return
 
       const { lat, lng, city, country } = ctx
       const labelText = 'Someone just bought this in'
-      const labelColor = isRealPurchase ? '#1b5e20' : '#d32f2f'
-
+      // const labelColor = isRealPurchase ? '#1b5e20' : '#d32f2f'
+      const labelColor = '#d32f2f'
       const popupHtml = `
         <div style="font-family: system-ui; min-width: 220px;">
           <div style="display:flex; gap:10px; margin-bottom:8px; align-items: start;">
@@ -158,7 +160,7 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
           justifyContent: 'space-between',
         }}
       >
-        <span>{!isRandom ? '🎉 Real Purchase:' : '🛒 Current Store Context:'}</span>
+        <span>{'🛒 Current Store Context:'}</span>
         {currentContext && currentProduct ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img
@@ -167,7 +169,7 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
               style={{ width: 24, height: 32, objectFit: 'cover', borderRadius: 3 }}
             />
             <div>
-              <strong style={{ color: !isRandom ? '#1b5e20' : '#2e7d32' }}>
+              <strong style={{ color: '#2e7d32' }}>
                 {currentProduct.title}
               </strong>
               <span style={{ color: '#666', marginLeft: 8, fontSize: 13 }}>
