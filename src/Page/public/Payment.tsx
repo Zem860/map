@@ -78,7 +78,6 @@ const Payment = () => {
 
             // 用 URL query 参数保存 orderId
             navigate(`/payment?orderId=${postedOrderId}`);
-            window.location.reload();
         } catch (error) {
             console.error("Failed to submit order:", error);
         }

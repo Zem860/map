@@ -2,10 +2,10 @@ import { useEffect, useRef, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// ---- 1. Leaflet Icon Fix (標準修正) ----
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+
 import type { productData } from '@/type/product'
 import { useMapStore, MapService } from '@/store/mapStore'
 import type { MapProduct, StoreContext } from '@/store/mapStore'
@@ -17,7 +17,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
-// ---- Helper: productData → MapProduct ----
 function toMapProduct(product: productData): MapProduct {
   const author = (() => {
     try {
@@ -26,28 +25,20 @@ function toMapProduct(product: productData): MapProduct {
       return 'Unknown'
     }
   })()
-  return {
-    title: product.title,
-    imageUrl: product.imageUrl,
-    author,
-  }
+  return { title: product.title, imageUrl: product.imageUrl, author }
 }
 
-// ---- Main Component ----
 export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markerRef = useRef<L.Marker | null>(null)
-  // 用來追蹤地圖是否已經初始化完成
   const mapReadyRef = useRef(false)
 
-  // 從 store 訂閱
   const currentContext = useMapStore((s) => s.currentContext)
   const currentProduct = useMapStore((s) => s.currentProduct)
   const isPaused = useMapStore((s) => s.isPaused)
   const isRandom = useMapStore((s) => s.isRandom)
 
-  // ---- 共用的地圖 UI 更新函式 ----
   const showPopupOnMap = useCallback(
     (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
       const map = mapInstanceRef.current
@@ -73,27 +64,19 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
         </div>
       `
 
-      // 更新 / 建立 marker
       if (!markerRef.current) {
         markerRef.current = L.marker([lat, lng]).addTo(map)
       } else {
         markerRef.current.setLatLng([lat, lng])
       }
 
-      // 使用 Leaflet 的 popup API，直接開在指定座標
-      const popup = L.popup({ maxWidth: 260 })
-        .setLatLng([lat, lng])
-        .setContent(popupHtml)
-
-      popup.openOn(map)
-
-      // 再飛動畫，視覺上會從目前位置飛到新點
+      L.popup({ maxWidth: 260 }).setLatLng([lat, lng]).setContent(popupHtml).openOn(map)
       map.flyTo([lat, lng], 6, { duration: 2 })
     },
     []
   )
 
-  // ---- 初始化地圖 (只執行一次) ----
+  // 初始化地圖
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return
 
@@ -106,18 +89,11 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
     mapInstanceRef.current = map
     mapReadyRef.current = true
 
-    // ✅ 地圖剛初始化：如果 store 裡有 persisted 資料，馬上顯示 popup
-    const { currentContext: ctx, currentProduct: prod, isPaused: paused } =
-      useMapStore.getState()
+    // 如果 store 已經有資料，馬上顯示
+    const { currentContext: ctx, currentProduct: prod, isPaused: paused } = useMapStore.getState()
     if (ctx && prod) {
-      // 等地圖 tile 載入完再 flyTo，避免動畫卡頓
-      setTimeout(() => {
-        showPopupOnMap(ctx, prod, paused)
-      }, 300)
+      setTimeout(() => showPopupOnMap(ctx, prod, paused), 300)
     }
-
-    // 頁面載入時檢查暫停倒計時是否需要恢復
-    useMapStore.getState().checkAndResume()
 
     return () => {
       map.remove()
@@ -126,13 +102,13 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
     }
   }, [showPopupOnMap])
 
-  // ---- 每 10 秒 random simulation ----
+  // ✅ 每 10 秒 random simulation（paused 時直接停掉 interval）
   useEffect(() => {
+    if (isPaused) return
+
     let isMounted = true
 
     const runSimulation = async () => {
-      // ⛔ 如果 store 暫停中，跳過
-      if (useMapStore.getState().isPaused) return
       if (!mapInstanceRef.current || products.length === 0) return
 
       const pickedProduct = products[Math.floor(Math.random() * products.length)]
@@ -144,18 +120,14 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
       const coords = await MapService.resolveCoordinates(city, country)
       if (!coords || !isMounted) return
 
-      // 再次確認沒被暫停（async 期間狀態可能改變）
+      // async 期間可能被 pause，再保險一次
       if (useMapStore.getState().isPaused) return
 
-      const [lat, lng] = coords 
+      const [lat, lng] = coords
       const mapProduct = toMapProduct(pickedProduct)
-
-      // 寫入 store（包含書的資料）
-      console.log('[LeafletMap] updateContext:', { city, country, lat, lng }, mapProduct)
       useMapStore.getState().updateContext({ city, country, lat, lng }, mapProduct)
     }
 
-    // 立即執行一次，然後設 Interval
     runSimulation()
     const intervalId = setInterval(runSimulation, 10_000)
 
@@ -163,20 +135,17 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
       isMounted = false
       clearInterval(intervalId)
     }
-  }, [products])
+  }, [products, isPaused])
 
-  // ---- 監聽 store 的 currentContext / currentProduct 變化 → 更新地圖 popup ----
+  // store 變更 → 更新 popup
   useEffect(() => {
-    console.log('[LeafletMap] store changed:', { currentContext, currentProduct, isPaused, mapReady: mapReadyRef.current })
     if (!currentContext || !currentProduct) return
     if (!mapReadyRef.current) return
-
     showPopupOnMap(currentContext, currentProduct, isPaused)
   }, [currentContext, currentProduct, isPaused, showPopupOnMap])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      {/* ✅ 狀態顯示區塊：顯示書名 + 圖片 + 地點 */}
       <div
         style={{
           padding: '12px',
