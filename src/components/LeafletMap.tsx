@@ -49,13 +49,13 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
 
   // ---- 共用的地圖 UI 更新函式 ----
   const showPopupOnMap = useCallback(
-    (ctx: StoreContext, product: MapProduct) => {
+    (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
       const map = mapInstanceRef.current
       if (!map) return
 
       const { lat, lng, city, country } = ctx
       const labelText = 'Someone just bought this in'
-      const labelColor = '#d32f2f'
+      const labelColor = isRealPurchase ? '#1b5e20' : '#d32f2f'
 
       const popupHtml = `
         <div style="font-family: system-ui; min-width: 220px;">
