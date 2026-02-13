@@ -12,6 +12,8 @@ import Cart from "./Page/public/Cart"
 import AdminOrder from "./Page/admin/Order"
 import Payment from "./Page/public/Payment"
 import About from "./Page/About"
+import ArticlePage from "./Page/public/ArticlePage"
+import Article from "./Page/admin/Article"
 const App = () => {
   return (
     <Routes>
@@ -24,6 +26,7 @@ const App = () => {
         <Route path="/payment" element={<Payment/>}></Route>
         <Route path="/payment/:orderId" element={<Payment/>}></Route>
         <Route path="/about" element={<About/>}></Route>
+        <Route path="/article/:id" element={<ArticlePage/>}></Route>
       </Route>
 
       {/* 登入頁 */}
@@ -41,6 +44,7 @@ const App = () => {
         {/* /admin/products */}
         <Route path="products" element={<AdminProducts />} />
         <Route path="orders" element={<AdminOrder />} />
+        <Route path="articles" element={<Article />} />
 
       </Route>
 
