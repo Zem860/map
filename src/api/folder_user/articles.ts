@@ -1,10 +1,6 @@
 import type { AxiosResponse } from "axios";
 import type { Article } from "@/type/articles";
 
-export type GetArticlesResponse = {
-  articles: Article[]
-  total: number
-}
 import { baseApi } from "../api";
 
 type getArticlesFunc = (params:{page?:number})=>Promise<AxiosResponse<GetArticlesResponse>>

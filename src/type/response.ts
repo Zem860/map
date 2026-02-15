@@ -1,6 +1,7 @@
 import type { productData, PaginationData } from "./product";
 import type { CartData, cartData, UpdateQtyParams } from "./cart";
 import type { Order, OrderProductItem, UserInfo } from "./order";
+import type { Article } from "./articles";
 export type MesssageResponse = {
     success: boolean,
     message: string,
@@ -58,3 +59,8 @@ export type CustomerOrderApiResponse = {
     success: boolean;
     order: CustomerOrderResponse;
 }
+
+export type GetArticlesResponse = {
+  articles: Article[];
+  total: number;
+};

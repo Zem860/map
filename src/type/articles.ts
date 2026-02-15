@@ -1,3 +1,4 @@
+import type { PaginationData } from "./product"
 export type Article = {
   id: string
   title: string
@@ -9,4 +10,11 @@ export type Article = {
   isPublic: boolean
   tag: string[]
   num: number
+}
+
+export type Articles = {
+  success:boolean,
+  messages:string[],
+  articles:Article[],
+  pagination: PaginationData
 }

@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, User, ArrowRight, Newspaper, ScanFace } from 'lucide-react';
+import { Calendar, User, ArrowRight, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Article } from '@/type/articles';
 import { getArticles } from '@/api/folder_user/articles';
