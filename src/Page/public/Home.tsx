@@ -82,7 +82,7 @@ const Home = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {articles.map((article) => (
-                  <Link key={article.id} to={`/article/${article.id}`} className="block group">
+                  <Link key={article.id} to={`/articles/${article.id}`} className="block group">
                     <div className="border rounded-lg p-4 hover:border-primary hover:bg-primary/5 transition-all">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
