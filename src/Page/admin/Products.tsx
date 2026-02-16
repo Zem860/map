@@ -97,7 +97,6 @@ const Products = () => {
                   <TableHead className="w-[150px]">Title</TableHead>
                   <TableHead className='w-20'>Category</TableHead>
                   <TableHead className='text-right'>Price</TableHead>
-                  <TableHead className='text-right'>Stock</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className='w-20'>Actions</TableHead>
                 </TableRow>
@@ -121,7 +120,6 @@ const Products = () => {
                       <Badge variant="outline">{item.category}</Badge>
                     </TableCell>
                     <TableCell className="text-right font-medium">{formatPrice(item.price)}</TableCell>
-                    <TableCell className="text-right">{item.num}</TableCell>
                     <TableCell>
                       <Badge variant={!item.is_enabled ? "default" : "secondary"} className="text-xs">
                         {item.is_enabled ? 'enabled' : 'not enabled'}
