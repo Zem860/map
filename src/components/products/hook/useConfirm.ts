@@ -24,10 +24,10 @@ export function useConfirm() {
     setError("")
 
     try {
-      await config.action()
+      await config.action() //api
       setIsOpen(false)
       setConfig(null)
-      config.onSuccess?.()
+      config.onSuccess?.() //callback
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
