@@ -4,8 +4,11 @@ import { getProducts, createProduct, editProduct, deleteProduct } from "@/api/fo
 import type { productData, ProductDataResponse, PaginationData, SearchData } from "@/type/product"
 import { getCategoryCombos } from "@/helper/tool"
 import { useConfirm } from "./useConfirm"
+import { useToastStore } from '@/store/toastStore';
+
 
 export const useProducts = () => {
+  	const addToast = useToastStore((state) => state.addToast);
   const [products, setProducts] = useState<productData[] | undefined>(undefined)
   const [pagination, setPagination] = useState<PaginationData | undefined>(undefined)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -107,6 +110,7 @@ export const useProducts = () => {
     async (id: string) => {
       await deleteProduct(id)
       await getProduct()
+      addToast("delete", "book", "error")
     },
     [getProduct],
   )
@@ -114,8 +118,8 @@ export const useProducts = () => {
   const askDelete = useCallback((id: string, title: string) => {
     confirmModal.confirm(
       {
-        title: "確認刪除",
-        message: `您確定要刪除「${title}」嗎？此操作無法復原。`,
+        title: "Confirm Delete",
+        message: `Do you wanna delete「${title}」? The action can't be undone`,
       },
       () => removeProduct(id)
     )
@@ -125,11 +129,12 @@ export const useProducts = () => {
     const isCreate = mode === "create"
     confirmModal.confirm(
       {
-        title: isCreate ? "確認新增" : "確認修改",
+        title: isCreate ? "Confirm Create" : "Confirm Modify",
         message: isCreate
-          ? `確定要建立新產品「${product.title}」嗎？`
-          : `確定要儲存對「${product.title}」的變更嗎？`,
-        onSuccess: () => setIsModalOpen(false), // 成功後關閉 ProductModal
+          ? `Do you want to create「${product.title}」?`
+          : `Do you want to modify「${product.title}」?`,
+        onSuccess: () => {setIsModalOpen(false);
+          addToast(`${isCreate ? 'create' : 'modify'}`, 'book', 'success');}, // 成功後關閉 ProductModal
       },
       () => saveProduct(product)
     )
