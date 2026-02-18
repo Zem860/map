@@ -41,7 +41,7 @@ const Products = () => {
         />
         <Button onClick={openCreateModal} className="ml-auto bg-primary hover:bg-primary/90">
           <Plus className="size-4" />
-          新增書籍
+          Create an Book
         </Button>
       </div>
 
