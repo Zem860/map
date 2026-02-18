@@ -1,4 +1,3 @@
-import { useToastStore } from '@/store/toastStore';
 import type { Article } from '@/type/articles';
 import { useState, useEffect } from 'react';
 import { getArticles } from '@/api/folder_admin/articles';
@@ -19,22 +18,46 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Plus } from 'lucide-react';
+import ArticleModal from '@/components/products/articles/ArticleModal';
 
 const Article = () => {
-  const [articles, setArticles] = useState<Article[]>();
-
-  const addToast = useToastStore((state) => state.addToast);
-  const getArticlesData = async () => {
-    const res = await getArticles({});
-    setArticles(res.data.articles);
-  };
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [article, setArticle] = useState<Article>()
+  const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    addToast('welcome', 'article', 'success');
-    getArticlesData();
-  }, []);
+    // 在裡面定義，不要在外面定義
+    const fetchArticles = async () => {
+      try {
+        const res = await getArticles({});
+        setArticles(res.data.articles);
+      } catch (error) {
+        console.error('抓取失敗:', error);
+      }
+    };
+
+    fetchArticles();
+  }, []); // 保持空陣列，代表只在「第一次出現」時執行
   return (
     <>
+      <ArticleModal
+        article={article}
+        mode="create"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+      <div className="space-y-4 mb-4 flex items-center justify-between">
+        <Button
+          onClick={() => {
+            setIsOpen(!isOpen);
+          }}
+          className="ml-auto bg-primary hover:bg-primary/90"
+        >
+          <Plus className="size-4" />
+          Create an Article
+        </Button>
+      </div>
       <div className="grid gap-3 md:hidden">
         {articles?.map((item) => (
           <div
