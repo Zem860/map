@@ -18,3 +18,10 @@ export type Articles = {
   articles:Article[],
   pagination: PaginationData
 }
+
+export type ArticleModalProps = {
+    isOpen: boolean;
+    article?:Article| null;
+    mode?:'create' | 'edit';
+    setIsOpen:(isOpen:boolean)=>void
+}
