@@ -1,14 +1,14 @@
 // src/features/products/hooks/useProductImages.ts
 import { useEffect, useRef, useState, type ChangeEvent } from "react"
-import type { UseProductImagesArgs } from "@/type/product"
+import type { UseImageArgs } from "@/type/product"
 import { uploadImage } from "@/api/folder_admin/products"
 
 
 export function useProductImages({
-  product,
+  item,
   isOpen,
   maxImages = 4,
-}: UseProductImagesArgs) {
+}: UseImageArgs) {
   const [imageUrlInput, setImageUrlInput] = useState("")
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // existing URLs
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]) // waiting to upload
@@ -21,8 +21,8 @@ export function useProductImages({
 
   // 保證圖片在打開或關閉的情況會清理掉原來的檔案
   useEffect(() => {
-    if (product) {
-      setUploadedImages((product.imagesUrl || []).filter((u) => u !== ""))
+    if (item) {
+      setUploadedImages((item.imagesUrl || []).filter((u) => u !== ""))
     } else {
       setUploadedImages([])
     }

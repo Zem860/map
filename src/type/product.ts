@@ -87,12 +87,11 @@ export type ProductModalProps = {
     mode?:'create' | 'edit';
 }
 
-export type UseProductImagesArgs = {
-  product?: productData
+export type UseImageArgs = {
+  item?: productData | Article
   isOpen: boolean
   maxImages?: number
 }
-
 export type ConfirmModalProps = {
     isOpen:boolean;
     onOpenChange:(isOpen:boolean)=>void;
