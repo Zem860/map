@@ -1,6 +1,7 @@
-import type { Article } from '@/type/articles';
+import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
 import { getArticles } from '@/api/folder_admin/articles';
+import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +24,45 @@ import ArticleModal from '@/components/products/articles/ArticleModal';
 
 const Article = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [article, setArticle] = useState<Article>()
+  const [article, setArticle] = useState<Article>();
   const [articles, setArticles] = useState<Article[]>([]);
 
+  const [confirmState, setConfirmState] = useState<Confirmtype>({
+    isOpen: false,
+    title: '',
+    message: '',
+    isLoading: false,
+    onConfirm: () => {},
+  });
+const closeConfirm = () => {
+  // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
+  setConfirmState((prev) => ({ ...prev, isOpen: false }));
+};
+
+  const handleAskSave = (formData: Article) => {
+    setConfirmState({
+      isOpen: true,
+      title: '確認儲存',
+      message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
+      isLoading: false,
+      onConfirm: async () => {
+        // 真正打 API 的地方
+        setConfirmState((prev) => ({ ...prev, isLoading: true }));
+        try {
+          console.log('正在發送 API...', formData);
+          // await api.post('/articles', formData)
+
+          // 成功後：關閉所有彈窗
+          closeConfirm();
+          setIsOpen(false);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setConfirmState((prev) => ({ ...prev, isLoading: false }));
+        }
+      },
+    });
+  };
   useEffect(() => {
     // 在裡面定義，不要在外面定義
     const fetchArticles = async () => {
@@ -46,6 +83,7 @@ const Article = () => {
         mode="create"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        handleAskSave={handleAskSave}
       />
       <div className="space-y-4 mb-4 flex items-center justify-between">
         <Button
@@ -189,8 +227,18 @@ const Article = () => {
           </TableBody>
         </Table>
       </div>
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onOpenChange={(open) =>
+          setConfirmState((prev) => ({ ...prev, isOpen: open }))
+        }
+        title={confirmState.title}
+        message={confirmState.message}
+        isLoading={confirmState.isLoading}
+        onConfirm={confirmState.onConfirm}
+      />
     </>
   );
-};
+};;
 
 export default Article;

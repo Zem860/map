@@ -20,8 +20,17 @@ export type Articles = {
 }
 
 export type ArticleModalProps = {
-    isOpen: boolean;
-    article?:Article| null;
-    mode?:'create' | 'edit';
-    setIsOpen:(isOpen:boolean)=>void
-}
+  isOpen: boolean;
+  article?: Article | null;
+  mode?: 'create' | 'edit';
+  setIsOpen: (isOpen: boolean) => void;
+  handleAskSave:(data:Article)=>void
+};
+
+ export  type Confirmtype = {
+   isOpen: boolean;
+   title: string;
+   message: string;
+   isLoading: boolean;
+   onConfirm: () => void | Promise<void>; // 這裡定義為函式類型
+ };

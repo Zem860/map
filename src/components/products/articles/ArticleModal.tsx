@@ -12,7 +12,7 @@ import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X } from 'lucide-react';
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { cn } from '@/lib/utils';
 import type { ArticleModalProps, Article } from '@/type/articles'; // 你的型別路徑
 
@@ -21,11 +21,13 @@ export const ArticleModal = ({
   setIsOpen,
   article,
   mode = 'create',
+  handleAskSave,
 }: ArticleModalProps) => {
   const [tags, setTags] = useState<string[]>(article?.tag || []);
   const [formData, setFormData] = useState<Partial<Article>>(
     // 如果有 article 就用它，沒有就給空物件
-    article ? { ...article } : {})
+    article ? { ...article } : {},
+  );
   const [inputValue, setInputValue] = useState('');
 
   // 移除 Tag (使用 prev)
@@ -33,20 +35,18 @@ export const ArticleModal = ({
     setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
-    const handleInputChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        console.log(e.target.value)
-      const { name, value } = e.target
-      console.log(name)
-      setFormData((prev) => ({
-        ...prev,
-        [name]:value
-      }
-    )
-)
- console.log(formData)
-    }
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    console.log(e.target.value);
+    const { name, value } = e.target;
+    console.log(name);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(formData);
+  };
 
   // 鍵盤操作 (使用 prev)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,7 +68,8 @@ export const ArticleModal = ({
 
   const handleSave = () => {
     // TODO: 這裡呼叫你的 API，並帶上 tags
-    console.log('儲存資料:', { ...formData, tag: tags });
+    const data= { ...formData, tag: tags } as Article;
+    handleAskSave(data);
   };
 
   return (
