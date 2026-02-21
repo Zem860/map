@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import type { ArticleModalProps, Article } from '@/type/articles'; // 你的型別路徑
 import { FileInput } from 'lucide-react';
 import { useProductImages } from '../ProductModal/hooks/useProductImages';
+import { Switch } from '@/components/ui/switch';
 
 export const ArticleModal = ({
   isOpen,
@@ -33,12 +34,12 @@ export const ArticleModal = ({
   );
   const [inputValue, setInputValue] = useState('');
 
-  
+
   const images = useProductImages({
-  item: formData as Article,
-  isOpen,
-  maxImages: 4,
-})
+    item: formData as Article,
+    isOpen,
+    maxImages: 4,
+  })
 
   // 移除 Tag (使用 prev)
   const removeTag = (tagToRemove: string) => {
@@ -75,11 +76,15 @@ export const ArticleModal = ({
     }
   };
 
+  const handleSwitchChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, isPublic: checked }))
+  }
+
   const handleSave = async () => {
     console.log(formData, tags);
     // TODO: 這裡呼叫你的 API，並帶上 tags
-     let imageUrl = images.uploadedImages[0] || '';
-      console.log('imageUrl:', imageUrl);
+    let imageUrl = images.uploadedImages[0] || '';
+    console.log('imageUrl:', imageUrl);
     // 上傳待上傳的檔案
     if (images.selectedFiles.length > 0) {
       try {
@@ -90,29 +95,27 @@ export const ArticleModal = ({
         return;
       }
     }
-  const data = {
-    id: article?.id || '',              // 編輯時使用，建立時後端生成
-    title: formData.title || '',
-    description: formData.description || '',
-    image: imageUrl || '', // 只取第一張，作為封面
-    author: formData.author || '',       // 需要輸入欄位
-    content: formData.content || '',     // 需要輸入欄位
-    create_at: article?.create_at || Date.now(),
-    isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
-    tag: tags,
-    num: article?.num || 0,              // 編輯時保留
-  } as Article;
-      handleAskSave(data);
+    const data = {
+      id: article?.id || '',              // 編輯時使用，建立時後端生成
+      title: formData.title || '',
+      description: formData.description || '',
+      image: imageUrl || '', // 只取第一張，作為封面
+      author: formData.author || '',       // 需要輸入欄位
+      content: formData.content || '',     // 需要輸入欄位
+      create_at: article?.create_at || Date.now(),
+      isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
+      tag: tags,
+      num: article?.num || 0,              // 編輯時保留
+    } as Article;
+    handleAskSave(data);
   };
 
+
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={() => {
-        setIsOpen(!isOpen);
-      }}
-    >
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {/* 1. 稍微加寬 Dialog，並限制最大高度與 Flex 排版 */}
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-6">
+
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? '新增文章' : '編輯文章'}
@@ -121,61 +124,92 @@ export const ArticleModal = ({
             編輯文章標籤，輸入後按下 Enter 新增。
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            name="title"
-            value={formData?.title}
-            onChange={(e) => handleInputChange(e)}
-            placeholder="book title"
-          />
-        </div>
 
-        <div className="grid gap-4 py-2">
-          {/* 顯示與隱藏input，假裝div是input */}
-          <Label id="tags" htmlFor="tags">
-            Tags
-          </Label>
-          <div
-            className={cn(
-              'flex flex-wrap gap-2 p-2 border rounded-md bg-background min-h-[42px]',
-              'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary',
-              'cursor-text',
-            )}
-          >
-            {tags.map((tag, index) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className="gap-1 pr-1 text-sm font-normal"
-              >
-                {tag}
-                <button
-                  type="button"
-                  className="hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5 transition-colors focus:outline-none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeTag(tag);
-                  }}
-                >
-                  <X size={14} />
-                </button>
-              </Badge>
-            ))}
+        {/* 2. 將中間的表單內容包裝起來，加入 overflow-y-auto 讓它可捲動 */}
+        <div className="flex-1 overflow-y-auto pr-2 space-y-5">
 
-            <input
-              id="tags"
-              type="text"
-              className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[80px] text-sm h-6"
-              placeholder={tags.length === 0 ? '輸入標籤...' : ''}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
+          {/* 3. 將 Title, Author 與 Public 開關合併到 Grid 雙欄排版 */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                name="title"
+                value={formData?.title || ''}
+                onChange={handleInputChange}
+                placeholder="book title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="author">Author</Label>
+              <Input
+                id="author"
+                name="author"
+                value={formData?.author || ''}
+                onChange={handleInputChange}
+                placeholder="book author"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Label htmlFor="isPublic" className="mb-0">
+              Public
+            </Label>
+            <Switch
+              id="isPublic"
+              checked={formData.isPublic ?? false}
+              onCheckedChange={handleSwitchChange}
             />
           </div>
-        </div>
-        <div className="space-y-2">
+
+          {/* Tags */}
+          <div className="space-y-2">
+            <Label id="tags-label" htmlFor="tags">
+              Tags
+            </Label>
+            <div
+              className={cn(
+                'flex flex-wrap gap-2 p-2 border rounded-md bg-background min-h-[42px]',
+                'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary',
+                'cursor-text'
+              )}
+            >
+              {tags.map((tag, index) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="gap-1 pr-1 text-sm font-normal"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    className="hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5 transition-colors focus:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeTag(tag);
+                    }}
+                  >
+                    <X size={14} />
+                  </button>
+                </Badge>
+              ))}
+
+              <input
+                id="tags"
+                type="text"
+                className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[80px] text-sm h-6"
+                placeholder={tags.length === 0 ? '輸入標籤...' : ''}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+          </div>
+
+          {/* 圖片上傳 */}
+          <div className="space-y-2">
             <div className="flex gap-2">
               <input
                 ref={images.fileInputRef}
@@ -190,111 +224,110 @@ export const ArticleModal = ({
                 onClick={images.triggerFileInput}
                 disabled={images.isMax}
               >
-                <FileInput className="size-4" />
+                <FileInput className="size-4 mr-2" />
                 選擇圖片
               </Button>
             </div>
-        </div>
-        
-            {/* 圖片預覽 */}
-            <div className="space-y-2">
-              <Label>圖片預覽（儲存後才會上傳檔案）</Label>
-              <div className="grid grid-cols-2 gap-3">
-                {/* 已有 URL 圖 */}
-                {images.uploadedImages.map((image: string, index: number) => (
-                  <div
-                    key={`url-${index}`}
-                    className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
-                  >
-                    {index === 0 && (
-                      <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
-                        主圖
-                      </div>
-                    )}
 
-                    <img
-                      src={image}
-                      alt={`圖片 ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+            <Label className="text-xs text-muted-foreground">圖片預覽（儲存後才會上傳檔案）</Label>
 
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon-sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => images.deleteUrlImage(index)}
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  </div>
-                ))}
-
-                {/* 本次選檔 blob 預覽 */}
-                {images.selectedPreviews.map((p: string, i: number) => {
-                  const idx = images.uploadedImages.length + i
-                  return (
-                    <div
-                      key={`file-${i}`}
-                      className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
-                    >
-                      <img
-                        src={p}
-                        alt={`待上傳圖片 ${i + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-
-                      <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                        待上傳
-                      </div>
-
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon-sm"
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => images.deleteSelectedFile(i)}
-                      >
-                        <X className="size-4" />
-                      </Button>
+            {/* 這裡也可以改成橫向排列 grid-cols-4 節省垂直高度 */}
+            <div className="grid grid-cols-1 gap-3 mt-2">
+              {images.uploadedImages.map((image: string, index: number) => (
+                <div
+                  key={`url-${index}`}
+                  className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
+                >
+                  {index === 0 && (
+                    <div className="absolute top-1 left-1 z-10 bg-primary text-primary-foreground text-[10px] px-1 py-0.5 rounded-sm font-medium">
+                      主圖
                     </div>
-                  )
-                })}
-
-                {/* Placeholder */}
-                {Array.from({ length: 1- images.totalCount }).map((_, i) => (
-                  <div
-                    key={`placeholder-${i}`}
-                    className="aspect-square rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/30"
+                  )}
+                  <img
+                    src={image}
+                    alt={`圖片 ${index + 1}`}
+                    className="w-full h-full object-cover"
                   />
-                ))}
-              </div>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
+                    onClick={() => images.deleteUrlImage(index)}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+              ))}
+
+              {images.selectedPreviews.map((p: string, i: number) => (
+                <div
+                  key={`file-${i}`}
+                  className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
+                >
+                  <img
+                    src={p}
+                    alt={`待上傳圖片 ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-1 left-1 z-10 bg-black/60 text-white text-[10px] px-1 py-0.5 rounded">
+                    待上傳
+                  </div>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
+                    onClick={() => images.deleteSelectedFile(i)}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+              ))}
+
+              {Array.from({ length: 1 - images.totalCount }).map((_, i) => (
+                <div
+                  key={`placeholder-${i}`}
+                  className="aspect-square rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/30"
+                />
+              ))}
             </div>
-        <div className="space-y-2">
-          <Label htmlFor="content">Content</Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData?.description}
-            onChange={(e) => handleInputChange(e)}
-            placeholder="paste reader's thought"
-            rows={3}
-          ></Textarea>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData?.description || ''}
+              onChange={handleInputChange}
+              placeholder="paste article's thought"
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="content">Content</Label>
+            <Textarea
+              id="content"
+              name="content"
+              value={formData?.content || ''}
+              onChange={handleInputChange}
+              placeholder="paste reader's thought"
+              rows={4}
+            />
+          </div>
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setIsOpen(!isOpen);
-            }}
-          >
+        <DialogFooter className="gap-2 pt-4 mt-auto">
+          <Button variant="outline" onClick={() => setIsOpen(false)}>
             取消
           </Button>
           <Button onClick={handleSave}>
             {mode === 'create' ? '發布' : '儲存'}
           </Button>
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   );

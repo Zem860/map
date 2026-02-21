@@ -43,7 +43,7 @@ export function useProductImages({
       return []
     })
     if (fileInputRef.current) fileInputRef.current.value = ""
-  }, [isOpen, item])
+  }, [isOpen])
 
   // 只要preview那個有變動的話記得要把blob清掉因為blob會站瀏覽器記憶體
   useEffect(() => {
