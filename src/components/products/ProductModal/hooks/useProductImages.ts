@@ -21,11 +21,20 @@ export function useProductImages({
 
   // 保證圖片在打開或關閉的情況會清理掉原來的檔案
   useEffect(() => {
-    if (item) {
-      setUploadedImages((item.imagesUrl || []).filter((u) => u !== ""))
-    } else {
-      setUploadedImages([])
+    const normalizeImages = (): string[] => {
+      if (!item) return []
+      // 若有 imagesUrl 且為陣列，直接使用
+      if (Array.isArray((item as any).imagesUrl)) {
+        return (item as any).imagesUrl.filter((u: string) => !!u)
+      }
+      // 否則若有單一 image 字串，包成陣列
+      if ((item as any).image) {
+        return [(item as any).image].filter((u: string) => !!u)
+      }
+      return []
     }
+
+    setUploadedImages(normalizeImages())
 
     setImageUrlInput("")
     setSelectedFiles([])
@@ -34,7 +43,7 @@ export function useProductImages({
       return []
     })
     if (fileInputRef.current) fileInputRef.current.value = ""
-  }, [isOpen])
+  }, [isOpen, item])
 
   // 只要preview那個有變動的話記得要把blob清掉因為blob會站瀏覽器記憶體
   useEffect(() => {
@@ -147,6 +156,6 @@ export function useProductImages({
 
     uploadSelectedFiles,
     // clearSelectedFiles,
-    clearAllImages, 
+    clearAllImages,
   }
 }

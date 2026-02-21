@@ -1,3 +1,4 @@
+import type { Article } from "./articles"
 export type SidebarDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
