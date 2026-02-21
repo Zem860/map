@@ -36,7 +36,7 @@ export const ProductModal = ({
   })
 
   const images = useProductImages({
-    product: normalizedProduct,
+    item: normalizedProduct,
     isOpen,
     maxImages: 4,
   })
