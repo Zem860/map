@@ -15,6 +15,8 @@ import { X } from 'lucide-react';
 import { useState, type ChangeEvent } from 'react';
 import { cn } from '@/lib/utils';
 import type { ArticleModalProps, Article } from '@/type/articles'; // 你的型別路徑
+import { FileInput } from 'lucide-react';
+import { useProductImages } from '../ProductModal/hooks/useProductImages';
 
 export const ArticleModal = ({
   isOpen,
@@ -23,12 +25,20 @@ export const ArticleModal = ({
   mode = 'create',
   handleAskSave,
 }: ArticleModalProps) => {
+
   const [tags, setTags] = useState<string[]>(article?.tag || []);
   const [formData, setFormData] = useState<Partial<Article>>(
     // 如果有 article 就用它，沒有就給空物件
     article ? { ...article } : {},
   );
   const [inputValue, setInputValue] = useState('');
+
+  
+  const images = useProductImages({
+  item: formData as Article,
+  isOpen,
+  maxImages: 4,
+})
 
   // 移除 Tag (使用 prev)
   const removeTag = (tagToRemove: string) => {
@@ -38,7 +48,6 @@ export const ArticleModal = ({
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    console.log(e.target.value);
     const { name, value } = e.target;
     console.log(name);
     setFormData((prev) => ({
@@ -66,10 +75,34 @@ export const ArticleModal = ({
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    console.log(formData, tags);
     // TODO: 這裡呼叫你的 API，並帶上 tags
-    const data= { ...formData, tag: tags } as Article;
-    handleAskSave(data);
+     let imageUrl = images.uploadedImages[0] || '';
+      console.log('imageUrl:', imageUrl);
+    // 上傳待上傳的檔案
+    if (images.selectedFiles.length > 0) {
+      try {
+        const urls = await images.uploadSelectedFiles();
+        imageUrl = urls[0];
+      } catch (error) {
+        alert('上傳失敗');
+        return;
+      }
+    }
+  const data = {
+    id: article?.id || '',              // 編輯時使用，建立時後端生成
+    title: formData.title || '',
+    description: formData.description || '',
+    image: imageUrl || '', // 只取第一張，作為封面
+    author: formData.author || '',       // 需要輸入欄位
+    content: formData.content || '',     // 需要輸入欄位
+    create_at: article?.create_at || Date.now(),
+    isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
+    tag: tags,
+    num: article?.num || 0,              // 編輯時保留
+  } as Article;
+      handleAskSave(data);
   };
 
   return (
@@ -142,6 +175,101 @@ export const ArticleModal = ({
             />
           </div>
         </div>
+        <div className="space-y-2">
+            <div className="flex gap-2">
+              <input
+                ref={images.fileInputRef}
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={images.handleFileChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={images.triggerFileInput}
+                disabled={images.isMax}
+              >
+                <FileInput className="size-4" />
+                選擇圖片
+              </Button>
+            </div>
+        </div>
+        
+            {/* 圖片預覽 */}
+            <div className="space-y-2">
+              <Label>圖片預覽（儲存後才會上傳檔案）</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {/* 已有 URL 圖 */}
+                {images.uploadedImages.map((image: string, index: number) => (
+                  <div
+                    key={`url-${index}`}
+                    className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
+                  >
+                    {index === 0 && (
+                      <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
+                        主圖
+                      </div>
+                    )}
+
+                    <img
+                      src={image}
+                      alt={`圖片 ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon-sm"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => images.deleteUrlImage(index)}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                ))}
+
+                {/* 本次選檔 blob 預覽 */}
+                {images.selectedPreviews.map((p: string, i: number) => {
+                  const idx = images.uploadedImages.length + i
+                  return (
+                    <div
+                      key={`file-${i}`}
+                      className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
+                    >
+                      <img
+                        src={p}
+                        alt={`待上傳圖片 ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+
+                      <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                        待上傳
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon-sm"
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => images.deleteSelectedFile(i)}
+                      >
+                        <X className="size-4" />
+                      </Button>
+                    </div>
+                  )
+                })}
+
+                {/* Placeholder */}
+                {Array.from({ length: 1- images.totalCount }).map((_, i) => (
+                  <div
+                    key={`placeholder-${i}`}
+                    className="aspect-square rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/30"
+                  />
+                ))}
+              </div>
+            </div>
         <div className="space-y-2">
           <Label htmlFor="content">Content</Label>
           <Textarea
