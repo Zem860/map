@@ -14,7 +14,7 @@ import Payment from "./Page/public/Payment"
 import About from "./Page/About"
 import Articles from "./Page/public/Articles"
 import ArticlePage from "./Page/public/ArticlePage"
-import Article from "./Page/admin/Article"
+import ArticleAdmin from "./Page/admin/ArticleAdmin"
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
 const App = () => {
   return (
@@ -52,7 +52,7 @@ const App = () => {
           {/* /admin/products */}
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrder />} />
-          <Route path="articles" element={<Article />} />
+          <Route path="articles" element={<ArticleAdmin />} />
         </Route>
 
         {/* 404 */}

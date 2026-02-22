@@ -25,7 +25,7 @@ import { Plus } from 'lucide-react';
 import ArticleModal from '@/components/products/articles/ArticleModal';
 import { createArticle } from '@/api/folder_admin/articles';
 import { Loader } from '@/components/Loader';
-const Article = () => {
+const ArticleAdmin = () => {
   const addToast = useToastStore((state) => state.addToast);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [article, setArticle] = useState<Article | null>(null);
@@ -324,4 +324,4 @@ const Article = () => {
   );
 };;
 
-export default Article;
+export default ArticleAdmin;
