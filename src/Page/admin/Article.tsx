@@ -24,7 +24,6 @@ import { Plus } from 'lucide-react';
 import ArticleModal from '@/components/products/articles/ArticleModal';
 import { createArticle } from '@/api/folder_admin/articles';
 import { Loader } from '@/components/Loader';
-import { set } from 'date-fns';
 const Article = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [article, setArticle] = useState<Article>();
@@ -68,8 +67,8 @@ const Article = () => {
         setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
           await createArticle(formData);
-          closeConfirm();
           fetchArticles(); // 儲存成功後重新抓取文章列表
+          closeConfirm(); // 關閉確認對話框
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
           let errorMsg = '保存失敗';
@@ -81,10 +80,9 @@ const Article = () => {
                 : axiosErr.response.data.message;
             }
           }
-          setConfirmState((prev) => ({ ...prev, error: errorMsg }));
+          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
         } finally {
           setIsOpen(false); // 關閉 ArticleModal
-          closeConfirm();
         }
       },
     });
