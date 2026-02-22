@@ -42,7 +42,7 @@ export const ArticleModal = ({
       setFormData({});
       setTags([]);
     }
-  }, [article]);
+  }, [article, isOpen]);
 
   const images = useProductImages({
     item: article as Article||null,

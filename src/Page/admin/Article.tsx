@@ -56,8 +56,16 @@ const Article = () => {
     }
   };
 
-  const openEditModal = async (item: Article) => {
+  
+
+  const openModal = async (item: Article|null) => {
     try {
+      if (!item) {
+        setArticle(null);
+        setIsOpen(true);
+        setMode('create');
+        return;
+      }
       const res = await getSingleArticle(item.id);
       setArticle(res.data.article);
       setIsOpen(true);
@@ -115,7 +123,9 @@ const Article = () => {
         <div className="space-y-4 mb-4 flex items-center justify-between">
           <Button
             onClick={() => {
-              setIsOpen(!isOpen);
+              setArticle(null);        // ✅ 清空 article
+              setMode('create');       // ✅ 設定為新增模式
+              setIsOpen(true);         // ✅ 打開 Modal
             }}
             className="ml-auto bg-primary hover:bg-primary/90"
           >
@@ -237,7 +247,7 @@ const Article = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          onClick={() => { openEditModal(item) }}
+                          onClick={() => { openModal(item) }}
                         >
                           編輯
                         </DropdownMenuItem>
