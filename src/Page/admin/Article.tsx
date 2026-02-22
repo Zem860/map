@@ -2,6 +2,7 @@ import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
 import { getArticles } from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
+import type { AxiosError } from 'axios';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,17 +22,18 @@ import {
 } from '@/components/ui/table';
 import { Plus } from 'lucide-react';
 import ArticleModal from '@/components/products/articles/ArticleModal';
-
+import { createArticle } from '@/api/folder_admin/articles';
 const Article = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [article, setArticle] = useState<Article>();
   const [articles, setArticles] = useState<Article[]>([]);
 
-  const [confirmState, setConfirmState] = useState<Confirmtype>({
+  const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
     isOpen: false,
     title: '',
     message: '',
     isLoading: false,
+    error: '', // 用來存错误信息
     onConfirm: () => {},
   });
 const closeConfirm = () => {
@@ -45,18 +47,27 @@ const closeConfirm = () => {
       title: '確認儲存',
       message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
       isLoading: false,
+      error: '', // 清空之前的错误
       onConfirm: async () => {
         // 真正打 API 的地方
-        setConfirmState((prev) => ({ ...prev, isLoading: true }));
+        setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
           console.log('正在發送 API...', formData);
-          // await api.post('/articles', formData)
-
-          // 成功後：關閉所有彈窗
+          await createArticle(formData);
           closeConfirm();
           setIsOpen(false);
-        } catch (err) {
-          console.error(err);
+        } catch (err: unknown) {
+          // 將後端錯誤信息顯示在 Modal 中
+          let errorMsg = '保存失敗';
+          if (err && typeof err === 'object' && 'response' in err) {
+            const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+            if (axiosErr.response?.data?.message) {
+              errorMsg = Array.isArray(axiosErr.response.data.message)
+                ? axiosErr.response.data.message.join('\n')
+                : axiosErr.response.data.message;
+            }
+          }
+          setConfirmState((prev) => ({ ...prev, error: errorMsg }));
         } finally {
           setConfirmState((prev) => ({ ...prev, isLoading: false }));
         }
@@ -235,6 +246,7 @@ const closeConfirm = () => {
         title={confirmState.title}
         message={confirmState.message}
         isLoading={confirmState.isLoading}
+        error={confirmState.error}
         onConfirm={confirmState.onConfirm}
       />
     </>

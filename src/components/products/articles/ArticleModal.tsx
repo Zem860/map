@@ -102,7 +102,7 @@ export const ArticleModal = ({
       image: imageUrl || '', // 只取第一張，作為封面
       author: formData.author || '',       // 需要輸入欄位
       content: formData.content || '',     // 需要輸入欄位
-      create_at: article?.create_at || Date.now(),
+      create_at: article?.create_at || Math.floor(Date.now() / 1000),
       isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
       tag: tags,
       num: article?.num || 0,              // 編輯時保留
