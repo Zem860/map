@@ -1,6 +1,6 @@
 import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
-import { getArticles, getSingleArticle, editArticle } from '@/api/folder_admin/articles';
+import { getArticles, getSingleArticle, editArticle, deleteArticle } from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { AxiosError } from 'axios';
 import {
@@ -71,6 +71,39 @@ const Article = () => {
     }
     catch (err) { console.error(err) }
   };
+
+  const deleteThisArticle = async (id: string, title: string) => {
+    setConfirmState({
+      isOpen: true,
+      title: '確認刪除',
+      message: `您確定要刪除${title}嗎?`,
+      isLoading: false,
+      error: '', // 清空之前的错误
+      onConfirm: async () => {
+        // 真正打 API 的地方
+        setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
+        try {
+          await deleteArticle(id);
+          fetchArticles(); // 儲存成功後重新抓取文章列表
+          closeConfirm(); // 關閉確認對話框
+        } catch (err: unknown) {
+          // 將後端錯誤信息顯示在 Modal 中
+          let errorMsg = '保存失敗';
+          if (err && typeof err === 'object' && 'response' in err) {
+            const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+            if (axiosErr.response?.data?.message) {
+              errorMsg = Array.isArray(axiosErr.response.data.message)
+                ? axiosErr.response.data.message.join('\n')
+                : axiosErr.response.data.message;
+            }
+          }
+          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+        } finally {
+          setIsOpen(false); // 關閉 ArticleModal
+        }
+      },
+    });
+  }
 
   const handleAskSave = (formData: Article) => {
     setConfirmState({
@@ -258,7 +291,7 @@ const Article = () => {
                           編輯
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                        // onClick={() => askDelete(item.id, item.title)}
+                        onClick={() => deleteThisArticle(item.id, item.title)}
                         >
                           刪除
                         </DropdownMenuItem>

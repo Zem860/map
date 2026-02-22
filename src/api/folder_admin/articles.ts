@@ -16,3 +16,7 @@ export const getSingleArticle:getSingleArticleFunc = (id:string)=>baseApi.get(`/
 type editArticleFunc = (id:string, params:Article)=>Promise<AxiosResponse<MesssageResponse>>
 export const editArticle: editArticleFunc = (id, params) =>
   baseApi.put(`/admin/article/${id}`, { data: params })
+
+type deleteArticleFunc = (id:string)=>Promise<AxiosResponse<MesssageResponse>>
+export const deleteArticle: deleteArticleFunc = (id) =>
+  baseApi.delete(`/admin/article/${id}`)
