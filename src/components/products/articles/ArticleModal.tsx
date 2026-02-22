@@ -12,7 +12,7 @@ import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { ArticleModalProps, Article } from '@/type/articles'; // 你的型別路徑
 import { FileInput } from 'lucide-react';
@@ -29,14 +29,23 @@ export const ArticleModal = ({
 
   const [tags, setTags] = useState<string[]>(article?.tag || []);
   const [formData, setFormData] = useState<Partial<Article>>(
-    // 如果有 article 就用它，沒有就給空物件
     article ? { ...article } : {},
   );
   const [inputValue, setInputValue] = useState('');
 
+  // 當 article 改變時，更新 formData 和 tags
+  useEffect(() => {
+    if (article) {
+      setFormData({ ...article });
+      setTags(article.tag || []);
+    } else {
+      setFormData({});
+      setTags([]);
+    }
+  }, [article]);
 
   const images = useProductImages({
-    item: formData as Article,
+    item: article as Article||null,
     isOpen,
     maxImages: 4,
   })
@@ -50,12 +59,10 @@ export const ArticleModal = ({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    console.log(name);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    console.log(formData);
   };
 
   // 鍵盤操作 (使用 prev)
@@ -81,7 +88,6 @@ export const ArticleModal = ({
   }
 
   const handleSave = async () => {
-    console.log(formData, tags);
     // TODO: 這裡呼叫你的 API，並帶上 tags
     let imageUrl = images.uploadedImages[0] || '';
     console.log('imageUrl:', imageUrl);

@@ -1,6 +1,6 @@
 import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
-import { getArticles } from '@/api/folder_admin/articles';
+import { getArticles, getSingleArticle } from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { AxiosError } from 'axios';
 import {
@@ -26,9 +26,10 @@ import { createArticle } from '@/api/folder_admin/articles';
 import { Loader } from '@/components/Loader';
 const Article = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [article, setArticle] = useState<Article>();
+  const [article, setArticle] = useState<Article | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [mode, setMode] = useState<'create' | 'edit'>('create');
 
   const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
     isOpen: false,
@@ -55,6 +56,16 @@ const Article = () => {
     }
   };
 
+  const openEditModal = async (item: Article) => {
+    try {
+      const res = await getSingleArticle(item.id);
+      setArticle(res.data.article);
+      setIsOpen(true);
+      setMode('edit');
+    }
+    catch (err) { console.error(err) }
+  };
+
   const handleAskSave = (formData: Article) => {
     setConfirmState({
       isOpen: true,
@@ -67,6 +78,7 @@ const Article = () => {
         setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
           await createArticle(formData);
+          console.log('文章儲存成功', formData);
           fetchArticles(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
         } catch (err: unknown) {
@@ -94,22 +106,23 @@ const Article = () => {
     <>
       <ArticleModal
         article={article}
-        mode="create"
+        mode={mode}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         handleAskSave={handleAskSave}
       />
-      {isLoading ? <Loader /> : (<>      <div className="space-y-4 mb-4 flex items-center justify-between">
-        <Button
-          onClick={() => {
-            setIsOpen(!isOpen);
-          }}
-          className="ml-auto bg-primary hover:bg-primary/90"
-        >
-          <Plus className="size-4" />
-          Create an Article
-        </Button>
-      </div>
+      {isLoading ? <Loader /> : (<>
+        <div className="space-y-4 mb-4 flex items-center justify-between">
+          <Button
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+            className="ml-auto bg-primary hover:bg-primary/90"
+          >
+            <Plus className="size-4" />
+            Create an Article
+          </Button>
+        </div>
         <div className="grid gap-3 md:hidden">
           {articles?.map((item) => (
             <div
@@ -224,7 +237,7 @@ const Article = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                        //   onClick={() => openEditModal(item)}
+                          onClick={() => { openEditModal(item) }}
                         >
                           編輯
                         </DropdownMenuItem>

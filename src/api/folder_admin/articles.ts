@@ -9,3 +9,6 @@ export const getArticles: getArticlesFunc = (params:{page?:number})=>baseApi.get
 
 type createArticleFunc = (params:Article)=>Promise<AxiosResponse<MesssageResponse>>
 export const createArticle:createArticleFunc = (params:Article)=>baseApi.post('/admin/article', {data:params})
+
+type getSingleArticleFunc = (id:string)=>Promise<AxiosResponse<{article:Article}>>
+export const getSingleArticle:getSingleArticleFunc = (id:string)=>baseApi.get(`/admin/article/${id}`)
