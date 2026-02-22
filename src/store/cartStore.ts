@@ -2,7 +2,7 @@
 import { create } from "zustand"
 import type { CartData, CartItem, Step, UpdateQtyParams } from "@/type/cart"
 import { getCart,postCart,deleteProductFromCartFunc, updateCartQtyFunc, clearCart } from "@/api/folder_user/cart" 
-
+import { useToastStore } from "./toastStore"
 type CartStore = {
   count: number
   carts: CartData
@@ -45,6 +45,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true, error: undefined })
     try {
       await postCart({ product_id:productId, qty });
+      const addToast = useToastStore.getState().addToast;
+      addToast("add to cart", "book", "success");
       await get().fetchCart()
       set({ isLoading: false })
     } catch (err) {
