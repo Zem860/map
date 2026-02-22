@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getArticles, getSingleArticle, editArticle, deleteArticle } from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { AxiosError } from 'axios';
+import { useToastStore } from '@/store/toastStore';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ import ArticleModal from '@/components/products/articles/ArticleModal';
 import { createArticle } from '@/api/folder_admin/articles';
 import { Loader } from '@/components/Loader';
 const Article = () => {
+  const addToast = useToastStore((state) => state.addToast);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [article, setArticle] = useState<Article | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -86,9 +88,10 @@ const Article = () => {
           await deleteArticle(id);
           fetchArticles(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
+          addToast('delete', 'article', 'success'); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
-          let errorMsg = '保存失敗';
+          let errorMsg = '刪除失敗';
           if (err && typeof err === 'object' && 'response' in err) {
             const axiosErr = err as AxiosError<{ message?: string | string[] }>;
             if (axiosErr.response?.data?.message) {
@@ -128,6 +131,8 @@ const Article = () => {
           }
           fetchArticles(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
+          addToast(`${mode === 'create' ? 'create' : 'modify'}`, 'article', 'success'); // 成功後關閉 ProductModal
+
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
           let errorMsg = '保存失敗';
@@ -291,7 +296,7 @@ const Article = () => {
                           編輯
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                        onClick={() => deleteThisArticle(item.id, item.title)}
+                          onClick={() => deleteThisArticle(item.id, item.title)}
                         >
                           刪除
                         </DropdownMenuItem>
