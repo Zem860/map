@@ -1,6 +1,6 @@
 import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
-import { getArticles, getSingleArticle } from '@/api/folder_admin/articles';
+import { getArticles, getSingleArticle, editArticle } from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { AxiosError } from 'axios';
 import {
@@ -56,9 +56,7 @@ const Article = () => {
     }
   };
 
-  
-
-  const openModal = async (item: Article|null) => {
+  const openModal = async (item: Article | null) => {
     try {
       if (!item) {
         setArticle(null);
@@ -85,8 +83,16 @@ const Article = () => {
         // 真正打 API 的地方
         setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
-          await createArticle(formData);
-          console.log('文章儲存成功', formData);
+          switch (mode) {
+            case 'create':
+              await createArticle(formData);
+              console.log('文章儲存成功', formData);
+              break;
+            case 'edit':
+              await editArticle(formData.id, formData);
+              console.log('文章編輯成功', formData);
+              break;
+          }
           fetchArticles(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
         } catch (err: unknown) {
