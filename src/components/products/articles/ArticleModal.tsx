@@ -143,7 +143,7 @@ export const ArticleModal = ({
                 name="title"
                 value={formData?.title || ''}
                 onChange={handleInputChange}
-                placeholder="book title"
+                placeholder="article title"
               />
             </div>
 
@@ -154,7 +154,7 @@ export const ArticleModal = ({
                 name="author"
                 value={formData?.author || ''}
                 onChange={handleInputChange}
-                placeholder="book author"
+                placeholder="article author"
               />
             </div>
           </div>
@@ -206,7 +206,7 @@ export const ArticleModal = ({
                 id="tags"
                 type="text"
                 className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[80px] text-sm h-6"
-                placeholder={tags.length === 0 ? '輸入標籤...' : ''}
+                placeholder={tags.length === 0 ? 'enter tags...' : ''}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
