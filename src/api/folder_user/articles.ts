@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 import type { Article } from "@/type/articles";
+import type{ GetArticlesResponse } from '@/type/response';
 
 import { baseApi } from "../api";
 
