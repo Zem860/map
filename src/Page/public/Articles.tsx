@@ -198,14 +198,6 @@ const Articles = () => {
             </div>
           )}
         </div>
-
-        <footer className="border-t py-12 bg-background mt-12">
-          <div className="container">
-            <div className="text-center text-sm text-muted-foreground">
-              <p>2025 Literary Haven. Free shipping worldwide on all orders.</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </>
   );
