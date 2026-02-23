@@ -2,7 +2,6 @@ import { useProductStore } from "@/store/productStore";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
-import { se } from "date-fns/locale";
 
 const CategoryMenu = ({ selected, handleCategoryChange }:{selected:string, handleCategoryChange: (category:string) => void }) => {
   const books = useProductStore((s) => s.products)
