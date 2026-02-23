@@ -11,11 +11,14 @@ const Navbar = () => {
                     <BookOpen className='h-6 w-6 text-primary' />
                     <span className='text-xl font-serif font-bold text-foreground'>Books</span>
                 </Link>
-                <nav className='flex items-center gap-6 text-sm font-medium'>
+                <nav className='hidden sm:flex items-center gap-6 text-sm font-medium'>
                     <Link to="/" className="text-foreground hover:text-primary transition-colors">
                     </Link>
                     <Link to="/shop" className='text-foreground hover:text-primary transition-colors'>
                         Shop
+                    </Link>
+                    <Link to="/articles" className='text-foreground hover:text-primary transition-colors'>
+                        Articles
                     </Link>
                     <Link to="/about" className='text-foreground hover:text-primary transition-colors'>
                         About

@@ -90,7 +90,6 @@ const Home = () => {
                       <p className="text-center text-muted-foreground">Fetching Articles...</p>
                     ) :
                     (
-
                       articles?.map((article) => (
                         <Link key={article.id} to={`/articles/${article.id}`} className="block group">
                           <div className="border rounded-lg p-4 hover:border-primary hover:bg-primary/5 transition-all">
@@ -161,7 +160,7 @@ const Home = () => {
               </h2>
               <p className="text-muted-foreground">The most popular books this week</p>
             </div>
-            <Button variant="ghost" className="hidden md:flex">
+            <Button variant="ghost" onClick={() => navigate('/shop')} className="hidden md:flex cursor-pointer">
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

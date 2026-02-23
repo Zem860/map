@@ -43,7 +43,7 @@ const Footer = () => {
 
         {/* 底部一條線與版權 */}
         <div className="border-t mt-10 pt-6 text-center text-xs text-muted-foreground">
-          <p>© {currentYear} Literary Haven. 靜享閱讀時光。</p>
+          <p>© {currentYear} Books. Enjoy Reading.</p>
         </div>
       </div>
     </footer>
