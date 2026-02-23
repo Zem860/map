@@ -14,19 +14,22 @@ import { useState } from "react";
 import { Calendar } from "lucide-react";
 import type { Article } from "@/type/articles";
 import { getArticles } from "@/api/folder_user/articles";
+import { useNavigate } from "react-router-dom";
+
+
 const Home = () => {
   const [articles, setArticles] = useState<Article[]>([])
   const featuredCategories = [
-    { label: "Literature", icon: "📖", hint: "Classics & Modern" },
-    { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds" },
-    { label: "History & Biography", icon: "🏛️", hint: "Real Stories" },
-    { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age" },
+    { label: "Literature", icon: "📖", hint: "Classics & Modern", category: "Classic" },
+    { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds", category: "Sci-Fi" },
+    { label: "History & Biography", icon: "🏛️", hint: "Real Stories", category: "History" },
+    { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age", category: "Young Adult" },
   ]
   const fetchProducts = useProductStore((s) => s.fetchAllProduct)
   const isLoading = useProductStore((s) => s.isLoading)
   const products = useProductStore((s) => s.products)
+  const navigate = useNavigate()
   useEffect(() => {
-
     fetchProducts()
     getArticles({ page: 1 }).then((response) => {
       setArticles(response.data.articles.slice(0, 5))
@@ -81,30 +84,37 @@ const Home = () => {
                 <p className="text-muted-foreground text-sm">Discover insights and stories from the literary world</p>
               </CardHeader>
               <CardContent className="space-y-4">
-                {articles.map((article) => (
-                  <Link key={article.id} to={`/articles/${article.id}`} className="block group">
-                    <div className="border rounded-lg p-4 hover:border-primary hover:bg-primary/5 transition-all">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{article.description}</p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(article.create_at * 1000).toLocaleDateString()}
-                        </div>
-                        {article.tag && article.tag.length > 0 && (
-                          <Badge variant="secondary" className="text-xs">
-                            {article.tag[0]}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                {
+                  articles.length === 0 ?
+                    (
+                      <p className="text-center text-muted-foreground">Fetching Articles...</p>
+                    ) :
+                    (
+
+                      articles?.map((article) => (
+                        <Link key={article.id} to={`/articles/${article.id}`} className="block group">
+                          <div className="border rounded-lg p-4 hover:border-primary hover:bg-primary/5 transition-all">
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
+                                {article.title}
+                              </h3>
+                              <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
+                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{article.description}</p>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
+                                {new Date(article.create_at * 1000).toLocaleDateString()}
+                              </div>
+                              {article.tag && article.tag.length > 0 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {article.tag[0]}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      )))}
               </CardContent>
             </Card>
           </div>
@@ -121,6 +131,7 @@ const Home = () => {
 
             {featuredCategories.map((c) => (
               <Button
+                onClick={() => navigate(`/shop?category=${c.category}`)}
                 key={c.label}
                 variant="outline"
                 className="

@@ -7,12 +7,13 @@ import { PaginationDemo } from "@/components/util/Pagination";
 import { BookCard } from "@/components/products/BookCard";
 import { productContentParser } from "@/helper/tool";
 import { Loader } from "@/components/Loader";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const Shop = () => {
+    const [searchParams] = useSearchParams();
     const [pageData, setPageData] = useState<PaginationParam>({
         page: 1,
-        category: "",
+        category:searchParams.get("category") || "",
     });
 
     const flexProducts = useProductStore((state) => state.flexProducts);
@@ -20,6 +21,7 @@ const Shop = () => {
     const pagination = useProductStore((state) => state.pagination);
 
     useEffect(() => {
+        console.log("Fetching products with params:", pageData);
         useProductStore.getState().fetchByCategory({
             category: pageData.category,
             page: pageData.page
