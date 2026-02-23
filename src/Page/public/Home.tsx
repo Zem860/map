@@ -14,19 +14,22 @@ import { useState } from "react";
 import { Calendar } from "lucide-react";
 import type { Article } from "@/type/articles";
 import { getArticles } from "@/api/folder_user/articles";
+import { useNavigate } from "react-router-dom";
+
+
 const Home = () => {
   const [articles, setArticles] = useState<Article[]>([])
   const featuredCategories = [
-    { label: "Literature", icon: "📖", hint: "Classics & Modern" },
-    { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds" },
-    { label: "History & Biography", icon: "🏛️", hint: "Real Stories" },
-    { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age" },
+    { label: "Literature", icon: "📖", hint: "Classics & Modern", category: "Classic" },
+    { label: "Science Fiction", icon: "🚀", hint: "Speculative Worlds", category: "Sci-Fi" },
+    { label: "History & Biography", icon: "🏛️", hint: "Real Stories", category: "History" },
+    { label: "Young Adult", icon: "🧑‍🎓", hint: "Coming of Age", category: "Young Adult" },
   ]
   const fetchProducts = useProductStore((s) => s.fetchAllProduct)
   const isLoading = useProductStore((s) => s.isLoading)
   const products = useProductStore((s) => s.products)
+  const navigate = useNavigate()
   useEffect(() => {
-
     fetchProducts()
     getArticles({ page: 1 }).then((response) => {
       setArticles(response.data.articles.slice(0, 5))
@@ -128,6 +131,7 @@ const Home = () => {
 
             {featuredCategories.map((c) => (
               <Button
+                onClick={() => navigate(`/shop?category=${c.category}`)}
                 key={c.label}
                 variant="outline"
                 className="
