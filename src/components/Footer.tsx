@@ -1,115 +1,53 @@
+import { Link } from 'react-router-dom';
+
 const Footer = () => {
-    return ( 
-    <footer className="border-t py-12 bg-background mt-5">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold mb-4">Shop</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Classics
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contemporary
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Poetry
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Drama
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Help</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Shipping Info
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Returns
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contact Us
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">About</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Our Story
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Press
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Blog
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Connect</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Newsletter
-                  </a>
-                </li>
-              </ul>
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="border-t py-12 bg-background mt-10">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+
+          {/* 左側：品牌名稱與簡單介紹 */}
+          <div className="space-y-4">
+            <h2 className="font-serif font-bold text-xl tracking-tight text-primary">Books</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Find peace in words, meet yourself in stories, and share your journey.<br />
+              **Curated titles with free shipping on every story.**
+            </p>
+          </div>
+
+          {/* 中間：導覽連結 */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-semibold text-sm uppercase tracking-wider">Quick Navigation</h3>
+            <nav className="flex flex-col space-y-2 text-sm text-muted-foreground">
+              <Link to="/shop" className="hover:text-primary transition-colors">Products</Link>
+              <Link to="/articles" className="hover:text-primary transition-colors">Articles</Link>
+              <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
+            </nav>
+          </div>
+
+          {/* 右側：聯繫方式 */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="font-semibold text-sm uppercase tracking-wider">Contact Us</h3>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>Email: hello@books.com</p>
+              <div className="flex justify-center md:justify-start space-x-4 pt-2">
+                <a href="#" className="hover:text-primary">Instagram</a>
+                <a href="#" className="hover:text-primary">Facebook</a>
+              </div>
             </div>
           </div>
-          <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2025 Literary Haven. Free shipping worldwide on all orders.</p>
-          </div>
+
         </div>
-      </footer>
-   );
-}
- 
+
+        {/* 底部一條線與版權 */}
+        <div className="border-t mt-10 pt-6 text-center text-xs text-muted-foreground">
+          <p>© {currentYear} Literary Haven. 靜享閱讀時光。</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
 export default Footer;
