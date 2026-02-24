@@ -63,4 +63,5 @@ export type CustomerOrderApiResponse = {
 export type GetArticlesResponse = {
   articles: Article[];
   total: number;
+  pagination: PaginationData;
 };

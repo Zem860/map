@@ -13,7 +13,7 @@ const BreadCrumb = ({ lastLabel }: BreadCrumbProps) => {
   );
 
   return (
-    <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+    <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
       {/* Home */}
       <NavLink to="/" className="hover:text-foreground">
         Home
