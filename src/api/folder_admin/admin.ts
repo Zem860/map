@@ -46,6 +46,7 @@ adminApi.interceptors.response.use(
 )
 
 export const apiUserLogin = (params:{username:string, password:string})=>adminApi.post(`admin/signin`, params)
+export const apiUserLogout = () => adminApi.post(`/logout`)
 
 
 

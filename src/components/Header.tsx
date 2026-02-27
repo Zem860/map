@@ -11,21 +11,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { apiUserLogout } from "@/api/folder_admin/admin"
 import axios from "axios"
 
 export function AdminHeader() {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const handleLogout = () => {
-    //測試過程中有遇到如果按上一頁cookie在同一個瀏覽器中某些路徑作用域還是存在
-    // 故改成刪除cookie的方式來確保登出後token不會存在，實際上應該是要讓後端的token失效才對
-    //Max-Age=0 代表立即過期，path=/ 代表整個網站都會刪除這個cookie，SameSite=Lax 是為了CSRF安全性而考量，確保在跨站請求時不會攜帶這個cookie
-    document.cookie = "hexToken=; Max-Age=0; path=/; SameSite=Lax"; 
-    //同步清除axio記憶體防止幽靈登入，因為axios.defaults.headers.common["Authorization"] 是全局設定，如果不清除，可能會導致在登出後的某些情況下仍然攜帶舊的token，造成安全風險或錯誤行為
-    axios.defaults.headers.common["Authorization"] = "";
-    // 登出後導向登入頁面，replace: true 代表不會在瀏覽歷史中留下這次導航的記錄，使用者無法按瀏覽器的返回按鈕回到登出前的頁面
-    navigate("/login", {replace: true})
+  const handleLogout = async () => {
+    try {
+      // 向後端發送登出請求，讓後端知道用戶已經登出，可以在後端進行相應的處理，例如清除伺服器上的 session 或 token
+      await apiUserLogout();
+      console.log("登出成功");
+    } catch (error) {
+      console.error("登出失敗:", error);
+    } finally {
+      //測試過程中有遇到如果按上一頁cookie在同一個瀏覽器中某些路徑作用域還是存在
+      // 故改成刪除cookie的方式來確保登出後token不會存在，實際上應該是要讓後端的token失效才對
+      //Max-Age=0 代表立即過期，path=/ 代表整個網站都會刪除這個cookie，SameSite=Lax 是為了CSRF安全性而考量，確保在跨站請求時不會攜帶這個cookie
+      document.cookie = "hexToken=; Max-Age=0; path=/; SameSite=Lax";
+      //同步清除axio記憶體防止幽靈登入，因為axios.defaults.headers.common["Authorization"] 是全局設定，如果不清除，可能會導致在登出後的某些情況下仍然攜帶舊的token，造成安全風險或錯誤行為
+      axios.defaults.headers.common["Authorization"] = "";
+      // 登出後導向登入頁面，replace: true 代表不會在瀏覽歷史中留下這次導航的記錄，使用者無法按瀏覽器的返回按鈕回到登出前的頁面
+      navigate("/login", { replace: true })
+    }
+    // 刪除 cookie
+    document.cookie = "hexToken=; Max-Age=0; path=/; SameSite=Lax";
   }
 
   return (
