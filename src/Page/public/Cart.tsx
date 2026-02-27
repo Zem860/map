@@ -9,9 +9,15 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { productContentParser } from "@/helper/tool";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Check } from "lucide-react";
+import { apiApplyCoupon } from "@/api/folder_user/cart";
 import { useEffect, useState } from "react";
 
 const Cart = () => {
+    const [couponCode, setCouponCode] = useState<string>("");
+    const [discount, setDiscount] = useState<number>(0);
+    const [discountMsg, setDiscountMsg] = useState<string>("");
+    const [originalTotal, setOriginalTotal] = useState<number>(0);
     const cart = useCartStore((s) => s.carts);
     const removeItem = useCartStore((s) => s.removeFromCart);
     const editCartNum = useCartStore((s) => s.editCartNum);
@@ -22,7 +28,7 @@ const Cart = () => {
     //做使用者體驗好的增加商品數量和減少商品數量
     const [loadingIds, setLoadingIds] = useState<string[]>([]);
     const handleQtyChange = async (itemId: string, productId: string, newQty: number) => {
-        setLoadingIds(prev => [...prev, itemId]);     
+        setLoadingIds(prev => [...prev, itemId]);
         try {
             await editCartNum(itemId, { product_id: productId, qty: newQty });
         } finally {
@@ -30,9 +36,26 @@ const Cart = () => {
         }
     };
 
-    useEffect(()=>{
+    const useDiscount = async () => {
+        if (couponCode.trim() === "") {
+            setDiscountMsg("Please enter a coupon code.");
+            return;
+        }
+        // 這裡可以根據 couponCode 計算折扣金額，這只是示例邏輯
+        try {
+            const res = await apiApplyCoupon({ code: couponCode });
+            setDiscount(res.data.data.final_total / originalTotal * 100);
+            setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
+            useCartStore.getState().fetchCart();
+        } catch (err) {
+            setDiscountMsg("Failed to apply coupon. Please check the code and try again.");
+        }
+    }
+
+    useEffect(() => {
         console.log("cart changed", cart);
-    },[])
+        setOriginalTotal(cart.data.total);
+    }, [cart])
     // 檢查某商品是否正在 loading
     const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
     return (
@@ -83,9 +106,9 @@ const Cart = () => {
                                                 </div>
                                                 {/* Quantity */}
                                                 <div className="inline-flex items-center justify-between">
-                                                    <Qtybar 
-                                                        qty={item.qty} 
-                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)} 
+                                                    <Qtybar
+                                                        qty={item.qty}
+                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)}
                                                         loading={isItemLoading(item.id)}
                                                     />
                                                     <div className="text-right">
@@ -140,9 +163,9 @@ const Cart = () => {
                                             {/* Quantity */}
                                             <td className="py-6 text-center">
                                                 <div className="inline-flex mx-auto justify-center">
-                                                    <Qtybar 
-                                                        qty={item.qty} 
-                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)} 
+                                                    <Qtybar
+                                                        qty={item.qty}
+                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)}
                                                         loading={isItemLoading(item.id)}
                                                     />
                                                 </div>
@@ -193,43 +216,25 @@ const Cart = () => {
                                     <div className="flex gap-2 mb-4">
                                         <Input
                                             placeholder="Enter code"
-                                            // value={couponCode}
-                                            // onChange={(e) => setCouponCode(e.target.value)}
+                                            value={couponCode}
+                                            onChange={(e) => setCouponCode(e.target.value)}
                                             className="flex-1 border-border"
                                         />
                                         <Button onClick={() => {
-                                            //applycouponcode
+                                            useDiscount()
                                         }} size="sm">Apply</Button>
                                     </div>
-
-                                    <div className="space-y-2 text-sm">
-                                        <p className="text-muted-foreground">Available codes:</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            <button
-                                                onClick={() => {
-                                                    // setCouponCode("READING") 
-                                                }}
-                                                className="px-3 py-1 bg-secondary text-secondary-foreground rounded text-xs font-medium hover:bg-secondary/80 transition-colors"
-                                            >
-                                                READING (10%)
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    // setCouponCode("LITERATURE") 
-                                                }}
-                                                className="px-3 py-1 bg-secondary text-secondary-foreground rounded text-xs font-medium hover:bg-secondary/80 transition-colors"
-                                            >
-                                                LITERATURE (15%)
-                                            </button>
+                                    {discount > 0 ? (
+                                        <div className="mt-4 flex items-center gap-2 text-sm text-primary">
+                                            <Check className="h-4 w-4" />
+                                            <span>{discountMsg}</span>
                                         </div>
-                                    </div>
-
-                                    {/* {appliedCoupon && (
-                  <div className="mt-4 flex items-center gap-2 text-sm text-primary">
-                    <Check className="h-4 w-4" />
-                    <span>Coupon "{appliedCoupon}" applied</span>
-                  </div>
-                )} */}
+                                    ) : discountMsg &&
+                                    (<div className="mt-4 flex items-center gap-2 text-sm text-destructive">
+                                        <X className="h-4 w-4" />
+                                        <span>{discountMsg}</span>
+                                    </div>)
+                                    }
                                 </CardContent>
                             </Card>
 
@@ -241,16 +246,19 @@ const Cart = () => {
                                     <div className="space-y-3 text-sm">
                                         <div className="flex justify-between py-2 border-b border-border">
                                             <span className="text-muted-foreground">Subtotal ({totalItems} items)</span>
-                                            <span className="font-medium text-foreground">${(123).toFixed(0)}</span>
+                                            {/* 直接使用 cart 內的原始總額 */}
+                                            <span className="font-medium text-foreground">${cart.data.total.toFixed(0)}</span>
                                         </div>
 
-                                        {/* {discount > 0 && (
-                    <div className="flex justify-between py-2 border-b border-border text-primary">
-                      <span>Discount</span>
-                      <span className="font-medium">-${discount.toFixed(0)}</span>
-                    </div>
-                  )} */}
-
+                                        {/* 如果 final_total 小於 total，代表有折扣 */}
+                                        {cart.data.final_total < cart.data.total && (
+                                            <div className="flex justify-between py-2 border-b border-border text-primary">
+                                                <span>Discount Applied</span>
+                                                <span className="font-medium">
+                                                    -${(cart.data.total - cart.data.final_total).toFixed(0)}
+                                                </span>
+                                            </div>
+                                        )}
                                         <div className="flex justify-between py-2 border-b border-border">
                                             <span className="text-muted-foreground">Shipping</span>
                                             <span className="font-medium text-foreground">Free</span>
@@ -258,7 +266,10 @@ const Cart = () => {
 
                                         <div className="flex justify-between pt-3 text-lg">
                                             <span className="font-bold text-foreground">Total</span>
-                                            <span className="font-bold text-primary">${(cart.data.final_total).toFixed(0)}</span>
+                                            {/* 顯示最終應付金額 */}
+                                            <span className="font-bold text-primary">
+                                                ${cart.data.final_total.toFixed(0)}
+                                            </span>
                                         </div>
                                     </div>
 
