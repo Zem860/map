@@ -29,12 +29,12 @@ export type UploadImageResponse = {
 }
 
 export type OrderResponse = {
-    total:string,
-    create_at:string,
-    orderId:string
+    total: string,
+    create_at: string,
+    orderId: string
 }
 
-export type GetOrderResponse  = MesssageResponse & OrderResponse
+export type GetOrderResponse = MesssageResponse & OrderResponse
 
 export type OrdersResponse = {
     success: boolean;
@@ -61,7 +61,15 @@ export type CustomerOrderApiResponse = {
 }
 
 export type GetArticlesResponse = {
-  articles: Article[];
-  total: number;
-  pagination: PaginationData;
+    articles: Article[];
+    total: number;
+    pagination: PaginationData;
 };
+
+type couponResponse = {
+    data: {
+        final_total: number;
+    }
+}
+
+export type ApplyCouponResponse = MesssageResponse & couponResponse;

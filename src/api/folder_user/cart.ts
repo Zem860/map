@@ -1,7 +1,8 @@
-import type { MesssageResponse, PostCartResponse, UpdateCartResponse, getCartResponse } from "@/type/response"
+import type { ApplyCouponResponse, MesssageResponse, PostCartResponse, UpdateCartResponse, getCartResponse } from "@/type/response"
 import type { AxiosResponse } from "axios";
 import { baseApi } from "../api";
 import type { UpdateQtyParams } from "@/type/cart";
+import type { couponCode } from "@/type/coupon";
 
 type addToCartFunc = (params:{product_id:string, qty:number}) =>Promise<AxiosResponse<PostCartResponse>>
 
@@ -18,3 +19,6 @@ export const updateCartQtyFunc = (id:string, params:UpdateQtyParams)=>baseApi.pu
 
 type clearCartFunc = ()=>Promise<AxiosResponse<MesssageResponse>>
 export const clearCart:clearCartFunc = ()=>baseApi.delete('/carts')
+
+type applyCouponFunc = (code:couponCode)=>Promise<AxiosResponse<ApplyCouponResponse>>
+export const apiApplyCoupon:applyCouponFunc = (code:couponCode)=>baseApi.post('/coupon', {data:code})

@@ -6,3 +6,7 @@ export type couponData = {
     percent: number,
     title: string
 }
+
+export type couponCode = {
+    code: string,
+}
