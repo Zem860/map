@@ -24,18 +24,18 @@ const Payment = () => {
     const cartStore = useCartStore();
     const orderStore = useOrderStore();
     const cartsData = cartStore.carts as CartData;
-    const userInfo = orderStore.userData ||userStore.userInfo?.data?.user;
-    const orderCartData = orderStore?.orderData?.products 
+    const userInfo = orderStore.userData || userStore.userInfo?.data?.user;
+    const orderCartData = orderStore?.orderData?.products
         ? Object.values(orderStore.orderData.products) as CartItem[]
         : undefined;
     const orderFinalTotal = orderStore.final_total;
-    const msg =orderStore?.orderData?.message || userStore.userInfo?.data?.message;
+    const msg = orderStore?.orderData?.message || userStore.userInfo?.data?.message;
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [paymentMethod, setPaymentMethod] = useState<string>("");
 
     // 从 URL 获取 orderId
     const orderNum = searchParams.get("orderId") || "";
-       const handleSubmitOrder = async () => {
+    const handleSubmitOrder = async () => {
         if (!userInfo) return;
         if (!paymentMethod) {
             setErrorMessage("Please select a payment method.");
@@ -116,7 +116,7 @@ const Payment = () => {
             {isLoading ? <Loader /> :
                 <div className="min-h-screen bg-background">
                     <div className="container mx-auto px-4 py-8 lg:py-12">
-                        <Stepper currentStep={orderNum ? 4:3} className="my-4" />
+                        <Stepper currentStep={orderNum ? 4 : 3} className="my-4" />
 
                         <Link to="/form" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
                             <ChevronLeft className="h-4 w-4" />
@@ -192,7 +192,9 @@ const Payment = () => {
 
                                     <div className="pt-4 border-t border-border mt-4 flex justify-between items-center">
                                         <span className="text-xl font-bold">Total Amount</span>
-                                        <span className="text-2xl font-bold text-primary">${orderFinalTotal || cartsData.data.final_total} NTD</span>
+                                        <span className="text-2xl font-bold text-primary">
+                                            ${Math.round(orderFinalTotal || cartsData.data?.final_total || 0)} NTD
+                                        </span>
                                     </div>
                                 </div>
                             </section>
