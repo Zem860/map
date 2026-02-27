@@ -11,7 +11,7 @@ import ProductDetail from './Page/public/ProductDetail'
 import Cart from "./Page/public/Cart"
 import AdminOrder from "./Page/admin/Order"
 import Payment from "./Page/public/Payment"
-import About from "./Page/About"
+import About from "./Page/public/About"
 import Articles from "./Page/public/Articles"
 import ArticlePage from "./Page/public/ArticlePage"
 import ArticleAdmin from "./Page/admin/ArticleAdmin"
