@@ -15,6 +15,7 @@ import About from "./Page/public/About"
 import Articles from "./Page/public/Articles"
 import ArticlePage from "./Page/public/ArticlePage"
 import ArticleAdmin from "./Page/admin/ArticleAdmin"
+import Coupon from "./Page/admin/Coupon"
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
 const App = () => {
   return (
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrder />} />
           <Route path="articles" element={<ArticleAdmin />} />
+          <Route path="coupons" element={<Coupon />} />
         </Route>
 
         {/* 404 */}
