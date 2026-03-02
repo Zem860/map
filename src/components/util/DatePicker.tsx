@@ -38,7 +38,7 @@ const DatePicker = ({
   value = "",
   onChange,
   id = "publishDate",
-  placeholder = "選擇日期",
+  placeholder = "Pick a date",
   disabled,
   className,
 }: DatePickerProps) => {
