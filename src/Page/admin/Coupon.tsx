@@ -4,6 +4,7 @@ import {
   getCoupons,
   createCoupon,
   editCoupon,
+  deleteCoupon,
 } from '@/api/folder_admin/coupon';
 import type { PaginationData } from '@/type/product';
 import { PaginationDemo } from '@/components/util/Pagination';
@@ -210,10 +211,10 @@ const Coupon = () => {
         // 真正打 API 的地方
         setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
-          // await deleteArticle(id);
+          await deleteCoupon(id);
           getInitialData(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
-          // addToast('delete', 'article', 'success'); // 成功後關閉 ProductModal
+          addToast('delete', 'coupon', 'success'); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
           let errorMsg = '刪除失敗';

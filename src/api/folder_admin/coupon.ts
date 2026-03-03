@@ -13,3 +13,7 @@ export const createCoupon:createCouponFunc = (params:couponData)=>baseApi.post('
 type editCouponFunc = (id:string, params:couponData)=>Promise<AxiosResponse<MesssageResponse>>
 export const editCoupon: editCouponFunc = (id, params) =>
   baseApi.put(`/admin/coupon/${id}`, { data: params })
+
+type deleteCouponFunc = (id:string)=>Promise<AxiosResponse<MesssageResponse>>
+export const deleteCoupon: deleteCouponFunc = (id) =>
+  baseApi.delete(`/admin/coupon/${id}`)
