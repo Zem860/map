@@ -15,8 +15,8 @@ import About from "./Page/public/About"
 import Articles from "./Page/public/Articles"
 import ArticlePage from "./Page/public/ArticlePage"
 import ArticleAdmin from "./Page/admin/ArticleAdmin"
-import Coupon from "./Page/admin/Coupon"
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
+import Coupon from "./Page/admin/Coupon"
 const App = () => {
   return (
     <>
@@ -26,7 +26,7 @@ const App = () => {
           <Route path="/shop" element={<Shop />}></Route>
           <Route path="/form" element={<UserForm />}></Route>
           <Route path="shop/:id" element={<ProductDetail />} />
-          <Route path="shop/:category" element={<ProductDetail />} />
+          <Route path="shop/:category" element={<Shop />} />
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/payment" element={<Payment />}></Route>
           <Route path="/payment/:orderId" element={<Payment />}></Route>

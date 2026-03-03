@@ -9,3 +9,7 @@ export const getCoupons: getCouponFunc = (params: { page?: number }) =>
 
 type createCouponFunc = (params:couponData)=>Promise<AxiosResponse<MesssageResponse>>
 export const createCoupon:createCouponFunc = (params:couponData)=>baseApi.post('/admin/coupon', {data:params})
+
+type editCouponFunc = (id:string, params:couponData)=>Promise<AxiosResponse<MesssageResponse>>
+export const editCoupon: editCouponFunc = (id, params) =>
+  baseApi.put(`/admin/coupon/${id}`, { data: params })

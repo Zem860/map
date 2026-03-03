@@ -1,6 +1,10 @@
 import type { couponData } from '@/type/coupon';
 import { useState, useEffect } from 'react';
-import { getCoupons, createCoupon } from '@/api/folder_admin/coupon';
+import {
+  getCoupons,
+  createCoupon,
+  editCoupon,
+} from '@/api/folder_admin/coupon';
 import type { PaginationData } from '@/type/product';
 import { PaginationDemo } from '@/components/util/Pagination';
 import { Loader } from '@/components/Loader';
@@ -64,6 +68,31 @@ const Coupon = () => {
     }
   };
 
+  const timestampToYmd = (timestamp?: number) => {
+    if (!timestamp) return '';
+    const d = new Date(timestamp * 1000);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  const openEditModal = (item: couponData | null) => {
+    if (!item) {
+      setCoupon(null);
+      setMode('create');
+      setIsOpen(true);
+      return;
+    }
+
+    setCoupon({
+      ...item,
+      due_date: timestampToYmd(Number(item.due_date)),
+    });
+
+    setMode('edit');
+    setIsOpen(true);
+  };
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
   };
@@ -120,48 +149,55 @@ const Coupon = () => {
   };
 
   const handleAskSave = (formData: couponData) => {
-      setConfirmState({
-        isOpen: true,
-        title: '確認儲存',
-        message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
-        isLoading: false,
-        error: '', // 清空之前的错误
-        onConfirm: async () => {
-          // 真正打 API 的地方
-          setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
-          try {
-            switch (mode) {
-              case 'create':
-                await createCoupon(formData);
-                console.log('優惠券儲存成功', formData);
-                break;
-              case 'edit':
-                // await editArticle(formData.id, formData);
-                console.log('優惠券編輯成功', formData);
-                break;
-            }
-            getInitialData(); // 儲存成功後重新抓取文章列表
-            closeConfirm(); // 關閉確認對話框
-            addToast(`${mode === 'create' ? 'create' : 'modify'}`, 'coupon', 'success'); // 成功後關閉 ProductModal
-
-          } catch (err: unknown) {
-            // 將後端錯誤信息顯示在 Modal 中
-            let errorMsg = '保存失敗';
-            if (err && typeof err === 'object' && 'response' in err) {
-              const axiosErr = err as AxiosError<{ message?: string | string[] }>;
-              if (axiosErr.response?.data?.message) {
-                errorMsg = Array.isArray(axiosErr.response.data.message)
-                  ? axiosErr.response.data.message.join('\n')
-                  : axiosErr.response.data.message;
-              }
-            }
-            setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
-          } finally {
-            setIsOpen(false); // 關閉 ArticleModal
+    setConfirmState({
+      isOpen: true,
+      title: '確認儲存',
+      message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
+      isLoading: false,
+      error: '', // 清空之前的错误
+      onConfirm: async () => {
+        // 真正打 API 的地方
+        setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
+        try {
+          switch (mode) {
+            case 'create':
+              await createCoupon(formData);
+              console.log('優惠券儲存成功', formData);
+              break;
+            case 'edit':
+              await editCoupon(formData.id, formData);
+              console.log('優惠券編輯成功', formData);
+              break;
           }
-        },
-      });
-    };
+          getInitialData(); // 儲存成功後重新抓取文章列表
+          closeConfirm(); // 關閉確認對話框
+          addToast(
+            `${mode === 'create' ? 'create' : 'modify'}`,
+            'coupon',
+            'success',
+          ); // 成功後關閉 ProductModal
+        } catch (err: unknown) {
+          // 將後端錯誤信息顯示在 Modal 中
+          let errorMsg = '保存失敗';
+          if (err && typeof err === 'object' && 'response' in err) {
+            const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+            if (axiosErr.response?.data?.message) {
+              errorMsg = Array.isArray(axiosErr.response.data.message)
+                ? axiosErr.response.data.message.join('\n')
+                : axiosErr.response.data.message;
+            }
+          }
+          setConfirmState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: errorMsg,
+          }));
+        } finally {
+          setIsOpen(false); // 關閉 ArticleModal
+        }
+      },
+    });
+  };
 
   const deleteThisCoupon = async (id: string, title: string) => {
     setConfirmState({
@@ -333,14 +369,12 @@ const Coupon = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                  // onClick={() => openEditModal(item)}
-                  >
+                  <DropdownMenuItem onClick={() => openEditModal(item)}>
                     <Pencil className="size-4" />
                     編輯
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                     onClick={() => deleteThisCoupon(item.id!, item.title)}
+                    onClick={() => deleteThisCoupon(item.id!, item.title)}
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash2 className="size-4" />
@@ -432,13 +466,7 @@ const Coupon = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setCoupon(item);
-                          setMode('edit');
-                          setIsOpen(true);
-                        }}
-                      >
+                      <DropdownMenuItem onClick={() => openEditModal(item)}>
                         <Pencil className="size-4" />
                         編輯
                       </DropdownMenuItem>

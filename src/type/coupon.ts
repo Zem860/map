@@ -1,6 +1,6 @@
 export type couponData = {
     code: string,
-    due_date: number,
+    due_date: number|string,
     id: string,
     is_enabled: number,
     percent: number,
