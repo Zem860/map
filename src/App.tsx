@@ -1,20 +1,21 @@
-import { Routes, Route } from "react-router-dom"
-import Login from "./Page/admin/Login"
-import AdminProducts from "./Page/admin/Products"
-import AdminRoute from "./routes/AdminRoute"
-import AdminLayout from "./Layout/AdminLayout"
-import Home from "./Page/public/Home"
-import Shop from "./Page/public/Shop"
-import PublicLayout from "./Layout/PublicLayout"
-import UserForm from "./Page/public/UserForm"
-import ProductDetail from './Page/public/ProductDetail'
-import Cart from "./Page/public/Cart"
-import AdminOrder from "./Page/admin/Order"
-import Payment from "./Page/public/Payment"
-import About from "./Page/public/About"
-import Articles from "./Page/public/Articles"
-import ArticlePage from "./Page/public/ArticlePage"
-import ArticleAdmin from "./Page/admin/ArticleAdmin"
+import { Routes, Route } from 'react-router-dom';
+import Login from './Page/admin/Login';
+import AdminProducts from './Page/admin/Products';
+import AdminRoute from './routes/AdminRoute';
+import AdminLayout from './Layout/AdminLayout';
+import Home from './Page/public/Home';
+import Shop from './Page/public/Shop';
+import PublicLayout from './Layout/PublicLayout';
+import UserForm from './Page/public/UserForm';
+import ProductDetail from './Page/public/ProductDetail';
+import Cart from './Page/public/Cart';
+import AdminOrder from './Page/admin/Order';
+import Payment from './Page/public/Payment';
+import About from './Page/public/About';
+import Articles from './Page/public/Articles';
+import ArticlePage from './Page/public/ArticlePage';
+import ArticleAdmin from './Page/admin/ArticleAdmin';
+import Dashboard from './Page/admin/Dashboard';
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
 const App = () => {
   return (
@@ -47,7 +48,7 @@ const App = () => {
           }
         >
           {/* /admin */}
-          <Route index element={<div>Admin Dashboard</div>} />
+          <Route index element={<Dashboard />} />
           {/* /admin/login */}
           <Route path="login" element={<Login />} />
           {/* /admin/products */}
@@ -62,6 +63,6 @@ const App = () => {
       <ToastContainer />
     </>
   );
-}
+};
 
-export default App
+export default App;

@@ -1,18 +1,21 @@
 // layouts/AdminLayout.tsx
-import { Outlet } from "react-router-dom"
+import { Outlet } from 'react-router-dom';
 
-import { AdminHeader } from "@/components/Header";
+import { AdminHeader } from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 
 const AdminLayout = () => {
-    return (
-        <>
-            <Sidebar open={false} onOpenChange={()=>{}} />
-            <div className="lg:ml-64">
-                <AdminHeader />
-                <div className="p-4"><Outlet /></div>
-            </div>
-        </>);
-}
+  return (
+    <>
+      <Sidebar open={false} onOpenChange={() => {}} />
+      <div className="lg:ml-64">
+        <AdminHeader />
+        <div className="p-4">
+          <Outlet />
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default AdminLayout;
