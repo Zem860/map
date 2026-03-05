@@ -98,7 +98,7 @@ export default function RevenueChart() {
                     if (name === 'revenue') {
                       return `NT$ ${Number(value).toLocaleString()}`;
                     }
-                    return `${Number(value).toLocaleString()} 筆`;
+                    return `${Number(value).toLocaleString()} orders`;
                   }}
                 />
               }
