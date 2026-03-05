@@ -36,14 +36,16 @@ export default function TopProducts() {
           {topProducts.map((product, index) => (
             <div key={product.name} className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-semibold text-secondary-foreground">
                     {index + 1}
                   </span>
-                  <span className="text-sm font-medium text-foreground truncate">
+
+                  <span className="truncate text-sm font-medium text-foreground">
                     {product.name}
                   </span>
                 </div>
+
                 <span className="text-xs font-mono text-muted-foreground shrink-0 ml-2">
                   {product.revenue}
                 </span>
