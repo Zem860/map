@@ -17,6 +17,7 @@ import ArticlePage from './Page/public/ArticlePage';
 import ArticleAdmin from './Page/admin/ArticleAdmin';
 import Dashboard from './Page/admin/Dashboard';
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
+import Coupon from "./Page/admin/Coupon"
 const App = () => {
   return (
     <>
@@ -26,7 +27,7 @@ const App = () => {
           <Route path="/shop" element={<Shop />}></Route>
           <Route path="/form" element={<UserForm />}></Route>
           <Route path="shop/:id" element={<ProductDetail />} />
-          <Route path="shop/:category" element={<ProductDetail />} />
+          <Route path="shop/:category" element={<Shop />} />
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/payment" element={<Payment />}></Route>
           <Route path="/payment/:orderId" element={<Payment />}></Route>
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrder />} />
           <Route path="articles" element={<ArticleAdmin />} />
+          <Route path="coupons" element={<Coupon />} />
         </Route>
 
         {/* 404 */}

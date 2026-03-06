@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Package, ShoppingCart, Clipboard } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Clipboard, Ticket } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import type { SidebarDrawerProps } from '@/type/product'
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { name: 'Products', icon: Package, path: '/admin/products' },
   { name: 'Orders', icon: ShoppingCart, path: '/admin/orders' },
   { name: 'Articles', icon: Clipboard, path: '/admin/articles' },
+  { name: 'Coupons', icon: Ticket, path: '/admin/coupons' },
 ];
 
 export const Sidebar = ({ open, onOpenChange }: SidebarDrawerProps) => {
