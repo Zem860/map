@@ -131,8 +131,7 @@ export const CouponModal = ({
               <DatePicker
                 id="publishDate"
                 label="Due Date"
-                value={formData.due_date ?? ''}
-                onChange={(value) =>
+                value={formData.due_date ? String(formData.due_date) : ''} onChange={(value) =>
                   setFormData((prev) => ({ ...prev, due_date: value }))
                 }
               />
