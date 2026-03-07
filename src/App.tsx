@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import NotFound from './Page/NotFound';
 import Login from './Page/admin/Login';
 import AdminProducts from './Page/admin/Products';
 import AdminRoute from './routes/AdminRoute';
@@ -60,7 +61,7 @@ const App = () => {
         </Route>
 
         {/* 404 */}
-        <Route path="*" element={<div>404</div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer />
     </>
