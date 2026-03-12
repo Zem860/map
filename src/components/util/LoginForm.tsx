@@ -17,7 +17,7 @@ const Login = () => {
   });
 
   const hasInfo = form.username.trim() !== "" || form.password.trim() !== ""
-  const [isLoggedIn, _] = useState(false);
+  const [isLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
