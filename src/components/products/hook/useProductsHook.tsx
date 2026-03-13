@@ -112,7 +112,7 @@ export const useProducts = () => {
       await getProduct()
       addToast("delete", "book", "error")
     },
-    [getProduct],
+    [getProduct, addToast],
   )
 
   const askDelete = useCallback((id: string, title: string) => {
@@ -138,7 +138,7 @@ export const useProducts = () => {
       },
       () => saveProduct(product)
     )
-  }, [mode, confirmModal, saveProduct])
+  }, [mode, confirmModal, saveProduct, addToast])
 
   return {
     // data
