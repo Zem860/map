@@ -28,11 +28,12 @@ export function useConfirm() {
       setIsOpen(false)
       setConfig(null)
       config.onSuccess?.() //callback
-    } catch (err: any) {
-      const errorMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        "操作失敗，請稍後再試"
+    } catch (err: unknown) {
+      let errorMessage = "something went wrong, please try again."
+      if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
       setError(errorMessage)
     } finally {
       setIsLoading(false)
