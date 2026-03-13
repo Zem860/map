@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
-import { useState, type ChangeEvent, useEffect, useCallback } from 'react';
+import { useState, type ChangeEvent, useCallback } from 'react';
 import type { couponData, CouponModalProps } from '@/type/coupon';
 import DatePicker from '@/components/util/DatePicker';
 import { Switch } from '@/components/ui/switch';
@@ -24,14 +24,6 @@ export const CouponModal = ({
   const [formData, setFormData] = useState<Partial<couponData>>(
     coupons ? { ...coupons } : {},
   );
-  // 當 article 改變時，更新 formData 和 tags
-  useEffect(() => {
-    if (coupons) {
-      setFormData({ ...coupons });
-    } else {
-      setFormData({});
-    }
-  }, [coupons, isOpen]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
