@@ -45,7 +45,7 @@ export const ArticleModal = ({
   }, [article, isOpen]);
 
   const images = useProductImages({
-    item: article as Article||null,
+    item: article as Article || null,
     isOpen,
     maxImages: 4,
   })
@@ -116,6 +116,10 @@ export const ArticleModal = ({
     handleAskSave(data);
   };
 
+  const placeholderCount = Math.max(
+    0,
+    1 - (images.uploadedImages.length + images.selectedFiles.length)
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -291,7 +295,7 @@ export const ArticleModal = ({
                 </div>
               ))}
 
-              {Array.from({ length: 1 - images.totalCount }).map((_, i) => (
+              {Array.from({ length: placeholderCount }).map((_, i) => (
                 <div
                   key={`placeholder-${i}`}
                   className="aspect-square rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/30"
