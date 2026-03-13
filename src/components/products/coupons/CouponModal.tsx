@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
-import { useState, type ChangeEvent, useEffect } from 'react';
+import { useState, type ChangeEvent, useEffect, useCallback } from 'react';
 import type { couponData, CouponModalProps } from '@/type/coupon';
 import DatePicker from '@/components/util/DatePicker';
 import { Switch } from '@/components/ui/switch';
@@ -43,6 +43,17 @@ export const CouponModal = ({
     }));
   };
 
+  const resetFormData = useCallback(() => {
+    setFormData(coupons ? { ...coupons } : {});
+  }, [coupons]);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) {
+      resetFormData();
+    }
+  };
+
   const handleSwitchChange = (checked: boolean) => {
     setFormData((prev) => ({ ...prev, is_enabled: checked ? 1 : 0 }));
   };
@@ -65,7 +76,7 @@ export const CouponModal = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       {/* 1. 稍微加寬 Dialog，並限制最大高度與 Flex 排版 */}
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-6">
         <DialogHeader>
