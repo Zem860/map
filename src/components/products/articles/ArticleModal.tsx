@@ -47,7 +47,7 @@ export const ArticleModal = ({
   const images = useProductImages({
     item: article as Article || null,
     isOpen,
-    maxImages: 4,
+    maxImages: 1, // 文章只允許一張圖片作為封面
   })
 
   // 移除 Tag (使用 prev)
@@ -89,10 +89,10 @@ export const ArticleModal = ({
 
   const handleSave = async () => {
     // TODO: 這裡呼叫你的 API，並帶上 tags
-    let imageUrl = images.uploadedImages[0] || '';
+    let imageUrl = uploadedImages[0] || '';
     console.log('imageUrl:', imageUrl);
     // 上傳待上傳的檔案
-    if (images.selectedFiles.length > 0) {
+    if (selectedFiles.length > 0) {
       try {
         const urls = await images.uploadSelectedFiles();
         imageUrl = urls[0];
@@ -116,9 +116,13 @@ export const ArticleModal = ({
     handleAskSave(data);
   };
 
+  const uploadedImages = images.uploadedImages;
+  const selectedPreviews = images.selectedPreviews;
+  const selectedFiles = images.selectedFiles;
+
   const placeholderCount = Math.max(
     0,
-    1 - (images.uploadedImages.length + images.selectedFiles.length)
+    1 - (uploadedImages.length + selectedFiles.length)
   );
 
   return (
@@ -243,7 +247,7 @@ export const ArticleModal = ({
 
             {/* 這裡也可以改成橫向排列 grid-cols-4 節省垂直高度 */}
             <div className="grid grid-cols-1 gap-3 mt-2">
-              {images.uploadedImages.map((image: string, index: number) => (
+              {uploadedImages.map((image: string, index: number) => (
                 <div
                   key={`url-${index}`}
                   className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
@@ -270,7 +274,7 @@ export const ArticleModal = ({
                 </div>
               ))}
 
-              {images.selectedPreviews.map((p: string, i: number) => (
+              {selectedPreviews.map((p: string, i: number) => (
                 <div
                   key={`file-${i}`}
                   className="relative aspect-square rounded-lg border-2 border-border overflow-hidden group"
