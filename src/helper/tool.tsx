@@ -22,3 +22,5 @@ export const productContentParser = (product: productData) => {
       : product.content;
   return contentObj
 }
+
+export const getUnixTimestamp = (): number => Math.floor(Date.now() / 1000);

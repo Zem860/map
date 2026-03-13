@@ -18,6 +18,7 @@ import type { ArticleModalProps, Article } from '@/type/articles'; // 你的型�
 import { FileInput } from 'lucide-react';
 import { useProductImages } from '../ProductModal/hooks/useProductImages';
 import { Switch } from '@/components/ui/switch';
+import { getUnixTimestamp } from '@/helper/tool';
 
 export const ArticleModal = ({
   isOpen,
@@ -96,11 +97,12 @@ export const ArticleModal = ({
       try {
         const urls = await images.uploadSelectedFiles();
         imageUrl = urls[0];
-      } catch (error) {
+      } catch {
         alert('上傳失敗');
         return;
       }
     }
+    const createdAt = article?.create_at ?? getUnixTimestamp();
     const data = {
       id: article?.id || '',              // 編輯時使用，建立時後端生成
       title: formData.title || '',
@@ -108,7 +110,7 @@ export const ArticleModal = ({
       image: imageUrl || '', // 只取第一張，作為封面
       author: formData.author || '',       // 需要輸入欄位
       content: formData.content || '',     // 需要輸入欄位
-      create_at: article?.create_at || Math.floor(Date.now() / 1000),
+      create_at: createdAt,              // 編輯時保留，建立時使用當下時間
       isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
       tag: tags,
       num: article?.num || 0,              // 編輯時保留
