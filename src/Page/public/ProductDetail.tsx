@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Package, ShoppingCart, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getProduct } from "@/api/folder_user/products";
 import { Loader } from "@/components/Loader";
 import { productContentParser } from "@/helper/tool";
@@ -13,20 +13,16 @@ import { useCartStore } from "@/store/cartStore";
 import BreadcrumbNav from "@/components/BreadCrumbs";
 
 const ProductDetail = () => {
-    const pathObj = useLocation();
+    const { id } = useParams();
     const [product, setProduct] = useState<productData>()
     const [productObj, setProductObj] = useState<ProductContent>()
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [qty, setQty] = useState(1);
     const addToCart = useCartStore((s) => s.addToCart);
     const isCartLoading = useCartStore((s) => s.isLoading);
     useEffect(() => {
-        const { pathname } = { ...pathObj }
-        const id = pathname.split("/")[2]
-        console.log(id)
         try {
-            setIsLoading(true)
-            getProduct(id).then((res) => {
+            getProduct(id as string).then((res) => {
                 const product = res.data.product; // ProductApi
                 const contentObj = productContentParser(product)
                 setProductObj(contentObj)
@@ -38,7 +34,7 @@ const ProductDetail = () => {
         } catch (err) {
             console.log(err)
         }
-    }, [])
+    }, [id])
 
     return (
         isLoading ? <Loader /> :
