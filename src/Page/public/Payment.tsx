@@ -83,16 +83,6 @@ const Payment = () => {
         }
     }
 
-    useEffect(() => {
-        orderStore.clearOrderData();
-        cartStore.fetchCart();
-        if (!userInfo && !orderNum) {
-            navigate("/form");
-        } else {
-            getOrder();
-        }
-    }, [orderNum]);
-
     const getOrder = async () => {
         if (!orderNum) return;
         try {
@@ -103,6 +93,16 @@ const Payment = () => {
             console.error("Failed to fetch order details:", error);
         }
     }
+
+    useEffect(() => {
+        orderStore.clearOrderData();
+        cartStore.fetchCart();
+        if (!userInfo && !orderNum) {
+            navigate("/form");
+        } else {
+            getOrder();
+        }
+    }, [orderNum]);
 
     const cartItems: CartItem[] = orderCartData || cartsData.data?.carts || [];
     const isLoading = cartStore.isLoading;
