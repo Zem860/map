@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getSingleArticle } from "@/api/folder_user/articles";
 import { Calendar, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,25 +11,27 @@ const ArticlePage = () => {
 
     const { id } = useParams<{ id: string }>();
     const [article, setArticle] = useState<Article>({} as Article)
-    const [formatedDate, setFormatedDate] = useState<string>("")
+    const fetchArticle = useCallback(async () => {
+        if (!id) return;
 
-    const fetchArticle = async () => {
         try {
-            const response = await getSingleArticle(id as string);
-            const formatedDate = new Date(response.data.article.create_at * 1000).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-            });
-            formatedDate;
-            setFormatedDate(formatedDate);
-            setArticle(response.data.article,);
+            const response = await getSingleArticle(id);
+            setArticle(response.data.article);
         } catch (error) {
             console.error("Error fetching article:", error);
         }
-    }
-    useEffect(() => {
-        fetchArticle();
     }, [id]);
+
+    const formattedDate = article.create_at
+        ? new Date(article.create_at * 1000).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+        })
+        : "";
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchArticle();
+  }, [fetchArticle]);
     return (
         <>
 
@@ -49,7 +51,7 @@ const ArticlePage = () => {
                             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
                                 <div className="flex items-center gap-1.5">
                                     <Calendar className="h-4 w-4" />
-                                    {formatedDate}
+                                    {formattedDate}
                                 </div>
                                 {article.author && (
                                     <div className="flex items-center gap-1.5">
