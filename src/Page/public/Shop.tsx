@@ -21,7 +21,6 @@ const Shop = () => {
     const pagination = useProductStore((state) => state.pagination);
 
     useEffect(() => {
-        console.log("Fetching products with params:", pageData);
         useProductStore.getState().fetchByCategory({
             category: pageData.category,
             page: pageData.page
