@@ -23,7 +23,6 @@ const UserForm = () => {
     const navigate = useNavigate();
     const userStore = useUserStore();
     const userInfo = userStore.userInfo?.data?.user;
-    const cartStore = useCartStore();
     const fetchCart = useCartStore((s) => s.fetchCart)
     const carts = useCartStore((s) => s.carts)
     const form = useForm({
