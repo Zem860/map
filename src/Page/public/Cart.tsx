@@ -36,7 +36,7 @@ const Cart = () => {
         }
     };
 
-    const useDiscount = async () => {
+    const applyDiscount  = async () => {
         if (couponCode.trim() === "") {
             setDiscountMsg("Please enter a coupon code.");
             return;
@@ -53,7 +53,6 @@ const Cart = () => {
     }
 
     useEffect(() => {
-        console.log("cart changed", cart);
         setOriginalTotal(cart.data.total);
     }, [cart])
     // 檢查某商品是否正在 loading
@@ -221,7 +220,7 @@ const Cart = () => {
                                             className="flex-1 border-border"
                                         />
                                         <Button onClick={() => {
-                                            useDiscount()
+                                            applyDiscount()
                                         }} size="sm">Apply</Button>
                                     </div>
                                     {discount > 0 ? (
