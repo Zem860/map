@@ -102,6 +102,7 @@ const Payment = () => {
         } else {
             getOrder();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orderNum]);
 
     const cartItems: CartItem[] = orderCartData || cartsData.data?.carts || [];
