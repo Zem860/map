@@ -17,12 +17,15 @@ import { useUserStore } from '@/store/userStore';
 import { ChevronLeft } from 'lucide-react';
 import { useEffect } from 'react';
 import { useCartStore } from '@/store/cartStore';
+import type { UserFormValues } from '@/type/order';
 
 const UserForm = () => {
     const navigate = useNavigate();
     const userStore = useUserStore();
     const userInfo = userStore.userInfo?.data?.user;
     const cartStore = useCartStore();
+    const fetchCart = useCartStore((s) => s.fetchCart)
+    const carts = useCartStore((s) => s.carts)
     const form = useForm({
         defaultValues: {
             firstName: userInfo?.name?.split(", ")[0] || "",
@@ -36,7 +39,7 @@ const UserForm = () => {
         },
     });
 
-    const onSubmit = (data: any) => {
+    const onSubmit = (data: UserFormValues) => {
         const fullAddress = `${data.country}, ${data.city}, ${data.address}`;
         const nameData = `${data.firstName}, ${data.lastName}`
         const msg = data.message
@@ -56,15 +59,18 @@ const UserForm = () => {
     };
 
     useEffect(() => {
-        cartStore.fetchCart();
-        if (cartStore.carts.data.carts.length === 0) {
-            navigate("/cart");
+        fetchCart()
+    }, [fetchCart])
+
+    useEffect(() => {
+        if (carts.data.carts.length === 0) {
+            navigate('/cart')
         }
-    }, []);
+    }, [carts, navigate])
 
     return (
         <>
-           <div className="w-full max-w-2xl mx-auto px-4 py-12">
+            <div className="w-full max-w-2xl mx-auto px-4 py-12">
                 <Stepper currentStep={2} className={'mb-10'} />
                 <Link to="/cart" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
                     <ChevronLeft className="h-4 w-4" />
@@ -111,8 +117,8 @@ const UserForm = () => {
                             rules={{
                                 required: "Telephone is required",
                                 pattern: {
-                                    value: /^[0-9\-\+\(\)\s]{9,}$/,
-                                    message: "Please enter a valid telephone number"
+                                    value: /^[0-9+()\s-]{9,}$/,
+                                     message: "Please enter a valid telephone number"
                                 }
                             }}
                             render={({ field }) => (
