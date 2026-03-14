@@ -47,7 +47,7 @@ const Cart = () => {
             setDiscount(res.data.data.final_total / originalTotal * 100);
             setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
             useCartStore.getState().fetchCart();
-        } catch (err) {
+        } catch{
             setDiscountMsg("Failed to apply coupon. Please check the code and try again.");
         }
     }
