@@ -10,7 +10,8 @@ import type { productData } from '@/type/product'
 import { useMapStore, MapService } from '@/store/mapStore'
 import type { MapProduct, StoreContext } from '@/store/mapStore'
 
-delete (L.Icon.Default.prototype as any)._getIconUrl
+// Fix Leaflet default marker icon issue in bundlers like Vite/Webpack
+delete (L.Icon.Default.prototype as { _getIconUrl?: () => void })._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
   iconUrl: markerIcon,
