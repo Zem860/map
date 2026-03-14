@@ -22,9 +22,9 @@ import { useConfirm } from '@/components/products/hook/useConfirm';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import { Loader } from '@/components/Loader';
 const AdminOrder = () => {
-  const [orders, setOrder] = useState<Order[] | undefined>(undefined);
+  const [orders, setOrder] = useState<Order[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const confirmModal = useConfirm();
 
   const toggleSelectAll = () => {
@@ -44,12 +44,12 @@ const AdminOrder = () => {
   };
 
   const getData = async () => {
-    setIsLoading(true);
     const res = await getAdminOrders({ page: '1' });
     setOrder(res.data.orders);
     setIsLoading(false);
   };
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     getData();
   }, []);
   //  批次刪除
@@ -141,7 +141,7 @@ const AdminOrder = () => {
                     <Checkbox
                       checked={
                         selectedIds.length === orders?.length &&
-                        orders?.length! > 0
+                        (orders?.length ?? 0) > 0
                       }
                       onCheckedChange={toggleSelectAll}
                     ></Checkbox>
@@ -215,7 +215,7 @@ const AdminOrder = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => {}}>
+                          <DropdownMenuItem onClick={() => { }}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
@@ -253,7 +253,7 @@ const AdminOrder = () => {
                 </div>
                 <div className="mt-2 flex justify-between items-center">
                   <p className="text-lg font-bold">${o.total}</p>
-                  <Button variant="ghost" size="icon" onClick={() => {}}>
+                  <Button variant="ghost" size="icon" onClick={() => { }}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -261,7 +261,7 @@ const AdminOrder = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => {}}>
+                        <DropdownMenuItem onClick={() => { }}>
                           <Eye className="h-4 w-4 mr-2" />
                           View Details
                         </DropdownMenuItem>
