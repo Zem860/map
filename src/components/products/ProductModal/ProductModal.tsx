@@ -13,7 +13,7 @@ import { Label } from "../../ui/label"
 import { Switch } from "../../ui/switch"
 import { Textarea } from "../../ui/textarea"
 import type { productData, ProductModalProps, ProductContent } from "@/type/product"
-import { useState } from "react"
+import { useState, type ChangeEvent } from "react"
 import { useProductForm } from "./hooks/useProductForm"
 import { useProductImages } from "./hooks/useProductImages"
 import { buildProductPayload } from "./utils/product.mapper"
@@ -84,9 +84,9 @@ export const ProductModal = ({
     // ✅ 直接寫回 formData.content（仍是 string）
     handleInputChange({
       target: { name: "content", value: JSON.stringify(next) },
-    } as any)
+    } as ChangeEvent<HTMLInputElement>)
   }
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="product-modal-description">
