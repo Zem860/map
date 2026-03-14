@@ -15,7 +15,7 @@ const EMPTY_PRODUCT = (): productData => ({
   is_enabled: 1,
   imageUrl: "",
   imagesUrl: [""],
-  rating:0
+  rating: 0
 })
 
 type UseProductFormArgs = {
@@ -29,8 +29,14 @@ export function useProductForm({ product, isOpen }: UseProductFormArgs) {
   )
 
   useEffect(() => {
-    setFormData(product ? product : EMPTY_PRODUCT())
-  }, [product, isOpen])
+    if (!isOpen) return
+
+    const timer = setTimeout(() => {
+      setFormData(product ?? EMPTY_PRODUCT())
+    }, 0)
+
+    return () => clearTimeout(timer)
+  }, [isOpen, product])
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,7 +45,7 @@ export function useProductForm({ product, isOpen }: UseProductFormArgs) {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "origin_price" || name === "price" || name === "num" || name=="rating"
+        name === "origin_price" || name === "price" || name === "num" || name == "rating"
           ? Number(value)
           : value,
     }))
