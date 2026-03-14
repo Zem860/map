@@ -78,7 +78,7 @@ export const ProductModal = ({
   }
 
 
-  const setContentField = (key: keyof ProductContent, value: any) => {
+  const setContentField = (key: keyof ProductContent, value: string) => {
     const cur = getContentJson()
     const next = { ...cur, [key]: value }
     // ✅ 直接寫回 formData.content（仍是 string）
