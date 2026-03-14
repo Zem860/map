@@ -11,17 +11,19 @@ import type { SearchData } from "@/type/product";
 
 type Props = {
     searchData?: SearchData
-    categories:string[]
+    categories: string[]
     onCategoryChange: (category: string) => void
 }
-const CategoryPicker = ({ searchData, onCategoryChange,categories }: Props) => {
+const CategoryPicker = ({ searchData, onCategoryChange, categories }: Props) => {
 
     return (<>
         <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select
-                value={searchData?.category}
-                onValueChange={(value) => { value === "all" ? onCategoryChange("") : onCategoryChange(value) }}
+                value={searchData?.category || "all"}
+                onValueChange={(value) => {
+                    onCategoryChange(value === "all" ? "" : value);
+                }}
             >
                 <SelectTrigger id="category">
                     <SelectValue placeholder="All" />
