@@ -11,6 +11,9 @@ import { useMapStore, MapService } from '@/store/mapStore'
 import type { MapProduct, StoreContext } from '@/store/mapStore'
 
 // Fix Leaflet default marker icon issue in bundlers like Vite/Webpack
+//Leaflet 在 Vite 環境下，預設 marker icon 的處理有問題。
+//所以我們要把它原本內建的 _getIconUrl 邏輯刪掉，改成自己指定 icon 路徑。
+//但因為 TypeScript / lint 會檢查型別，而官方型別沒有明確寫這個屬性，所以要先補一個型別斷言，才可以安全地刪掉它。
 delete (L.Icon.Default.prototype as { _getIconUrl?: () => void })._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
