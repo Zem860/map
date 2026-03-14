@@ -1,7 +1,7 @@
 import { useCartStore } from "@/store/cartStore";
 import BreadcrumbNav from "@/components/BreadCrumbs";
 import { Stepper } from "@/components/Stepper";
-import { ShoppingBag, Trash2, X, Tag } from "lucide-react";
+import { ShoppingBag, Trash2, X, Tag, Loader2 } from "lucide-react";
 import { Loader } from "@/components/Loader";
 import Qtybar from "@/components/util/Qtybar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import { apiApplyCoupon } from "@/api/folder_user/cart";
 import { useEffect, useState } from "react";
 
 const Cart = () => {
+    const [loading, setLoading] = useState(false);
     const [couponCode, setCouponCode] = useState<string>("");
     const [discount, setDiscount] = useState<number>(0);
     const [discountMsg, setDiscountMsg] = useState<string>("");
@@ -36,19 +37,22 @@ const Cart = () => {
         }
     };
 
-    const applyDiscount  = async () => {
+    const applyDiscount = async () => {
         if (couponCode.trim() === "") {
             setDiscountMsg("Please enter a coupon code.");
             return;
         }
         // 這裡可以根據 couponCode 計算折扣金額，這只是示例邏輯
         try {
+            setLoading(true);
             const res = await apiApplyCoupon({ code: couponCode });
             setDiscount(res.data.data.final_total / originalTotal * 100);
             setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
-            useCartStore.getState().fetchCart();
-        } catch{
+            useCartStore.getState().fetchCart(true);
+        } catch {
             setDiscountMsg("Failed to apply coupon. Please check the code and try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -219,9 +223,9 @@ const Cart = () => {
                                             onChange={(e) => setCouponCode(e.target.value)}
                                             className="flex-1 border-border"
                                         />
-                                        <Button onClick={() => {
+                                        <Button disabled={loading} onClick={() => {
                                             applyDiscount()
-                                        }} size="sm">Apply</Button>
+                                        }} size="sm">{loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Apply'}</Button>
                                     </div>
                                     {discount > 0 ? (
                                         <div className="mt-4 flex items-center gap-2 text-sm text-primary">
@@ -271,13 +275,12 @@ const Cart = () => {
                                             </span>
                                         </div>
                                     </div>
-
                                     <Button
                                         className="w-full mt-6"
                                         size="lg"
-                                        disabled={cart.data.carts.length === 0}
+                                        disabled={cart.data.carts.length === 0||loading}
                                         onClick={() => navigate("../form")}                                    >
-                                        Proceed to Checkout
+                                        {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Proceed to Checkout'}
                                     </Button>
 
                                     <p className="text-xs text-muted-foreground text-center mt-4">
