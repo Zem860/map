@@ -1,8 +1,11 @@
-// src/features/products/hooks/useProductImages.ts
 import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import type { UseImageArgs } from "@/type/product"
 import { uploadImage } from "@/api/folder_admin/products"
 
+type ProductImageSource = {
+  imagesUrl?: string[]
+  image?: string
+}
 
 export function useProductImages({
   item,
@@ -10,51 +13,54 @@ export function useProductImages({
   maxImages = 4,
 }: UseImageArgs) {
   const [imageUrlInput, setImageUrlInput] = useState("")
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]) // existing URLs
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]) // waiting to upload
-  const [selectedPreviews, setSelectedPreviews] = useState<string[]>([]) // blob urls
+  const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [selectedPreviews, setSelectedPreviews] = useState<string[]>([])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const totalCount = uploadedImages.length + selectedFiles.length
   const isMax = totalCount >= maxImages
 
-  // 保證圖片在打開或關閉的情況會清理掉原來的檔案
-  useEffect(() => {
-    const normalizeImages = (): string[] => {
-      if (!item) return []
-      // 若有 imagesUrl 且為陣列，直接使用
-      if (Array.isArray((item as any).imagesUrl)) {
-        return (item as any).imagesUrl.filter((u: string) => !!u)
-      }
-      // 否則若有單一 image 字串，包成陣列
-      if ((item as any).image) {
-        return [(item as any).image].filter((u: string) => !!u)
-      }
-      return []
+  const normalizeImages = (target?: ProductImageSource): string[] => {
+    if (!target) return []
+
+    if (Array.isArray(target.imagesUrl)) {
+      return target.imagesUrl.filter((u) => !!u)
     }
 
-    setUploadedImages(normalizeImages())
+    if (target.image) {
+      return [target.image].filter((u) => !!u)
+    }
 
-    setImageUrlInput("")
-    setSelectedFiles([])
-    setSelectedPreviews((prev) => {
-      prev.forEach((p) => URL.revokeObjectURL(p))
-      return []
-    })
-    if (fileInputRef.current) fileInputRef.current.value = ""
-  }, [isOpen])
+    return []
+  }
+  // Reset image states when modal opens or item changes and cleanup preview blobs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setUploadedImages(normalizeImages(item as ProductImageSource | undefined))
+      setImageUrlInput("")
+      setSelectedFiles([])
+      setSelectedPreviews((prev) => {
+        prev.forEach((p) => URL.revokeObjectURL(p))
+        return []
+      })
 
-  // 只要preview那個有變動的話記得要把blob清掉因為blob會站瀏覽器記憶體
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }, 0)
+
+    return () => clearTimeout(timer)
+
+  }, [isOpen, item])
+
   useEffect(() => {
     return () => {
       selectedPreviews.forEach((p) => URL.revokeObjectURL(p))
     }
   }, [selectedPreviews])
 
-  const triggerFileInput = () => fileInputRef.current?.click() //瀏覽器預設function->點選上傳檔案的input觸發選取檔案，ref與function直接抓取該頁面，Input
+  const triggerFileInput = () => fileInputRef.current?.click()
 
-  //用於新增連結
   const addImageUrl = () => {
     const url = imageUrlInput.trim()
     if (!url) return
@@ -63,7 +69,7 @@ export function useProductImages({
     setUploadedImages((prev) => [...prev, url].slice(0, maxImages))
     setImageUrlInput("")
   }
-  //用於檔案上傳
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -76,14 +82,13 @@ export function useProductImages({
     setSelectedFiles((prev) => [...prev, file])
     setSelectedPreviews((prev) => [...prev, URL.createObjectURL(file)])
 
-    // input file的行為特性是，如果我把檔案刪掉了(選同一個檔案兩次)~他不會讓我onChange感應到
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
-  //刪除連結圖片
+
   const deleteUrlImage = (index: number) => {
     setUploadedImages((prev) => prev.filter((_, i) => i !== index))
   }
-  //刪除檔案
+
   const deleteSelectedFile = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index))
     setSelectedPreviews((prev) => {
@@ -93,7 +98,6 @@ export function useProductImages({
     })
   }
 
-  //Save 才 upload，回傳「upload 後 URL」陣列（不含你手動貼的 URL） 
   const uploadSelectedFiles = async (): Promise<string[]> => {
     const urls: string[] = []
     for (const file of selectedFiles) {
@@ -105,48 +109,28 @@ export function useProductImages({
     return urls
   }
 
-  //用於未來可能會有清除按鈕
-  // const clearSelectedFiles = () => {
-  //   setSelectedFiles([])
-  //   setSelectedPreviews((prev) => {
-  //     prev.forEach((p) => URL.revokeObjectURL(p))
-  //     return []
-  //   })
-  //   if (fileInputRef.current) fileInputRef.current.value = ""
-  // }
-
-  /** ✅ 全清：連結(URL) + blob + input 都清掉 */
   const clearAllImages = () => {
-    // 1) 清 URL 圖
     setUploadedImages([])
-
-    // 2) 清本次選檔（blob）
     setSelectedFiles([])
     setSelectedPreviews((prev) => {
       prev.forEach((p) => URL.revokeObjectURL(p))
       return []
     })
-
-    // 3) 清 URL input
     setImageUrlInput("")
 
-    // 4) reset file input
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
   return {
-    // state
     imageUrlInput,
     uploadedImages,
     selectedFiles,
     selectedPreviews,
 
-    // derived
     totalCount,
     isMax,
     fileInputRef,
 
-    // actions
     setImageUrlInput,
     addImageUrl,
     handleFileChange,
@@ -155,7 +139,6 @@ export function useProductImages({
     deleteSelectedFile,
 
     uploadSelectedFiles,
-    // clearSelectedFiles,
     clearAllImages,
   }
 }
