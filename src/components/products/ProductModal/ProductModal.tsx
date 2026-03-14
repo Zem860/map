@@ -86,9 +86,7 @@ export const ProductModal = ({
       target: { name: "content", value: JSON.stringify(next) },
     } as any)
   }
-
-
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="product-modal-description">
