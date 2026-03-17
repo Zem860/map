@@ -1,6 +1,7 @@
-import type { ConfirmedOrder, Order } from '@/type/order';
+import type { ConfirmedOrder, Order, Confirmtype } from '@/type/order';
+import { AxiosError } from 'axios';
 import { useEffect, useState, useCallback } from 'react';
-import { deleteAdminOrders, getAdminOrders } from '@/api/folder_admin/order';
+import { deleteAdminOrders, getAdminOrders, editAdminOrders } from '@/api/folder_admin/order';
 import {
   Table,
   TableBody,
@@ -22,13 +23,24 @@ import { useConfirm } from '@/components/products/hook/useConfirm';
 import OrderModal from '@/components/products/orders/OrderModal';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import { Loader } from '@/components/Loader';
+import { useToastStore } from '@/store/toastStore';
+
 const AdminOrder = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [order, setOrder] = useState<Order>();
+  const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    isLoading: false,
+    error: '', // 用來存错误信息
+    onConfirm: () => { },
+  });
   const confirmModal = useConfirm();
+  const addToast = useToastStore((state) => state.addToast);
 
   const toggleSelectAll = () => {
     if (selectedIds.length === orders?.length) {
@@ -52,7 +64,6 @@ const AdminOrder = () => {
     setIsLoading(false);
   };
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     getData();
   }, []);
   //  批次刪除
@@ -92,15 +103,56 @@ const AdminOrder = () => {
     [confirmModal],
   );
 
-  const handleOpenModalChange = (order:Order)=>{
+  const handleOpenModalChange = (order: Order) => {
     setIsOpen(!isOpen)
     setOrder(order)
   }
 
+  const closeConfirm = () => {
+    // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
+    setConfirmState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleAskSave = (formData: ConfirmedOrder) => {
+    console.log(formData)
+    setConfirmState({
+      isOpen: true,
+      title: 'Confirmed Save',
+      message: `Do you want to confirm the Modification?`,
+      isLoading: false,
+      error: '', // 清空之前的错误
+      onConfirm: async () => {
+        // 真正打 API 的地方
+        setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
+        try {
+          await editAdminOrders(formData.id, formData)
+          getData()
+          closeConfirm(); // 關閉確認對話框
+          addToast(`Modify`, 'order', 'success'); // 成功後關閉 ProductModal
+
+        } catch (err: unknown) {
+          // 將後端錯誤信息顯示在 Modal 中
+          let errorMsg = 'Modify Failed';
+          if (err && typeof err === 'object' && 'response' in err) {
+            const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+            if (axiosErr.response?.data?.message) {
+              errorMsg = Array.isArray(axiosErr.response.data.message)
+                ? axiosErr.response.data.message.join('\n')
+                : axiosErr.response.data.message;
+            }
+          }
+          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+        } finally {
+          setIsOpen(false);
+        }
+      },
+    });
+  };
+
   return (
     <>
       <OrderModal order={order as unknown as ConfirmedOrder} isOpen={isOpen} setIsOpen={setIsOpen}
-        handleAskSave={function () { }} />
+        handleAskSave={handleAskSave} />
       {isLoading ? (
         <Loader />
       ) : (
@@ -225,7 +277,7 @@ const AdminOrder = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => {handleOpenModalChange(o) }}>
+                          <DropdownMenuItem onClick={() => { handleOpenModalChange(o) }}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
@@ -300,6 +352,17 @@ const AdminOrder = () => {
           />
         </>
       )}
+       <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onOpenChange={(open) =>
+          setConfirmState((prev) => ({ ...prev, isOpen: open }))
+        }
+        title={confirmState.title}
+        message={confirmState.message}
+        isLoading={confirmState.isLoading}
+        error={confirmState.error}
+        onConfirm={confirmState.onConfirm}
+      />
     </>
   );
 };

@@ -89,3 +89,12 @@ export type OrderModalProps = {
   setIsOpen: (isOpen: boolean) => void;
   handleAskSave:(data:ConfirmedOrder)=>void
 };
+
+ export  type Confirmtype = {
+   isOpen: boolean;
+   title: string;
+   message: string;
+   isLoading: boolean;
+   error?:string;
+   onConfirm: () => void | Promise<void>; // 這裡定義為函式類型
+ };

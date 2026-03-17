@@ -18,8 +18,8 @@ const OrderModal = ({
 
   // 1. 補上 [order] 依賴，確保傳入的 order 更新時，formData 也會跟著更新
   useEffect(() => {
-    console.log("lsdkjfosldkj")
     if (order) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({ ...order } as ConfirmedOrder);
     }
   }, [order]);
