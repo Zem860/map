@@ -63,3 +63,29 @@ export type Order = {
     user: UserInfo;
     num: string;
 }
+
+//給putAPI
+
+export type ConfirmedOrderProduct = {
+    id: string;
+    product_id: string;    
+    qty: number;           
+}
+
+export type ConfirmedOrder = {
+    create_at: string,
+    id: string,
+    is_paid: boolean,
+    message: string;
+    products: Record<string, ConfirmedOrderProduct>;
+    user: UserInfo;
+    num: string;
+}
+
+
+export type OrderModalProps = {
+  isOpen: boolean;
+  order?: ConfirmedOrder | null;
+  setIsOpen: (isOpen: boolean) => void;
+  handleAskSave:(data:ConfirmedOrder)=>void
+};

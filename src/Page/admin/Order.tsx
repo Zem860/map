@@ -1,4 +1,4 @@
-import type { Order } from '@/type/order';
+import type { ConfirmedOrder, Order } from '@/type/order';
 import { useEffect, useState, useCallback } from 'react';
 import { deleteAdminOrders, getAdminOrders } from '@/api/folder_admin/order';
 import {
@@ -19,12 +19,15 @@ import {
 import { Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useConfirm } from '@/components/products/hook/useConfirm';
+import OrderModal from '@/components/products/orders/OrderModal';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import { Loader } from '@/components/Loader';
 const AdminOrder = () => {
-  const [orders, setOrder] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [order, setOrder] = useState<Order>();
   const confirmModal = useConfirm();
 
   const toggleSelectAll = () => {
@@ -45,7 +48,7 @@ const AdminOrder = () => {
 
   const getData = async () => {
     const res = await getAdminOrders({ page: '1' });
-    setOrder(res.data.orders);
+    setOrders(res.data.orders);
     setIsLoading(false);
   };
   useEffect(() => {
@@ -89,8 +92,15 @@ const AdminOrder = () => {
     [confirmModal],
   );
 
+  const handleOpenModalChange = (order:Order)=>{
+    setIsOpen(!isOpen)
+    setOrder(order)
+  }
+
   return (
     <>
+      <OrderModal order={order as unknown as ConfirmedOrder} isOpen={isOpen} setIsOpen={setIsOpen}
+        handleAskSave={function () { }} />
       {isLoading ? (
         <Loader />
       ) : (
@@ -215,7 +225,7 @@ const AdminOrder = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => { }}>
+                          <DropdownMenuItem onClick={() => {handleOpenModalChange(o) }}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
@@ -253,28 +263,26 @@ const AdminOrder = () => {
                 </div>
                 <div className="mt-2 flex justify-between items-center">
                   <p className="text-lg font-bold">${o.total}</p>
-                  <Button variant="ghost" size="icon" onClick={() => { }}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => { }}>
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => handleDeleteOrder(o.id, o.user.name)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => { handleOpenModalChange(o) }}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => handleDeleteOrder(o.id, o.user.name)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))}
