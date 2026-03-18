@@ -90,6 +90,7 @@ const Coupon = () => {
       ...item,
       due_date: timestampToYmd(Number(item.due_date)),
     });
+    console.log('Opening edit modal for item:', item);
 
     setMode('edit');
     setIsOpen(true);
@@ -152,8 +153,8 @@ const Coupon = () => {
   const handleAskSave = (formData: couponData) => {
     setConfirmState({
       isOpen: true,
-      title: '確認儲存',
-      message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
+      title: 'Confirm Save',
+      message: `Are you sure you want to save "${formData.title}"?`,
       isLoading: false,
       error: '', // 清空之前的错误
       onConfirm: async () => {
@@ -163,11 +164,9 @@ const Coupon = () => {
           switch (mode) {
             case 'create':
               await createCoupon(formData);
-              console.log('優惠券儲存成功', formData);
               break;
             case 'edit':
               await editCoupon(formData.id, formData);
-              console.log('優惠券編輯成功', formData);
               break;
           }
           getInitialData(); // 儲存成功後重新抓取文章列表
@@ -179,7 +178,7 @@ const Coupon = () => {
           ); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
-          let errorMsg = '保存失敗';
+          let errorMsg = 'Save failed';
           if (err && typeof err === 'object' && 'response' in err) {
             const axiosErr = err as AxiosError<{ message?: string | string[] }>;
             if (axiosErr.response?.data?.message) {
@@ -203,8 +202,8 @@ const Coupon = () => {
   const deleteThisCoupon = async (id: string, title: string) => {
     setConfirmState({
       isOpen: true,
-      title: '確認刪除',
-      message: `您確定要刪除${title}嗎?`,
+      title: 'Confirm Delete',
+      message: `Are you sure you want to delete "${title}"?`,
       isLoading: false,
       error: '', // 清空之前的错误
       onConfirm: async () => {
@@ -217,7 +216,7 @@ const Coupon = () => {
           addToast('delete', 'coupon', 'success'); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
-          let errorMsg = '刪除失敗';
+          let errorMsg = 'Delete failed';
           if (err && typeof err === 'object' && 'response' in err) {
             const axiosErr = err as AxiosError<{ message?: string | string[] }>;
             if (axiosErr.response?.data?.message) {
@@ -255,10 +254,10 @@ const Coupon = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            優惠券管理
+            Coupon Management
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            管理所有優惠券的建立、編輯與刪除
+            Manage all coupon creation, editing, and deletion
           </p>
         </div>
         <Button
@@ -277,23 +276,23 @@ const Coupon = () => {
       {/* Stats cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">總數量</p>
+          <p className="text-xs text-muted-foreground">Total Count</p>
           <p className="text-2xl font-bold text-foreground">{coupons.length}</p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">已啟用</p>
+          <p className="text-xs text-muted-foreground">Enabled</p>
           <p className="text-2xl font-bold text-primary">
             {coupons.filter((c) => c.is_enabled).length}
           </p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">未啟用</p>
+          <p className="text-xs text-muted-foreground">Disabled</p>
           <p className="text-2xl font-bold text-foreground">
             {coupons.filter((c) => !c.is_enabled).length}
           </p>
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">已過期</p>
+          <p className="text-xs text-muted-foreground">Expired</p>
           <p className="text-2xl font-bold text-destructive">
             {coupons.filter((c) => isExpired(Number(c.due_date))).length}
           </p>
@@ -304,7 +303,7 @@ const Coupon = () => {
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
-            placeholder="搜尋名稱或優惠碼..."
+            placeholder="Search by title or code..."
             className="pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -316,7 +315,7 @@ const Coupon = () => {
         {filteredCoupons.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <Ticket className="size-10 mb-2 opacity-50" />
-            <p className="text-sm">沒有找到優惠券</p>
+            <p className="text-sm">No coupons found</p>
           </div>
         )}
         {filteredCoupons.map((item) => (
@@ -332,11 +331,11 @@ const Coupon = () => {
                   </p>
                   {item.is_enabled ? (
                     <Badge className="bg-primary/10 text-primary border-primary/20 text-xs shrink-0">
-                      啟用
+                      Enabled
                     </Badge>
                   ) : (
                     <Badge variant="secondary" className="text-xs shrink-0">
-                      未啟用
+                      Disabled
                     </Badge>
                   )}
                 </div>
@@ -344,17 +343,17 @@ const Coupon = () => {
                   <button
                     onClick={() => copyCode(item.code)}
                     className="flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1 text-xs font-mono text-secondary-foreground hover:bg-accent transition-colors"
-                    title="點擊複製"
+                    title="Click to copy"
                   >
                     <Copy className="size-3" />
                     {item.code}
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  {'到期日：'}
+                  {'Due Date: '}
                   {formatDate(Number(item.due_date))}
                   {isExpired(Number(item.due_date)) && (
-                    <span className="text-destructive ml-1">（已過期）</span>
+                    <span className="text-destructive ml-1">（Expired）</span>
                   )}
                 </p>
               </div>
@@ -366,20 +365,20 @@ const Coupon = () => {
                     className="h-8 w-8 shrink-0"
                   >
                     <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">操作選單</span>
+                    <span className="sr-only">Actions</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => openEditModal(item)}>
                     <Pencil className="size-4" />
-                    編輯
+                    Modify
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => deleteThisCoupon(item.id!, item.title)}
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash2 className="size-4" />
-                    刪除
+                    Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -393,12 +392,12 @@ const Coupon = () => {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[200px]">名稱</TableHead>
-              <TableHead className="w-[140px]">優惠碼</TableHead>
-              <TableHead className="w-[100px]">折扣</TableHead>
-              <TableHead className="w-[140px]">到期日</TableHead>
-              <TableHead className="w-[100px]">狀態</TableHead>
-              <TableHead className="w-[80px]">操作</TableHead>
+              <TableHead className="w-[200px]">Name</TableHead>
+              <TableHead className="w-[140px]">Coupon Code</TableHead>
+              <TableHead className="w-[100px]">Discount</TableHead>
+              <TableHead className="w-[140px]">Due Date</TableHead>
+              <TableHead className="w-[100px]">Status</TableHead>
+              <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -410,7 +409,7 @@ const Coupon = () => {
                 >
                   <div className="flex flex-col items-center gap-2">
                     <Ticket className="size-8 opacity-50" />
-                    <p>沒有找到優惠券</p>
+                    <p>No coupons found</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -424,7 +423,7 @@ const Coupon = () => {
                   <button
                     onClick={() => copyCode(item.code)}
                     className="flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1 text-xs font-mono text-secondary-foreground hover:bg-accent transition-colors"
-                    title="點擊複製"
+                    title="Click to copy"
                   >
                     <Copy className="size-3" />
                     {item.code}
@@ -446,16 +445,16 @@ const Coupon = () => {
                     {formatDate(Number(item.due_date))}
                   </span>
                   {isExpired(Number(item.due_date)) && (
-                    <p className="text-xs text-destructive">已過期</p>
+                    <p className="text-xs text-destructive">Expired</p>
                   )}
                 </TableCell>
                 <TableCell>
                   {item.is_enabled ? (
                     <Badge className="bg-primary/10 text-primary border-primary/20">
-                      啟用
+                      Enabled
                     </Badge>
                   ) : (
-                    <Badge variant="secondary">未啟用</Badge>
+                    <Badge variant="secondary">Disabled</Badge>
                   )}
                 </TableCell>
                 <TableCell>
@@ -463,20 +462,20 @@ const Coupon = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">操作選單</span>
+                        <span className="sr-only">Actions</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => openEditModal(item)}>
                         <Pencil className="size-4" />
-                        編輯
+                        Modify
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => deleteThisCoupon(item.id, item.title)}
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="size-4" />
-                        刪除
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
 import { Input } from '@/components/ui/input';
-import { useState, type ChangeEvent, useCallback } from 'react';
+import { useState, type ChangeEvent, useCallback, useEffect } from 'react';
 import type { couponData, CouponModalProps } from '@/type/coupon';
 import DatePicker from '@/components/util/DatePicker';
 import { Switch } from '@/components/ui/switch';
@@ -24,6 +24,13 @@ export const CouponModal = ({
   const [formData, setFormData] = useState<Partial<couponData>>(
     coupons ? { ...coupons } : {},
   );
+
+  useEffect(() => {
+    if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormData(coupons ? { ...coupons } : { is_enabled: 0 }); // 建立時也可以給預設值
+    }
+  }, [isOpen, coupons]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -144,10 +151,10 @@ export const CouponModal = ({
 
         <DialogFooter className="gap-2 pt-4 mt-auto">
           <Button variant="outline" onClick={() => setIsOpen(false)}>
-            取消
+            Cancel
           </Button>
           <Button onClick={handleSave}>
-            {mode === 'create' ? '發布' : '儲存'}
+            {mode === 'create' ? 'Create Coupon' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>
