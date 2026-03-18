@@ -195,12 +195,12 @@ const Products = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditModal(item)}>
-                            編輯
+                            Modify
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => askDelete(item.id, item.title)}
                           >
-                            刪除
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

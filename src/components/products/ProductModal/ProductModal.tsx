@@ -59,7 +59,7 @@ export const ProductModal = ({
       images.clearAllImages()
     } catch (err) {
       console.error(err)
-      alert("儲存失敗（圖片上傳或商品儲存失敗）")
+      alert("Failed to save (Image upload or product saving failed)")
     } finally {
       setIsSaving(false)
     }
@@ -68,7 +68,7 @@ export const ProductModal = ({
 
 
 
-  const formTitle = mode === "create" ? "新增書籍" : "編輯書籍"
+  const formTitle = mode === "create" ? "Create Book" : "Modify Book"
   const getContentJson = (): ProductContent => {
     try {
       return formData.content ? (JSON.parse(formData.content) as ProductContent) : ({} as ProductContent)
@@ -217,7 +217,7 @@ export const ProductModal = ({
               </div>
               <div className="flex items-center gap-3">
                 <Label htmlFor="is_enabled" className="mb-0">
-                  啟用
+                  Enabled
                 </Label>
                 <Switch
                   id="is_enabled"
@@ -247,7 +247,7 @@ export const ProductModal = ({
                 disabled={images.isMax}
               >
                 <FileInput className="size-4" />
-                選擇圖片
+                Image Upload
               </Button>
 
               <div className="text-sm text-muted-foreground flex items-center">
@@ -261,7 +261,7 @@ export const ProductModal = ({
                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   type="url"
-                  placeholder="輸入圖片連結"
+                  placeholder="Image Url"
                   value={images.imageUrlInput}
                   onChange={(e) => images.setImageUrlInput(e.target.value)}
                   className="pl-9"
@@ -274,13 +274,13 @@ export const ProductModal = ({
                 onClick={images.addImageUrl}
                 disabled={images.isMax}
               >
-                新增
+                Upload
               </Button>
             </div>
 
             {/* 圖片預覽 */}
             <div className="space-y-2">
-              <Label>圖片預覽（儲存後才會上傳檔案）</Label>
+              <Label>Image Preview (File will be uploaded after saving)</Label>
               <div className="grid grid-cols-2 gap-3">
                 {/* 已有 URL 圖 */}
                 {images.uploadedImages.map((image: string, index: number) => (
@@ -290,13 +290,13 @@ export const ProductModal = ({
                   >
                     {index === 0 && (
                       <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
-                        主圖
+                        Cover
                       </div>
                     )}
 
                     <img
                       src={image}
-                      alt={`圖片 ${index + 1}`}
+                      alt={`image ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
 
@@ -322,7 +322,7 @@ export const ProductModal = ({
                     >
                       {idx === 0 && (
                         <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
-                          主圖
+                          Cover
                         </div>
                       )}
 
@@ -362,13 +362,13 @@ export const ProductModal = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">書籍描述</Label>
+          <Label htmlFor="description">Book Info</Label>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            placeholder="請輸入書籍詳細描述"
+            placeholder="Enter detailed book description..."
             rows={3}
           />
         </div>
@@ -379,7 +379,7 @@ export const ProductModal = ({
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
           >
-            取消
+            Cancel
           </Button>
 
           <Button
@@ -387,7 +387,7 @@ export const ProductModal = ({
             className="bg-primary hover:bg-primary/90"
             disabled={isSaving}
           >
-            {isSaving ? "儲存中..." : "儲存"}
+            {isSaving ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>
