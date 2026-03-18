@@ -34,25 +34,25 @@ const ArticleAdmin = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
-    const [pageData, setPageData] = useState<PaginationData>({
-      total_pages: 0,
-      current_page: 1,
-      has_pre: false,
-      has_next: false,
-      category: '',
-    });
-      const handlePageChange = async (newPage: number) => {
-        try {
-          setIsLoading(true);
-          const res = await getArticles({ page: newPage });
-          setArticles(res.data.articles);
-          setPageData(res.data.pagination);
-        } catch (err) {
-          console.error('Failed to fetch articles for page', newPage, err);
-        } finally {
-          setIsLoading(false);
-        }
-      };
+  const [pageData, setPageData] = useState<PaginationData>({
+    total_pages: 0,
+    current_page: 1,
+    has_pre: false,
+    has_next: false,
+    category: '',
+  });
+  const handlePageChange = async (newPage: number) => {
+    try {
+      setIsLoading(true);
+      const res = await getArticles({ page: newPage });
+      setArticles(res.data.articles);
+      setPageData(res.data.pagination);
+    } catch (err) {
+      console.error('Failed to fetch articles for page', newPage, err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
     isOpen: false,
@@ -70,7 +70,7 @@ const ArticleAdmin = () => {
   const fetchArticles = async () => {
     setIsLoading(true);
     try {
-      const res = await getArticles({});  
+      const res = await getArticles({});
       setArticles(res.data.articles);
       setPageData(res.data.pagination);
     } catch (error) {
@@ -355,10 +355,10 @@ const ArticleAdmin = () => {
         onConfirm={confirmState.onConfirm}
       />
 
-            {pageData && (
-              <PaginationDemo pagination={pageData} onPageChange={handlePageChange} />
-            )}
-      
+      {pageData && (
+        <PaginationDemo pagination={pageData} onPageChange={handlePageChange} />
+      )}
+
     </>
   );
 };;

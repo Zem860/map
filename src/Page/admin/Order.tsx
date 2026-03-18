@@ -24,6 +24,8 @@ import OrderModal from '@/components/products/orders/OrderModal';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import { Loader } from '@/components/Loader';
 import { useToastStore } from '@/store/toastStore';
+import type { PaginationData } from '@/type/product';
+import { PaginationDemo } from '@/components/util/Pagination';
 
 const AdminOrder = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -41,6 +43,26 @@ const AdminOrder = () => {
   });
   const confirmModal = useConfirm();
   const addToast = useToastStore((state) => state.addToast);
+
+  const [pageData, setPageData] = useState<PaginationData>({
+    total_pages: 0,
+    current_page: 1,
+    has_pre: false,
+    has_next: false,
+    category: '',
+  });
+  const handlePageChange = async (newPage: number) => {
+    try {
+      setIsLoading(true);
+      const res = await getAdminOrders({ page: newPage.toString() });
+      setOrders(res.data.orders);
+      setPageData(res.data.pagination);
+    } catch (err) {
+      console.error('Failed to fetch orders for page', newPage, err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleSelectAll = () => {
     if (selectedIds.length === orders?.length) {
@@ -61,6 +83,7 @@ const AdminOrder = () => {
   const getData = async () => {
     const res = await getAdminOrders({ page: '1' });
     setOrders(res.data.orders);
+    setPageData(res.data.pagination);
     setIsLoading(false);
   };
   useEffect(() => {
@@ -352,7 +375,7 @@ const AdminOrder = () => {
           />
         </>
       )}
-       <ConfirmModal
+      <ConfirmModal
         isOpen={confirmState.isOpen}
         onOpenChange={(open) =>
           setConfirmState((prev) => ({ ...prev, isOpen: open }))
@@ -363,6 +386,9 @@ const AdminOrder = () => {
         error={confirmState.error}
         onConfirm={confirmState.onConfirm}
       />
+      {pageData && (
+        <PaginationDemo pagination={pageData} onPageChange={handlePageChange} />
+      )}
     </>
   );
 };
