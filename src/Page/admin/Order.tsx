@@ -184,7 +184,7 @@ const AdminOrder = () => {
               </p>
             </div>
           </div>
-          <div className="mb-4">
+          <div className="mb-4 md:block hidden">
             <Button
               variant="destructive"
               disabled={selectedIds.length === 0}
