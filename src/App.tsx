@@ -19,9 +19,11 @@ import ArticleAdmin from './Page/admin/ArticleAdmin';
 import Dashboard from './Page/admin/Dashboard';
 import { ToastContainer } from '@/components/Toast'; // 請確認路徑
 import Coupon from "./Page/admin/Coupon"
+import ScrollTop from './components/util/ScrollTop';
 const App = () => {
   return (
     <>
+      <ScrollTop />
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<Home />}></Route>
