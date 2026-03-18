@@ -25,6 +25,8 @@ import { Plus } from 'lucide-react';
 import ArticleModal from '@/components/products/articles/ArticleModal';
 import { createArticle } from '@/api/folder_admin/articles';
 import { Loader } from '@/components/Loader';
+import type { PaginationData } from '@/type/product';
+import { PaginationDemo } from '@/components/util/Pagination';
 const ArticleAdmin = () => {
   const addToast = useToastStore((state) => state.addToast);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -32,6 +34,25 @@ const ArticleAdmin = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
+    const [pageData, setPageData] = useState<PaginationData>({
+      total_pages: 0,
+      current_page: 1,
+      has_pre: false,
+      has_next: false,
+      category: '',
+    });
+      const handlePageChange = async (newPage: number) => {
+        try {
+          setIsLoading(true);
+          const res = await getArticles({ page: newPage });
+          setArticles(res.data.articles);
+          setPageData(res.data.pagination);
+        } catch (err) {
+          console.error('Failed to fetch articles for page', newPage, err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
   const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
     isOpen: false,
@@ -49,8 +70,9 @@ const ArticleAdmin = () => {
   const fetchArticles = async () => {
     setIsLoading(true);
     try {
-      const res = await getArticles({});
+      const res = await getArticles({});  
       setArticles(res.data.articles);
+      setPageData(res.data.pagination);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -332,6 +354,11 @@ const ArticleAdmin = () => {
         error={confirmState.error}
         onConfirm={confirmState.onConfirm}
       />
+
+            {pageData && (
+              <PaginationDemo pagination={pageData} onPageChange={handlePageChange} />
+            )}
+      
     </>
   );
 };;
