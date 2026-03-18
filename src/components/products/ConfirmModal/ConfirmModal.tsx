@@ -36,10 +36,10 @@ const ConfirmModal = ({
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            取消
+            Cancel
           </Button>
           <Button onClick={onConfirm} disabled={isLoading}>
-            {isLoading ? "處理中..." : "確認"}
+            {isLoading ? "Processing..." : "Confirm"}
           </Button>
         </DialogFooter>
       </DialogContent>

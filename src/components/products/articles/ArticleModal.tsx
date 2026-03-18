@@ -92,14 +92,13 @@ export const ArticleModal = ({
   const handleSave = async () => {
     // TODO: 這裡呼叫你的 API，並帶上 tags
     let imageUrl = uploadedImages[0] || '';
-    console.log('imageUrl:', imageUrl);
     // 上傳待上傳的檔案
     if (selectedFiles.length > 0) {
       try {
         const urls = await images.uploadSelectedFiles();
         imageUrl = urls[0];
       } catch {
-        alert('上傳失敗');
+        alert('Upload failed. Please try again.');
         return;
       }
     }
@@ -135,10 +134,10 @@ export const ArticleModal = ({
 
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? '新增文章' : '編輯文章'}
+            {mode === 'create' ? 'Create Article' : 'Modify Article'}
           </DialogTitle>
           <DialogDescription>
-            編輯文章標籤，輸入後按下 Enter 新增。
+            Enter and press Enter to add tags.
           </DialogDescription>
         </DialogHeader>
 
@@ -242,11 +241,11 @@ export const ArticleModal = ({
                 disabled={images.isMax}
               >
                 <FileInput className="size-4 mr-2" />
-                選擇圖片
+                Upload Image
               </Button>
             </div>
 
-            <Label className="text-xs text-muted-foreground">圖片預覽（儲存後才會上傳檔案）</Label>
+            <Label className="text-xs text-muted-foreground">Image Preview (will be uploaded after saving)</Label>
 
             {/* 這裡也可以改成橫向排列 grid-cols-4 節省垂直高度 */}
             <div className="grid grid-cols-1 gap-3 mt-2">
@@ -338,10 +337,10 @@ export const ArticleModal = ({
 
         <DialogFooter className="gap-2 pt-4 mt-auto">
           <Button variant="outline" onClick={() => setIsOpen(false)}>
-            取消
+            Cancel
           </Button>
           <Button onClick={handleSave}>
-            {mode === 'create' ? '發布' : '儲存'}
+            {mode === 'create' ? 'Create' : 'Save'}
           </Button>
         </DialogFooter>
 

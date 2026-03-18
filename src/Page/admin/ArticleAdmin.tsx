@@ -52,7 +52,7 @@ const ArticleAdmin = () => {
       const res = await getArticles({});
       setArticles(res.data.articles);
     } catch (error) {
-      console.error('抓取失敗:', error);
+      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -77,8 +77,8 @@ const ArticleAdmin = () => {
   const deleteThisArticle = async (id: string, title: string) => {
     setConfirmState({
       isOpen: true,
-      title: '確認刪除',
-      message: `您確定要刪除${title}嗎?`,
+      title: 'Confirm Delete',
+      message: `Are you sure you want to delete "${title}"?`,
       isLoading: false,
       error: '', // 清空之前的错误
       onConfirm: async () => {
@@ -91,7 +91,7 @@ const ArticleAdmin = () => {
           addToast('delete', 'article', 'success'); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
-          let errorMsg = '刪除失敗';
+          let errorMsg = 'Failed to delete the article';
           if (err && typeof err === 'object' && 'response' in err) {
             const axiosErr = err as AxiosError<{ message?: string | string[] }>;
             if (axiosErr.response?.data?.message) {
@@ -111,8 +111,8 @@ const ArticleAdmin = () => {
   const handleAskSave = (formData: Article) => {
     setConfirmState({
       isOpen: true,
-      title: '確認儲存',
-      message: `您確定要儲存「${formData.title}」這篇文章嗎？`,
+      title: 'Confirm Save',
+      message: `Are you sure you want to save the article "${formData.title}"?`,
       isLoading: false,
       error: '', // 清空之前的错误
       onConfirm: async () => {
@@ -122,11 +122,9 @@ const ArticleAdmin = () => {
           switch (mode) {
             case 'create':
               await createArticle(formData);
-              console.log('文章儲存成功', formData);
               break;
             case 'edit':
               await editArticle(formData.id, formData);
-              console.log('文章編輯成功', formData);
               break;
           }
           fetchArticles(); // 儲存成功後重新抓取文章列表
@@ -135,7 +133,7 @@ const ArticleAdmin = () => {
 
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
-          let errorMsg = '保存失敗';
+          let errorMsg = 'Failed to save the article';
           if (err && typeof err === 'object' && 'response' in err) {
             const axiosErr = err as AxiosError<{ message?: string | string[] }>;
             if (axiosErr.response?.data?.message) {
@@ -216,14 +214,18 @@ const ArticleAdmin = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                          //   onClick={() => openEditModal(item)}
+                            onClick={() => {
+                              openModal(item);
+                            }}
                           >
-                            編輯
+                            Modify
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                          // onClick={() => askDelete(item.id, item.title)}
+                            onClick={() =>
+                              deleteThisArticle(item.id, item.title)
+                            }
                           >
-                            刪除
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -300,14 +302,14 @@ const ArticleAdmin = () => {
                               openModal(item);
                             }}
                           >
-                            編輯
+                            Modify
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
                               deleteThisArticle(item.id, item.title)
                             }
                           >
-                            刪除
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
