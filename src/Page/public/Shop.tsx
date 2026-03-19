@@ -58,8 +58,8 @@ const Shop = () => {
                                             <BookCard
                                                 title={book.title}
                                                 author={productContentParser(book).author || "Unknown"}
-                                                price={String(book.price)}
-                                                originalPrice={String(book.origin_price)}
+                                                price={book.price}
+                                                originalPrice={book.origin_price}
                                                 imageQuery={book.imageUrl}
                                                 rating={book.rating}
                                             />

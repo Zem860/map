@@ -26,6 +26,7 @@ import { Loader } from '@/components/Loader';
 import { useToastStore } from '@/store/toastStore';
 import type { PaginationData } from '@/type/product';
 import { PaginationDemo } from '@/components/util/Pagination';
+import { thousandSeparator } from '@/helper/tool';
 
 const AdminOrder = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -270,7 +271,7 @@ const AdminOrder = () => {
 
                     {/* 5. Total (對應 Total 標題) */}
                     <TableCell className="text-right font-bold">
-                      ${o.total}
+                      ${thousandSeparator(Number(o.total).toFixed(0))}
                     </TableCell>
 
                     {/* 6. Paid Status (對應 Paid Status 標題) */}

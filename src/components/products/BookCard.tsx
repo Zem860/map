@@ -1,15 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ShoppingCart } from "lucide-react"
-
-interface BookCardProps {
-  title: string
-  author: string
-  price: string
-  originalPrice?: string
-  imageQuery: string
-  rating: number
-}
+import { thousandSeparator } from "@/helper/tool"
+import type { BookCardProps } from "@/type/product"
 
 export function BookCard({ title, author, price, originalPrice, imageQuery, rating }: BookCardProps) {
   return (
@@ -37,8 +30,8 @@ export function BookCard({ title, author, price, originalPrice, imageQuery, rati
       </CardContent>
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-primary">{price}</span>
-          {originalPrice && <span className="text-sm text-muted-foreground line-through">{originalPrice}</span>}
+          <span className="text-lg font-bold text-primary">{thousandSeparator(price)}</span>
+          {originalPrice && <span className="text-sm text-muted-foreground line-through">{thousandSeparator(originalPrice)}</span>}
         </div>
         <Button size="icon" variant="outline" className="h-9 w-9 bg-transparent">
           <ShoppingCart className="h-4 w-4" />

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
 import { apiApplyCoupon } from "@/api/folder_user/cart";
 import { useEffect, useState } from "react";
+import { thousandSeparator } from "@/helper/tool";
 
 const Cart = () => {
     const [loading, setLoading] = useState(false);
@@ -103,8 +104,8 @@ const Cart = () => {
                                                 </div>
                                                 <div className="flex flex-col gap-2 mb-3">
                                                     <div className="flex items-baseline gap-2">
-                                                        <span className="text-xs text-muted-foreground line-through">${item.product.origin_price}</span>
-                                                        <span className="text-base font-bold text-primary">${item.product.price}</span>
+                                                        <span className="text-xs text-muted-foreground line-through">${thousandSeparator(item.product.origin_price)}</span>
+                                                        <span className="text-base font-bold text-primary">${thousandSeparator(item.product.price)}</span>
                                                     </div>
                                                 </div>
                                                 {/* Quantity */}
@@ -115,8 +116,8 @@ const Cart = () => {
                                                         loading={isItemLoading(item.id)}
                                                     />
                                                     <div className="text-right">
-                                                        <p className="font-semibold text-primary">${item.product.origin_price}</p>
-                                                        <p className="text-xs text-muted-foreground">Total: ${(item.product.price * item.qty).toFixed(0)}</p>
+                                                        <p className="font-semibold text-primary">${thousandSeparator(item.product.origin_price)}</p>
+                                                        <p className="text-xs text-muted-foreground">Total: ${thousandSeparator((item.product.price * item.qty).toFixed(0))}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -158,8 +159,8 @@ const Cart = () => {
                                             {/* Price */}
                                             <td className="py-6 text-center">
                                                 <div className="flex flex-col items-center">
-                                                    <span className="font-semibold text-primary">${item.product.price}</span>
-                                                    <span className="text-xs text-muted-foreground line-through">${item.product.origin_price}</span>
+                                                    <span className="font-semibold text-primary">${thousandSeparator(item.product.price)}</span>
+                                                    <span className="text-xs text-muted-foreground line-through">${thousandSeparator(item.product.origin_price)}</span>
                                                 </div>
                                             </td>
 
@@ -176,7 +177,7 @@ const Cart = () => {
 
                                             {/* Subtotal */}
                                             <td className="py-6 text-right">
-                                                <span className="font-semibold text-foreground">${(item.product.price * item.qty).toFixed(0)}</span>
+                                                <span className="font-semibold text-foreground">${thousandSeparator((item.product.price * item.qty).toFixed(0))}</span>
                                             </td>
 
                                             {/* Remove */}
@@ -250,7 +251,7 @@ const Cart = () => {
                                         <div className="flex justify-between py-2 border-b border-border">
                                             <span className="text-muted-foreground">Subtotal ({totalItems} items)</span>
                                             {/* 直接使用 cart 內的原始總額 */}
-                                            <span className="font-medium text-foreground">${cart.data.total.toFixed(0)}</span>
+                                            <span className="font-medium text-foreground">${thousandSeparator(cart.data.total.toFixed(0))}</span>
                                         </div>
 
                                         {/* 如果 final_total 小於 total，代表有折扣 */}
@@ -258,7 +259,7 @@ const Cart = () => {
                                             <div className="flex justify-between py-2 border-b border-border text-primary">
                                                 <span>Discount Applied</span>
                                                 <span className="font-medium">
-                                                    -${(cart.data.total - cart.data.final_total).toFixed(0)}
+                                                    -${thousandSeparator((cart.data.total - cart.data.final_total).toFixed(0))}
                                                 </span>
                                             </div>
                                         )}
@@ -271,7 +272,7 @@ const Cart = () => {
                                             <span className="font-bold text-foreground">Total</span>
                                             {/* 顯示最終應付金額 */}
                                             <span className="font-bold text-primary">
-                                                ${cart.data.final_total.toFixed(0)}
+                                                ${thousandSeparator(cart.data.final_total.toFixed(0))}
                                             </span>
                                         </div>
                                     </div>

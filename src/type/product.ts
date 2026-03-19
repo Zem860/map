@@ -4,6 +4,15 @@ export type SidebarDrawerProps = {
   onOpenChange: (open: boolean) => void
 }
 
+export type BookCardProps ={
+  title: string
+  author: string
+  price: number
+  originalPrice?: number
+  imageQuery: string
+  rating: number
+}
+
 export type productData = {
     id:string,
     title:string,

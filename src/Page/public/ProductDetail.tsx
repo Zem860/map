@@ -11,6 +11,7 @@ import ProductImageGallery from "@/components/products/ImageGallery";
 import Qtybar from "@/components/util/Qtybar";
 import { useCartStore } from "@/store/cartStore";
 import BreadcrumbNav from "@/components/BreadCrumbs";
+import { thousandSeparator } from "@/helper/tool";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -67,16 +68,16 @@ const ProductDetail = () => {
                                 <Card>
                                     <CardContent className="p-6">
                                         <div className="flex items-baseline gap-3 mb-6">
-                                            <span className="text-4xl font-bold text-primary">${product?.price}</span>
+                                            <span className="text-4xl font-bold text-primary">${thousandSeparator(product?.price)}</span>
                                             {product?.origin_price && (
-                                                <span className="text-xl text-muted-foreground line-through">{product?.origin_price}</span>
+                                                <span className="text-xl text-muted-foreground line-through">{thousandSeparator(product?.origin_price)}</span>
                                             )}
                                             {product?.origin_price && (
                                                 <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
                                                     Save{" "}
-                                                    {Math.round(
+                                                    {thousandSeparator(Math.round(
                                                         ((product.origin_price - product.price) / product.origin_price) * 100
-                                                    )}
+                                                    ))}
                                                     %
                                                 </span>
                                             )}
