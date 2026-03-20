@@ -94,7 +94,7 @@ export type OrderModalProps = {
    isOpen: boolean;
    title: string;
    message: string;
-   isLoading: boolean;
+   isLoading?: boolean;
    error?:string;
    onConfirm: () => void | Promise<void>; // 這裡定義為函式類型
  };

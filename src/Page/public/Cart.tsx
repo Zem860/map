@@ -13,9 +13,14 @@ import { Check } from "lucide-react";
 import { apiApplyCoupon } from "@/api/folder_user/cart";
 import { useEffect, useState } from "react";
 import { thousandSeparator } from "@/helper/tool";
+import ConfirmModal from "@/components/products/ConfirmModal/ConfirmModal";
+import type { Confirmtype } from "@/type/order";
+import type { AxiosError } from "axios";
+import { useToastStore } from '@/store/toastStore';
 
 const Cart = () => {
-    const [loading, setLoading] = useState(false);
+    const { addToast } = useToastStore();
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
     const [couponCode, setCouponCode] = useState<string>("");
     const [discount, setDiscount] = useState<number>(0);
     const [discountMsg, setDiscountMsg] = useState<string>("");
@@ -45,7 +50,7 @@ const Cart = () => {
         }
         // 這裡可以根據 couponCode 計算折扣金額，這只是示例邏輯
         try {
-            setLoading(true);
+            setIsApplyingCoupon(true);
             const res = await apiApplyCoupon({ code: couponCode });
             setDiscount(res.data.data.final_total / originalTotal * 100);
             setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
@@ -53,7 +58,7 @@ const Cart = () => {
         } catch {
             setDiscountMsg("Failed to apply coupon. Please check the code and try again.");
         } finally {
-            setLoading(false);
+            setIsApplyingCoupon(false);
         }
     }
 
@@ -62,8 +67,63 @@ const Cart = () => {
     }, [cart])
     // 檢查某商品是否正在 loading
     const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
+    const [confirmState, setConfirmState] = useState<
+        Confirmtype & { error?: string }
+    >({
+        isOpen: false,
+        title: '',
+        message: '',
+        error: '', // 用來存错误信息
+        onConfirm: () => { },
+    });
+    const closeConfirm = () => {
+        // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+    };
+    const clearCartWithConfirm = () => {
+        setConfirmState({
+            isOpen: true,
+            title: 'Confirm Delete',
+            message: `Are you sure you want to delete your products?`,
+            isLoading: false,
+            error: '',
+            onConfirm: async () => {
+                setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
+                try {
+                    closeConfirm();
+                    await clearCart();
+                    addToast('clear', 'cart', 'success');
+                } catch (err: unknown) {
+                    let errorMsg = 'Delete failed';
+                    if (err && typeof err === 'object' && 'response' in err) {
+                        const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+                        if (axiosErr.response?.data?.message) {
+                            errorMsg = Array.isArray(axiosErr.response.data.message)
+                                ? axiosErr.response.data.message.join('\n')
+                                : axiosErr.response.data.message;
+                        }
+                    }
+                    setConfirmState((prev) => ({
+                        ...prev,
+                        error: errorMsg,
+                    }));
+                }
+            },
+        });
+    };
     return (
         <>
+            <ConfirmModal
+                isOpen={confirmState.isOpen}
+                onOpenChange={(open) =>
+                    setConfirmState((prev) => ({ ...prev, isOpen: open }))
+                }
+                title={confirmState.title}
+                message={confirmState.message}
+                isLoading={confirmState.isLoading}
+                error={confirmState.error}
+                onConfirm={confirmState.onConfirm}
+            />
             {isLoading && <Loader />}
             {cart.data.carts.length === 0 ?
                 <Card className="border-border">
@@ -201,7 +261,7 @@ const Cart = () => {
                                         Continue Shopping
                                     </Button>
                                 </NavLink>
-                                <Button variant="ghost" onClick={() => { clearCart() }} className="text-muted-foreground hover:text-destructive">
+                                <Button variant="ghost" onClick={() => { clearCartWithConfirm() }} className="text-muted-foreground hover:text-destructive">
                                     Clear Cart
                                 </Button>
                             </div>
@@ -224,9 +284,9 @@ const Cart = () => {
                                             onChange={(e) => setCouponCode(e.target.value)}
                                             className="flex-1 border-border"
                                         />
-                                        <Button disabled={loading} onClick={() => {
+                                        <Button disabled={isApplyingCoupon} onClick={() => {
                                             applyDiscount()
-                                        }} size="sm">{loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Apply'}</Button>
+                                        }} size="sm">{isApplyingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Apply'}</Button>
                                     </div>
                                     {discount > 0 ? (
                                         <div className="mt-4 flex items-center gap-2 text-sm text-primary">
@@ -279,9 +339,9 @@ const Cart = () => {
                                     <Button
                                         className="w-full mt-6"
                                         size="lg"
-                                        disabled={cart.data.carts.length === 0||loading}
+                                        disabled={cart.data.carts.length === 0 || isApplyingCoupon}
                                         onClick={() => navigate("../form")}                                    >
-                                        {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Proceed to Checkout'}
+                                        {isApplyingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Proceed to Checkout'}
                                     </Button>
 
                                     <p className="text-xs text-muted-foreground text-center mt-4">
