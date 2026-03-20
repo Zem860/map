@@ -84,11 +84,11 @@ const UserForm = () => {
                             rules={{ required: "First name is required" }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label className="text-foreground">
+                                    <Label className="text-foreground" htmlFor='firstName'>
                                         First Name <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="First Name" />
+                                        <Input {...field} placeholder="First Name" id='firstName' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -100,11 +100,11 @@ const UserForm = () => {
                             rules={{ required: "Last name is required" }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='lastName'>
                                         Last Name <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="Last Name" />
+                                        <Input {...field} placeholder="Last Name" id='lastName' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -122,11 +122,11 @@ const UserForm = () => {
                             }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='tel'>
                                         Telephone <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="Telephone" />
+                                        <Input {...field} placeholder="Telephone" id='tel' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -144,11 +144,11 @@ const UserForm = () => {
                             }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='email'>
                                         Email <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="Email" type="email" />
+                                        <Input {...field} placeholder="Email" id='email' type="email" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -161,11 +161,11 @@ const UserForm = () => {
                             rules={{ required: "Country is required" }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='country'>
                                         Country <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="Country" />
+                                        <Input {...field} placeholder="Country" id='country' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -177,11 +177,11 @@ const UserForm = () => {
                             rules={{ required: "City is required" }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='city'>
                                         City <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="City" />
+                                        <Input {...field} placeholder="City" id='city' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -193,11 +193,11 @@ const UserForm = () => {
                             rules={{ required: "Address is required" }}
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='address'>
                                         Address <span className="text-destructive">*</span>
                                     </Label>
                                     <FormControl>
-                                        <Input {...field} placeholder="Address" />
+                                        <Input {...field} placeholder="Address" id='address' type="text" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -208,11 +208,11 @@ const UserForm = () => {
                             name="message"
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label>
+                                    <Label className="text-foreground" htmlFor='message'>
                                         Message
                                     </Label>
                                     <FormControl>
-                                        <Textarea placeholder="Enter your message" {...field} />
+                                        <Textarea placeholder="Enter your message" {...field} id='message' />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
