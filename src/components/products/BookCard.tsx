@@ -15,7 +15,7 @@ export function BookCard({ title, author, price, originalPrice, imageQuery, rati
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-        <h3 className="font-serif font-semibold text-base leading-tight mb-1 line-clamp-2">{title}</h3>
+        <h3 className="font-serif font-semibold text-base leading-tight mb-1 line-clamp-2  min-h-[2.5rem]" title={title}>{title}</h3>
         <p className="text-sm text-muted-foreground mb-2">{author}</p>
         <div className="flex items-center gap-1 mb-2">
           <div className="flex">
