@@ -13,6 +13,13 @@ export type BookCardProps = {
   rating: number;
 };
 
+export type QtybarProps = {
+  qty: number;
+  setQty: (qty: number) => void;
+  disable?: boolean;
+  loading?: boolean;
+};
+
 export type productData = {
   id: string;
   title: string;

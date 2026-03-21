@@ -1,3 +1,5 @@
+import { useEffect, useState, useRef } from 'react';
+import { AxiosError } from 'axios';
 import { useCartStore } from '@/store/cartStore';
 import BreadcrumbNav from '@/components/BreadCrumbs';
 import { Stepper } from '@/components/Stepper';
@@ -11,11 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Check } from 'lucide-react';
 import { apiApplyCoupon } from '@/api/folder_user/cart';
-import { useEffect, useState } from 'react';
 import { thousandSeparator } from '@/helper/tool';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { Confirmtype } from '@/type/order';
-import type { AxiosError } from 'axios';
 import { useToastStore } from '@/store/toastStore';
 
 const Cart = () => {
@@ -34,17 +34,27 @@ const Cart = () => {
   const navigate = useNavigate();
   //做使用者體驗好的增加商品數量和減少商品數量
   const [loadingIds, setLoadingIds] = useState<string[]>([]);
-  const handleQtyChange = async (
+  const qtyTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const handleQtyChange = (
     itemId: string,
     productId: string,
     newQty: number
   ) => {
-    setLoadingIds((prev) => [...prev, itemId]);
-    try {
-      await editCartNum(itemId, { product_id: productId, qty: newQty });
-    } finally {
-      setLoadingIds((prev) => prev.filter((id) => id !== itemId));
+    if (qtyTimers.current[itemId]) {
+      clearTimeout(qtyTimers.current[itemId]);
     }
+    qtyTimers.current[itemId] = setTimeout(async () => {
+      setLoadingIds((prev) => [...prev, itemId]);
+      try {
+        await editCartNum(itemId, {
+          product_id: productId,
+          qty: newQty,
+        });
+      } finally {
+        setLoadingIds((prev) => prev.filter((id) => id !== itemId));
+        delete qtyTimers.current[itemId];
+      }
+    }, 500);
   };
 
   const applyDiscount = async () => {
