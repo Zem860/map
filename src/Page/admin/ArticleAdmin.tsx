@@ -1,6 +1,11 @@
 import type { Article, Confirmtype } from '@/type/articles';
 import { useState, useEffect } from 'react';
-import { getArticles, getSingleArticle, editArticle, deleteArticle } from '@/api/folder_admin/articles';
+import {
+  getArticles,
+  getSingleArticle,
+  editArticle,
+  deleteArticle,
+} from '@/api/folder_admin/articles';
 import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
 import type { AxiosError } from 'axios';
 import { useToastStore } from '@/store/toastStore';
@@ -54,13 +59,15 @@ const ArticleAdmin = () => {
     }
   };
 
-  const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
+  const [confirmState, setConfirmState] = useState<
+    Confirmtype & { error?: string }
+  >({
     isOpen: false,
     title: '',
     message: '',
     isLoading: false,
     error: '', // 用來存错误信息
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
   const closeConfirm = () => {
     // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
@@ -92,8 +99,9 @@ const ArticleAdmin = () => {
       setArticle(res.data.article);
       setIsOpen(true);
       setMode('edit');
+    } catch (err) {
+      console.error(err);
     }
-    catch (err) { console.error(err) }
   };
 
   const deleteThisArticle = async (id: string, title: string) => {
@@ -122,13 +130,17 @@ const ArticleAdmin = () => {
                 : axiosErr.response.data.message;
             }
           }
-          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+          setConfirmState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: errorMsg,
+          }));
         } finally {
           setIsOpen(false); // 關閉 ArticleModal
         }
       },
     });
-  }
+  };
 
   const handleAskSave = (formData: Article) => {
     setConfirmState({
@@ -151,8 +163,11 @@ const ArticleAdmin = () => {
           }
           fetchArticles(); // 儲存成功後重新抓取文章列表
           closeConfirm(); // 關閉確認對話框
-          addToast(`${mode === 'create' ? 'create' : 'modify'}`, 'article', 'success'); // 成功後關閉 ProductModal
-
+          addToast(
+            `${mode === 'create' ? 'create' : 'modify'}`,
+            'article',
+            'success'
+          ); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
           let errorMsg = 'Failed to save the article';
@@ -164,7 +179,11 @@ const ArticleAdmin = () => {
                 : axiosErr.response.data.message;
             }
           }
-          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+          setConfirmState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: errorMsg,
+          }));
         } finally {
           setIsOpen(false); // 關閉 ArticleModal
         }
@@ -358,9 +377,8 @@ const ArticleAdmin = () => {
       {pageData && (
         <PaginationDemo pagination={pageData} onPageChange={handlePageChange} />
       )}
-
     </>
   );
-};;
+};
 
 export default ArticleAdmin;

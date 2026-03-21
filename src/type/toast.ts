@@ -3,4 +3,4 @@ export type CustomToastProps = {
   message: string;
   duration?: number;
   onClose: () => void;
-}
+};

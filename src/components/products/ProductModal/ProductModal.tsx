@@ -1,95 +1,103 @@
 // src/features/products/components/ProductModal.tsx
-import { X, LinkIcon, FileInput } from "lucide-react"
+import { X, LinkIcon, FileInput } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "../../ui/dialog"
-import { Button } from "../../ui/button"
-import { Input } from "../../ui/input"
-import { Label } from "../../ui/label"
-import { Switch } from "../../ui/switch"
-import { Textarea } from "../../ui/textarea"
-import type { productData, ProductModalProps, ProductContent } from "@/type/product"
-import { useState, type ChangeEvent } from "react"
-import { useProductForm } from "./hooks/useProductForm"
-import { useProductImages } from "./hooks/useProductImages"
-import { buildProductPayload } from "./utils/product.mapper"
-import DatePicker from "@/components/util/DatePicker"
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Switch } from '../../ui/switch';
+import { Textarea } from '../../ui/textarea';
+import type {
+  productData,
+  ProductModalProps,
+  ProductContent,
+} from '@/type/product';
+import { useState, type ChangeEvent } from 'react';
+import { useProductForm } from './hooks/useProductForm';
+import { useProductImages } from './hooks/useProductImages';
+import { buildProductPayload } from './utils/product.mapper';
+import DatePicker from '@/components/util/DatePicker';
 
 export const ProductModal = ({
   isOpen,
   onOpenChange,
   product,
   onSave,
-  mode = "create",
+  mode = 'create',
 }: ProductModalProps) => {
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
 
-  const normalizedProduct = product ?? undefined
+  const normalizedProduct = product ?? undefined;
 
   const { formData, handleInputChange, handleSwitchChange } = useProductForm({
     product: normalizedProduct,
     isOpen,
-  })
+  });
 
   const images = useProductImages({
     item: normalizedProduct,
     isOpen,
     maxImages: 4,
-  })
+  });
   const handleSave = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       // 1) upload selected files
-      const uploadedFileUrls = await images.uploadSelectedFiles()
+      const uploadedFileUrls = await images.uploadSelectedFiles();
 
       // 2) merge url images + uploaded urls
-      const allImages = [...images.uploadedImages, ...uploadedFileUrls].slice(0, 4)
+      const allImages = [...images.uploadedImages, ...uploadedFileUrls].slice(
+        0,
+        4
+      );
 
       // 3) build payload (主圖=第一張)
-      const payload: productData = buildProductPayload(formData, allImages)
+      const payload: productData = buildProductPayload(formData, allImages);
 
       // 4) save product
-      await onSave(payload)
+      await onSave(payload);
 
       // 5) clear selected files after success
-      images.clearAllImages()
+      images.clearAllImages();
     } catch (err) {
-      console.error(err)
-      alert("Failed to save (Image upload or product saving failed)")
+      console.error(err);
+      alert('Failed to save (Image upload or product saving failed)');
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
-
-
-
-  const formTitle = mode === "create" ? "Create Book" : "Modify Book"
+  const formTitle = mode === 'create' ? 'Create Book' : 'Modify Book';
   const getContentJson = (): ProductContent => {
     try {
-      return formData.content ? (JSON.parse(formData.content) as ProductContent) : ({} as ProductContent)
+      return formData.content
+        ? (JSON.parse(formData.content) as ProductContent)
+        : ({} as ProductContent);
     } catch {
-      return {} as ProductContent
+      return {} as ProductContent;
     }
-  }
-
+  };
 
   const setContentField = (key: keyof ProductContent, value: string) => {
-    const cur = getContentJson()
-    const next = { ...cur, [key]: value }
+    const cur = getContentJson();
+    const next = { ...cur, [key]: value };
     // ✅ 直接寫回 formData.content（仍是 string）
     handleInputChange({
-      target: { name: "content", value: JSON.stringify(next) },
-    } as ChangeEvent<HTMLInputElement>)
-  }
+      target: { name: 'content', value: JSON.stringify(next) },
+    } as ChangeEvent<HTMLInputElement>);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="product-modal-description">
+      <DialogContent
+        className="sm:!max-w-4xl max-h-[90vh] overflow-y-auto"
+        aria-describedby="product-modal-description"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl">{formTitle}</DialogTitle>
         </DialogHeader>
@@ -159,8 +167,8 @@ export const ProductModal = ({
                 <Input
                   id="author"
                   type="text"
-                  value={getContentJson().author ?? ""}
-                  onChange={(e) => setContentField("author", e.target.value)}
+                  value={getContentJson().author ?? ''}
+                  onChange={(e) => setContentField('author', e.target.value)}
                   placeholder="Author"
                 />
               </div>
@@ -169,8 +177,8 @@ export const ProductModal = ({
                 <Input
                   id="isbn"
                   type="text"
-                  value={getContentJson().isbn ?? ""}
-                  onChange={(e) => setContentField("isbn", e.target.value)}
+                  value={getContentJson().isbn ?? ''}
+                  onChange={(e) => setContentField('isbn', e.target.value)}
                   placeholder="978-..."
                 />
               </div>
@@ -179,8 +187,8 @@ export const ProductModal = ({
                 <Input
                   id="publisher"
                   type="text"
-                  value={getContentJson().publisher ?? ""}
-                  onChange={(e) => setContentField("publisher", e.target.value)}
+                  value={getContentJson().publisher ?? ''}
+                  onChange={(e) => setContentField('publisher', e.target.value)}
                   placeholder="Publisher"
                 />
               </div>
@@ -188,8 +196,8 @@ export const ProductModal = ({
                 <DatePicker
                   id="publishDate"
                   label="Publish Date"
-                  value={getContentJson().publishDate ?? ""}
-                  onChange={(val) => setContentField("publishDate", val)}
+                  value={getContentJson().publishDate ?? ''}
+                  onChange={(val) => setContentField('publishDate', val)}
                 />
               </div>
               <div className="space-y-2">
@@ -198,7 +206,7 @@ export const ProductModal = ({
                   id="pages"
                   type="number"
                   value={getContentJson().pages ?? 0}
-                  onChange={(e) => setContentField("pages", e.target.value)}
+                  onChange={(e) => setContentField('pages', e.target.value)}
                   placeholder="Pages"
                 />
               </div>
@@ -314,7 +322,7 @@ export const ProductModal = ({
 
                 {/* 本次選檔 blob 預覽 */}
                 {images.selectedPreviews.map((p: string, i: number) => {
-                  const idx = images.uploadedImages.length + i
+                  const idx = images.uploadedImages.length + i;
                   return (
                     <div
                       key={`file-${i}`}
@@ -346,7 +354,7 @@ export const ProductModal = ({
                         <X className="size-4" />
                       </Button>
                     </div>
-                  )
+                  );
                 })}
 
                 {/* Placeholder */}
@@ -387,10 +395,10 @@ export const ProductModal = ({
             className="bg-primary hover:bg-primary/90"
             disabled={isSaving}
           >
-            {isSaving ? "Saving..." : "Save"}
+            {isSaving ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

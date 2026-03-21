@@ -1,22 +1,35 @@
 import { baseApi } from '../api';
 import type { AxiosResponse } from 'axios';
-import type{ GetArticlesResponse, MesssageResponse } from '@/type/response';
+import type { GetArticlesResponse, MesssageResponse } from '@/type/response';
 import type { Article } from '@/type/articles';
 
+type getArticlesFunc = (params: {
+  page?: number;
+}) => Promise<AxiosResponse<GetArticlesResponse>>;
+export const getArticles: getArticlesFunc = (params: { page?: number }) =>
+  baseApi.get('/admin/articles', { params });
 
-type getArticlesFunc = (params:{page?:number})=>Promise<AxiosResponse<GetArticlesResponse>>
-export const getArticles: getArticlesFunc = (params:{page?:number})=>baseApi.get('/admin/articles', {params})
+type createArticleFunc = (
+  params: Article
+) => Promise<AxiosResponse<MesssageResponse>>;
+export const createArticle: createArticleFunc = (params: Article) =>
+  baseApi.post('/admin/article', { data: params });
 
-type createArticleFunc = (params:Article)=>Promise<AxiosResponse<MesssageResponse>>
-export const createArticle:createArticleFunc = (params:Article)=>baseApi.post('/admin/article', {data:params})
+type getSingleArticleFunc = (
+  id: string
+) => Promise<AxiosResponse<{ article: Article }>>;
+export const getSingleArticle: getSingleArticleFunc = (id: string) =>
+  baseApi.get(`/admin/article/${id}`);
 
-type getSingleArticleFunc = (id:string)=>Promise<AxiosResponse<{article:Article}>>
-export const getSingleArticle:getSingleArticleFunc = (id:string)=>baseApi.get(`/admin/article/${id}`)
-
-type editArticleFunc = (id:string, params:Article)=>Promise<AxiosResponse<MesssageResponse>>
+type editArticleFunc = (
+  id: string,
+  params: Article
+) => Promise<AxiosResponse<MesssageResponse>>;
 export const editArticle: editArticleFunc = (id, params) =>
-  baseApi.put(`/admin/article/${id}`, { data: params })
+  baseApi.put(`/admin/article/${id}`, { data: params });
 
-type deleteArticleFunc = (id:string)=>Promise<AxiosResponse<MesssageResponse>>
+type deleteArticleFunc = (
+  id: string
+) => Promise<AxiosResponse<MesssageResponse>>;
 export const deleteArticle: deleteArticleFunc = (id) =>
-  baseApi.delete(`/admin/article/${id}`)
+  baseApi.delete(`/admin/article/${id}`);

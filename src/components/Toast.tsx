@@ -22,8 +22,8 @@ const ToastItem = ({
     type === 'error'
       ? 'bg-red-500'
       : type === 'success'
-      ? 'bg-green-500'
-      : 'bg-blue-600';
+        ? 'bg-green-500'
+        : 'bg-blue-600';
 
   return (
     <div className="pointer-events-auto w-80 overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition-all animate-in slide-in-from-right duration-300 mb-3">

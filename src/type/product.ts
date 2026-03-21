@@ -1,137 +1,134 @@
-import type { Article } from "./articles"
+import type { Article } from './articles';
 export type SidebarDrawerProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
-export type BookCardProps ={
-  title: string
-  author: string
-  price: number
-  originalPrice?: number
-  imageQuery: string
-  rating: number
-}
+export type BookCardProps = {
+  title: string;
+  author: string;
+  price: number;
+  originalPrice?: number;
+  imageQuery: string;
+  rating: number;
+};
 
 export type productData = {
-    id:string,
-    title:string,
-    category:string,
-    origin_price:number,
-    price:number,
-    unit:string,
-    description:string,
-    content:string,
-    is_enabled:number,
-    imageUrl:string,
-    imagesUrl:string[],
-    num:number
-    rating:number
-}
+  id: string;
+  title: string;
+  category: string;
+  origin_price: number;
+  price: number;
+  unit: string;
+  description: string;
+  content: string;
+  is_enabled: number;
+  imageUrl: string;
+  imagesUrl: string[];
+  num: number;
+  rating: number;
+};
 
 export type PaginationData = {
-    total_pages:number,
-    current_page:number,
-    has_pre:boolean,
-    has_next:boolean,
-    category:string,
-}
+  total_pages: number;
+  current_page: number;
+  has_pre: boolean;
+  has_next: boolean;
+  category: string;
+};
 
 export type SearchData = {
-    page:number,
-    category:string,
-    title?: string
-}
+  page: number;
+  category: string;
+  title?: string;
+};
 
 export type PaginationParam = {
-    page: number,
-    category: string,
-}
+  page: number;
+  category: string;
+};
 
 export type ProductDataResponse = {
-    success:boolean,
-    products:productData[],
-    pagination:PaginationData,
-    messages:string[],
-}
+  success: boolean;
+  products: productData[];
+  pagination: PaginationData;
+  messages: string[];
+};
 
-  export type ProductContent = {
-    author?: string
-    isbn?: string
-    publisher?: string
-    publishDate?: string
-    pages?: number
-  }
+export type ProductContent = {
+  author?: string;
+  isbn?: string;
+  publisher?: string;
+  publishDate?: string;
+  pages?: number;
+};
 
 export type CreateProductParams = {
-    title:string,
-    category:string,
-    origin_price:number,
-    price:number,
-    unit:string,
-    description:string,
-    content:string,
-    is_enabled:number,
-    imageUrl:string,
-    imagesUrl:string[],
-}
+  title: string;
+  category: string;
+  origin_price: number;
+  price: number;
+  unit: string;
+  description: string;
+  content: string;
+  is_enabled: number;
+  imageUrl: string;
+  imagesUrl: string[];
+};
 
 export type PaginationProps = {
-    currentPage:number,
-    totalPages:number,
-    onPageChange:(page:number)=>void;
-    siblingCount?:number
-}
-
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  siblingCount?: number;
+};
 
 export type UploadImageResponse = {
-    success:boolean,
-    imageUrl:string
-}
+  success: boolean;
+  imageUrl: string;
+};
 
 export type ProductModalProps = {
-    isOpen: boolean;
-    onOpenChange:(isOpen:boolean)=>void;
-    product?:productData| null; 
-    onSave:(product:productData)=>void;
-    mode?:'create' | 'edit';
-}
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  product?: productData | null;
+  onSave: (product: productData) => void;
+  mode?: 'create' | 'edit';
+};
 
 export type UseImageArgs = {
-  item?: productData | Article
-  isOpen: boolean
-  maxImages?: number
-}
+  item?: productData | Article;
+  isOpen: boolean;
+  maxImages?: number;
+};
 export type ConfirmModalProps = {
-    isOpen:boolean;
-    onOpenChange:(isOpen:boolean)=>void;
-    mode?:'delete'|'edit'
-}
-
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  mode?: 'delete' | 'edit';
+};
 
 export type DatePickerProps = {
-    lable?:string,
-    value?:string, // yyyy-mm-dd
-    onChange?:(value:string)=>void,
-    id?:string,
-    placeholder?:string,
-    disabled?:boolean,
-    className:string,
-}
+  lable?: string;
+  value?: string; // yyyy-mm-dd
+  onChange?: (value: string) => void;
+  id?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  className: string;
+};
 
 export type ConfirmConfig = {
-  title: string
-  message: string
-  onSuccess?: () => void 
-}
-
+  title: string;
+  message: string;
+  onSuccess?: () => void;
+};
 
 export type ProductImageGalleryProps = {
-  images: string[]
-  title: string
-}
+  images: string[];
+  title: string;
+};
 
 export type BreadCrumbProps = {
-  lastLabel?:string;
-  categoryLabel?:string;
+  lastLabel?: string;
+  categoryLabel?: string;
 };

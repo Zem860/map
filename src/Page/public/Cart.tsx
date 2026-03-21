@@ -1,360 +1,459 @@
-import { useCartStore } from "@/store/cartStore";
-import BreadcrumbNav from "@/components/BreadCrumbs";
-import { Stepper } from "@/components/Stepper";
-import { ShoppingBag, Trash2, X, Tag, Loader2 } from "lucide-react";
-import { Loader } from "@/components/Loader";
-import Qtybar from "@/components/util/Qtybar";
-import { Card, CardContent } from "@/components/ui/card";
-import { NavLink, useNavigate } from "react-router-dom";
-import { productContentParser } from "@/helper/tool";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Check } from "lucide-react";
-import { apiApplyCoupon } from "@/api/folder_user/cart";
-import { useEffect, useState } from "react";
-import { thousandSeparator } from "@/helper/tool";
-import ConfirmModal from "@/components/products/ConfirmModal/ConfirmModal";
-import type { Confirmtype } from "@/type/order";
-import type { AxiosError } from "axios";
+import { useCartStore } from '@/store/cartStore';
+import BreadcrumbNav from '@/components/BreadCrumbs';
+import { Stepper } from '@/components/Stepper';
+import { ShoppingBag, Trash2, X, Tag, Loader2 } from 'lucide-react';
+import { Loader } from '@/components/Loader';
+import Qtybar from '@/components/util/Qtybar';
+import { Card, CardContent } from '@/components/ui/card';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { productContentParser } from '@/helper/tool';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Check } from 'lucide-react';
+import { apiApplyCoupon } from '@/api/folder_user/cart';
+import { useEffect, useState } from 'react';
+import { thousandSeparator } from '@/helper/tool';
+import ConfirmModal from '@/components/products/ConfirmModal/ConfirmModal';
+import type { Confirmtype } from '@/type/order';
+import type { AxiosError } from 'axios';
 import { useToastStore } from '@/store/toastStore';
 
 const Cart = () => {
-    const { addToast } = useToastStore();
-    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-    const [couponCode, setCouponCode] = useState<string>("");
-    const [discount, setDiscount] = useState<number>(0);
-    const [discountMsg, setDiscountMsg] = useState<string>("");
-    const [originalTotal, setOriginalTotal] = useState<number>(0);
-    const cart = useCartStore((s) => s.carts);
-    const removeItem = useCartStore((s) => s.removeFromCart);
-    const editCartNum = useCartStore((s) => s.editCartNum);
-    const clearCart = useCartStore((s) => s.clearCart);
-    const totalItems = useCartStore((s) => s.count);
-    const isLoading = useCartStore((s) => s.isLoading);
-    const navigate = useNavigate();
-    //做使用者體驗好的增加商品數量和減少商品數量
-    const [loadingIds, setLoadingIds] = useState<string[]>([]);
-    const handleQtyChange = async (itemId: string, productId: string, newQty: number) => {
-        setLoadingIds(prev => [...prev, itemId]);
-        try {
-            await editCartNum(itemId, { product_id: productId, qty: newQty });
-        } finally {
-            setLoadingIds(prev => prev.filter(id => id !== itemId));
-        }
-    };
-
-    const applyDiscount = async () => {
-        if (couponCode.trim() === "") {
-            setDiscountMsg("Please enter a coupon code.");
-            return;
-        }
-        // 這裡可以根據 couponCode 計算折扣金額，這只是示例邏輯
-        try {
-            setIsApplyingCoupon(true);
-            const res = await apiApplyCoupon({ code: couponCode });
-            setDiscount(res.data.data.final_total / originalTotal * 100);
-            setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
-            useCartStore.getState().fetchCart(true);
-        } catch {
-            setDiscountMsg("Failed to apply coupon. Please check the code and try again.");
-        } finally {
-            setIsApplyingCoupon(false);
-        }
+  const { addToast } = useToastStore();
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponCode, setCouponCode] = useState<string>('');
+  const [discount, setDiscount] = useState<number>(0);
+  const [discountMsg, setDiscountMsg] = useState<string>('');
+  const [originalTotal, setOriginalTotal] = useState<number>(0);
+  const cart = useCartStore((s) => s.carts);
+  const removeItem = useCartStore((s) => s.removeFromCart);
+  const editCartNum = useCartStore((s) => s.editCartNum);
+  const clearCart = useCartStore((s) => s.clearCart);
+  const totalItems = useCartStore((s) => s.count);
+  const isLoading = useCartStore((s) => s.isLoading);
+  const navigate = useNavigate();
+  //做使用者體驗好的增加商品數量和減少商品數量
+  const [loadingIds, setLoadingIds] = useState<string[]>([]);
+  const handleQtyChange = async (
+    itemId: string,
+    productId: string,
+    newQty: number
+  ) => {
+    setLoadingIds((prev) => [...prev, itemId]);
+    try {
+      await editCartNum(itemId, { product_id: productId, qty: newQty });
+    } finally {
+      setLoadingIds((prev) => prev.filter((id) => id !== itemId));
     }
+  };
 
-    useEffect(() => {
-        setOriginalTotal(cart.data.total);
-    }, [cart])
-    // 檢查某商品是否正在 loading
-    const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
-    const [confirmState, setConfirmState] = useState<
-        Confirmtype & { error?: string }
-    >({
-        isOpen: false,
-        title: '',
-        message: '',
-        error: '', // 用來存错误信息
-        onConfirm: () => { },
-    });
-    const closeConfirm = () => {
-        // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
-        setConfirmState((prev) => ({ ...prev, isOpen: false }));
-    };
-    const clearCartWithConfirm = () => {
-        setConfirmState({
-            isOpen: true,
-            title: 'Confirm Delete',
-            message: `Are you sure you want to delete your products?`,
-            isLoading: false,
-            error: '',
-            onConfirm: async () => {
-                setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
-                try {
-                    closeConfirm();
-                    await clearCart();
-                    addToast('clear', 'cart', 'success');
-                } catch (err: unknown) {
-                    let errorMsg = 'Delete failed';
-                    if (err && typeof err === 'object' && 'response' in err) {
-                        const axiosErr = err as AxiosError<{ message?: string | string[] }>;
-                        if (axiosErr.response?.data?.message) {
-                            errorMsg = Array.isArray(axiosErr.response.data.message)
-                                ? axiosErr.response.data.message.join('\n')
-                                : axiosErr.response.data.message;
-                        }
-                    }
-                    setConfirmState((prev) => ({
-                        ...prev,
-                        error: errorMsg,
-                    }));
-                }
-            },
-        });
-    };
-    return (
-        <>
-            <ConfirmModal
-                isOpen={confirmState.isOpen}
-                onOpenChange={(open) =>
-                    setConfirmState((prev) => ({ ...prev, isOpen: open }))
-                }
-                title={confirmState.title}
-                message={confirmState.message}
-                isLoading={confirmState.isLoading}
-                error={confirmState.error}
-                onConfirm={confirmState.onConfirm}
-            />
-            {isLoading && <Loader />}
-            {cart.data.carts.length === 0 ?
-                <Card className="border-border">
-                    <CardContent className="p-12 text-center">
-                        <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="font-serif text-xl font-bold mb-2 text-foreground">Your cart is empty</h2>
-                        <p className="text-muted-foreground mb-6">Discover our collection of literature.</p>
-                        <NavLink className="text-primary underline" to="/shop">
-                            Browse Books
-                        </NavLink>
-                    </CardContent>
-                </Card> :
-                <div className="container mx-auto">
-                    <div className="py-4 space-y-4">
-                        <BreadcrumbNav />
-                    </div>
-                    <Stepper currentStep={1} className="my-4" />
-                    <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">Shopping Cart</h2>
-                    <div className="flex flex-col md:flex-row gap-6 mt-6">
-                        <section className="flex-1 min-w-0">
-                            {/* Mobile */}
-                            <div className="lg:hidden space-y-4">
-                                {cart.data.carts.map((item) => (
-                                    <div key={item.id} className="bg-card rounded-lg 
-                            shadow-md border border-border overflow-hidden">
-                                        <div className="flex p-4 gap-4">
-                                            <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden">
-                                                <img src={item.product.imageUrl} alt={item.product.title} className="object-cover w-24" />
-                                            </div>
-                                            <div className="flex-1 flex flex-col justify-between">
-                                                <div className="flex justify-between items-start mb-3">
-                                                    <h3 className="font-serif font-medium text-sm text-card-foreground line-clamp-2 pr-2">
-                                                        {item.product.title}
-                                                    </h3>
-                                                    <button onClick={() => removeItem(item.id)} className="text-muted-foreground hover:text-destructive transition-colors p-1" aria-label="Remove item from cart">
-                                                        <X className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                                <div className="flex flex-col gap-2 mb-3">
-                                                    <div className="flex items-baseline gap-2">
-                                                        <span className="text-xs text-muted-foreground line-through">${thousandSeparator(item.product.origin_price)}</span>
-                                                        <span className="text-base font-bold text-primary">${thousandSeparator(item.product.price)}</span>
-                                                    </div>
-                                                </div>
-                                                {/* Quantity */}
-                                                <div className="inline-flex items-center justify-between">
-                                                    <Qtybar
-                                                        qty={item.qty}
-                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)}
-                                                        loading={isItemLoading(item.id)}
-                                                    />
-                                                    <div className="text-right">
-                                                        <p className="font-semibold text-primary">${thousandSeparator(item.product.origin_price)}</p>
-                                                        <p className="text-xs text-muted-foreground">Total: ${thousandSeparator((item.product.price * item.qty).toFixed(0))}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+  const applyDiscount = async () => {
+    if (couponCode.trim() === '') {
+      setDiscountMsg('Please enter a coupon code.');
+      return;
+    }
+    // 這裡可以根據 couponCode 計算折扣金額，這只是示例邏輯
+    try {
+      setIsApplyingCoupon(true);
+      const res = await apiApplyCoupon({ code: couponCode });
+      setDiscount((res.data.data.final_total / originalTotal) * 100);
+      setDiscountMsg(`Coupon ${couponCode} applied successfully!`);
+      useCartStore.getState().fetchCart(true);
+    } catch {
+      setDiscountMsg(
+        'Failed to apply coupon. Please check the code and try again.'
+      );
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
-                                ))}
-                            </div>
-
-                            {/* Desktop */}
-                            <table className="w-full hidden lg:table-auto lg:table mt-8 border-collapse">
-                                <thead>
-                                    <tr className="border-b border-border">
-                                        <th className="text-left py-4 text-sm font-medium text-muted-foreground">Product</th>
-                                        <th className="text-center py-4 text-sm font-medium text-muted-foreground w-28">Price</th>
-                                        <th className="text-center py-4 text-sm font-medium text-muted-foreground w-36">Quantity</th>
-                                        <th className="text-right py-4 text-sm font-medium text-muted-foreground w-28">Subtotal</th>
-                                        <th className="w-12"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cart.data.carts.map((item) => (
-                                        <tr key={item.id} className="border-b border-border">
-                                            {/* Product */}
-
-                                            <td className="py-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-20 h-28 relative bg-secondary/30 rounded flex-shrink-0">
-                                                        <img src={item.product.imageUrl} alt={item.product.title} className="object-cover w-24" />
-
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="font-serif font-semibold text-foreground line-clamp-2 mb-1">{item.product.title}</h3>
-                                                        <p className="text-sm text-muted-foreground">by {productContentParser(item.product).author}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            {/* Price */}
-                                            <td className="py-6 text-center">
-                                                <div className="flex flex-col items-center">
-                                                    <span className="font-semibold text-primary">${thousandSeparator(item.product.price)}</span>
-                                                    <span className="text-xs text-muted-foreground line-through">${thousandSeparator(item.product.origin_price)}</span>
-                                                </div>
-                                            </td>
-
-                                            {/* Quantity */}
-                                            <td className="py-6 text-center">
-                                                <div className="inline-flex mx-auto justify-center">
-                                                    <Qtybar
-                                                        qty={item.qty}
-                                                        setQty={(newQty) => handleQtyChange(item.id, item.product_id, newQty)}
-                                                        loading={isItemLoading(item.id)}
-                                                    />
-                                                </div>
-                                            </td>
-
-                                            {/* Subtotal */}
-                                            <td className="py-6 text-right">
-                                                <span className="font-semibold text-foreground">${thousandSeparator((item.product.price * item.qty).toFixed(0))}</span>
-                                            </td>
-
-                                            {/* Remove */}
-                                            <td className="py-6 text-right">
-                                                <button
-                                                    onClick={() => removeItem(item.id)}
-                                                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                                                    aria-label="Remove item"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            {/* Actions */}
-                            <div className="flex justify-between items-center mt-6 pt-6 border-t border-border">
-                                <NavLink to="/shop">
-                                    <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                                        Continue Shopping
-                                    </Button>
-                                </NavLink>
-                                <Button variant="ghost" onClick={() => { clearCartWithConfirm() }} className="text-muted-foreground hover:text-destructive">
-                                    Clear Cart
-                                </Button>
-                            </div>
-                        </section>
-
-                        {/* Sidebar */}
-                        <div className="space-y-6">
-                            {/* Coupon */}
-                            <Card className="border-border">
-                                <CardContent className="p-6">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <Tag className="h-4 w-4 text-primary" />
-                                        <h2 className="font-serif font-semibold text-foreground">Coupon Code</h2>
-                                    </div>
-
-                                    <div className="flex gap-2 mb-4">
-                                        <Input
-                                            placeholder="Enter code"
-                                            value={couponCode}
-                                            onChange={(e) => setCouponCode(e.target.value)}
-                                            className="flex-1 border-border"
-                                        />
-                                        <Button disabled={isApplyingCoupon} onClick={() => {
-                                            applyDiscount()
-                                        }} size="sm">{isApplyingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Apply'}</Button>
-                                    </div>
-                                    {discount > 0 ? (
-                                        <div className="mt-4 flex items-center gap-2 text-sm text-primary">
-                                            <Check className="h-4 w-4" />
-                                            <span>{discountMsg}</span>
-                                        </div>
-                                    ) : discountMsg &&
-                                    (<div className="mt-4 flex items-center gap-2 text-sm text-destructive">
-                                        <X className="h-4 w-4" />
-                                        <span>{discountMsg}</span>
-                                    </div>)
-                                    }
-                                </CardContent>
-                            </Card>
-
-                            {/* Order Summary */}
-                            <Card className="border-border">
-                                <CardContent className="p-6">
-                                    <h2 className="font-serif font-semibold text-foreground mb-4">Order Summary</h2>
-
-                                    <div className="space-y-3 text-sm">
-                                        <div className="flex justify-between py-2 border-b border-border">
-                                            <span className="text-muted-foreground">Subtotal ({totalItems} items)</span>
-                                            {/* 直接使用 cart 內的原始總額 */}
-                                            <span className="font-medium text-foreground">${thousandSeparator(cart.data.total.toFixed(0))}</span>
-                                        </div>
-
-                                        {/* 如果 final_total 小於 total，代表有折扣 */}
-                                        {cart.data.final_total < cart.data.total && (
-                                            <div className="flex justify-between py-2 border-b border-border text-primary">
-                                                <span>Discount Applied</span>
-                                                <span className="font-medium">
-                                                    -${thousandSeparator((cart.data.total - cart.data.final_total).toFixed(0))}
-                                                </span>
-                                            </div>
-                                        )}
-                                        <div className="flex justify-between py-2 border-b border-border">
-                                            <span className="text-muted-foreground">Shipping</span>
-                                            <span className="font-medium text-foreground">Free</span>
-                                        </div>
-
-                                        <div className="flex justify-between pt-3 text-lg">
-                                            <span className="font-bold text-foreground">Total</span>
-                                            {/* 顯示最終應付金額 */}
-                                            <span className="font-bold text-primary">
-                                                ${thousandSeparator(cart.data.final_total.toFixed(0))}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        className="w-full mt-6"
-                                        size="lg"
-                                        disabled={cart.data.carts.length === 0 || isApplyingCoupon}
-                                        onClick={() => navigate("../form")}                                    >
-                                        {isApplyingCoupon ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Proceed to Checkout'}
-                                    </Button>
-
-                                    <p className="text-xs text-muted-foreground text-center mt-4">
-                                        Free shipping on all orders. 30-day returns.
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
-                </div>
+  useEffect(() => {
+    setOriginalTotal(cart.data.total);
+  }, [cart]);
+  // 檢查某商品是否正在 loading
+  const isItemLoading = (itemId: string) => loadingIds.includes(itemId);
+  const [confirmState, setConfirmState] = useState<
+    Confirmtype & { error?: string }
+  >({
+    isOpen: false,
+    title: '',
+    message: '',
+    error: '', // 用來存错误信息
+    onConfirm: () => {},
+  });
+  const closeConfirm = () => {
+    // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
+    setConfirmState((prev) => ({ ...prev, isOpen: false }));
+  };
+  const clearCartWithConfirm = () => {
+    setConfirmState({
+      isOpen: true,
+      title: 'Confirm Delete',
+      message: `Are you sure you want to delete your products?`,
+      isLoading: false,
+      error: '',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
+        try {
+          closeConfirm();
+          await clearCart();
+          addToast('clear', 'cart', 'success');
+        } catch (err: unknown) {
+          let errorMsg = 'Delete failed';
+          if (err && typeof err === 'object' && 'response' in err) {
+            const axiosErr = err as AxiosError<{ message?: string | string[] }>;
+            if (axiosErr.response?.data?.message) {
+              errorMsg = Array.isArray(axiosErr.response.data.message)
+                ? axiosErr.response.data.message.join('\n')
+                : axiosErr.response.data.message;
             }
-        </>
-    );
-}
+          }
+          setConfirmState((prev) => ({
+            ...prev,
+            error: errorMsg,
+          }));
+        }
+      },
+    });
+  };
+  return (
+    <>
+      <ConfirmModal
+        isOpen={confirmState.isOpen}
+        onOpenChange={(open) =>
+          setConfirmState((prev) => ({ ...prev, isOpen: open }))
+        }
+        title={confirmState.title}
+        message={confirmState.message}
+        isLoading={confirmState.isLoading}
+        error={confirmState.error}
+        onConfirm={confirmState.onConfirm}
+      />
+      {isLoading && <Loader />}
+      {cart.data.carts.length === 0 ? (
+        <Card className="border-border">
+          <CardContent className="p-12 text-center">
+            <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h2 className="font-serif text-xl font-bold mb-2 text-foreground">
+              Your cart is empty
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Discover our collection of literature.
+            </p>
+            <NavLink className="text-primary underline" to="/shop">
+              Browse Books
+            </NavLink>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="container mx-auto">
+          <div className="py-4 space-y-4">
+            <BreadcrumbNav />
+          </div>
+          <Stepper currentStep={1} className="my-4" />
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+            Shopping Cart
+          </h2>
+          <div className="flex flex-col md:flex-row gap-6 mt-6">
+            <section className="flex-1 min-w-0">
+              {/* Mobile */}
+              <div className="lg:hidden space-y-4">
+                {cart.data.carts.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-card rounded-lg 
+                            shadow-md border border-border overflow-hidden"
+                  >
+                    <div className="flex p-4 gap-4">
+                      <div className="bg-card rounded-lg shadow-md border border-border overflow-hidden">
+                        <img
+                          src={item.product.imageUrl}
+                          alt={item.product.title}
+                          className="object-cover w-24"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="font-serif font-medium text-sm text-card-foreground line-clamp-2 pr-2">
+                            {item.product.title}
+                          </h3>
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                            aria-label="Remove item from cart"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <div className="flex flex-col gap-2 mb-3">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xs text-muted-foreground line-through">
+                              ${thousandSeparator(item.product.origin_price)}
+                            </span>
+                            <span className="text-base font-bold text-primary">
+                              ${thousandSeparator(item.product.price)}
+                            </span>
+                          </div>
+                        </div>
+                        {/* Quantity */}
+                        <div className="inline-flex items-center justify-between">
+                          <Qtybar
+                            qty={item.qty}
+                            setQty={(newQty) =>
+                              handleQtyChange(item.id, item.product_id, newQty)
+                            }
+                            loading={isItemLoading(item.id)}
+                          />
+                          <div className="text-right">
+                            <p className="font-semibold text-primary">
+                              ${thousandSeparator(item.product.origin_price)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Total: $
+                              {thousandSeparator(
+                                (item.product.price * item.qty).toFixed(0)
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop */}
+              <table className="w-full hidden lg:table-auto lg:table mt-8 border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-4 text-sm font-medium text-muted-foreground">
+                      Product
+                    </th>
+                    <th className="text-center py-4 text-sm font-medium text-muted-foreground w-28">
+                      Price
+                    </th>
+                    <th className="text-center py-4 text-sm font-medium text-muted-foreground w-36">
+                      Quantity
+                    </th>
+                    <th className="text-right py-4 text-sm font-medium text-muted-foreground w-28">
+                      Subtotal
+                    </th>
+                    <th className="w-12"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.data.carts.map((item) => (
+                    <tr key={item.id} className="border-b border-border">
+                      {/* Product */}
+
+                      <td className="py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-20 h-28 relative bg-secondary/30 rounded flex-shrink-0">
+                            <img
+                              src={item.product.imageUrl}
+                              alt={item.product.title}
+                              className="object-cover w-24"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="font-serif font-semibold text-foreground line-clamp-2 mb-1">
+                              {item.product.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              by {productContentParser(item.product).author}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Price */}
+                      <td className="py-6 text-center">
+                        <div className="flex flex-col items-center">
+                          <span className="font-semibold text-primary">
+                            ${thousandSeparator(item.product.price)}
+                          </span>
+                          <span className="text-xs text-muted-foreground line-through">
+                            ${thousandSeparator(item.product.origin_price)}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Quantity */}
+                      <td className="py-6 text-center">
+                        <div className="inline-flex mx-auto justify-center">
+                          <Qtybar
+                            qty={item.qty}
+                            setQty={(newQty) =>
+                              handleQtyChange(item.id, item.product_id, newQty)
+                            }
+                            loading={isItemLoading(item.id)}
+                          />
+                        </div>
+                      </td>
+
+                      {/* Subtotal */}
+                      <td className="py-6 text-right">
+                        <span className="font-semibold text-foreground">
+                          $
+                          {thousandSeparator(
+                            (item.product.price * item.qty).toFixed(0)
+                          )}
+                        </span>
+                      </td>
+
+                      {/* Remove */}
+                      <td className="py-6 text-right">
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                          aria-label="Remove item"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* Actions */}
+              <div className="flex justify-between items-center mt-6 pt-6 border-t border-border">
+                <NavLink to="/shop">
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Continue Shopping
+                  </Button>
+                </NavLink>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    clearCartWithConfirm();
+                  }}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  Clear Cart
+                </Button>
+              </div>
+            </section>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Coupon */}
+              <Card className="border-border">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Tag className="h-4 w-4 text-primary" />
+                    <h2 className="font-serif font-semibold text-foreground">
+                      Coupon Code
+                    </h2>
+                  </div>
+
+                  <div className="flex gap-2 mb-4">
+                    <Input
+                      placeholder="Enter code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      className="flex-1 border-border"
+                    />
+                    <Button
+                      disabled={isApplyingCoupon}
+                      onClick={() => {
+                        applyDiscount();
+                      }}
+                      size="sm"
+                    >
+                      {isApplyingCoupon ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        'Apply'
+                      )}
+                    </Button>
+                  </div>
+                  {discount > 0 ? (
+                    <div className="mt-4 flex items-center gap-2 text-sm text-primary">
+                      <Check className="h-4 w-4" />
+                      <span>{discountMsg}</span>
+                    </div>
+                  ) : (
+                    discountMsg && (
+                      <div className="mt-4 flex items-center gap-2 text-sm text-destructive">
+                        <X className="h-4 w-4" />
+                        <span>{discountMsg}</span>
+                      </div>
+                    )
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Order Summary */}
+              <Card className="border-border">
+                <CardContent className="p-6">
+                  <h2 className="font-serif font-semibold text-foreground mb-4">
+                    Order Summary
+                  </h2>
+
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between py-2 border-b border-border">
+                      <span className="text-muted-foreground">
+                        Subtotal ({totalItems} items)
+                      </span>
+                      {/* 直接使用 cart 內的原始總額 */}
+                      <span className="font-medium text-foreground">
+                        ${thousandSeparator(cart.data.total.toFixed(0))}
+                      </span>
+                    </div>
+
+                    {/* 如果 final_total 小於 total，代表有折扣 */}
+                    {cart.data.final_total < cart.data.total && (
+                      <div className="flex justify-between py-2 border-b border-border text-primary">
+                        <span>Discount Applied</span>
+                        <span className="font-medium">
+                          -$
+                          {thousandSeparator(
+                            (cart.data.total - cart.data.final_total).toFixed(0)
+                          )}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-2 border-b border-border">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span className="font-medium text-foreground">Free</span>
+                    </div>
+
+                    <div className="flex justify-between pt-3 text-lg">
+                      <span className="font-bold text-foreground">Total</span>
+                      {/* 顯示最終應付金額 */}
+                      <span className="font-bold text-primary">
+                        ${thousandSeparator(cart.data.final_total.toFixed(0))}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    className="w-full mt-6"
+                    size="lg"
+                    disabled={cart.data.carts.length === 0 || isApplyingCoupon}
+                    onClick={() => navigate('../form')}
+                  >
+                    {isApplyingCoupon ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      'Proceed to Checkout'
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground text-center mt-4">
+                    Free shipping on all orders. 30-day returns.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
 export default Cart;

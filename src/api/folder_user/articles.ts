@@ -1,11 +1,17 @@
-import type { AxiosResponse } from "axios";
-import type { Article } from "@/type/articles";
-import type{ GetArticlesResponse } from '@/type/response';
+import type { AxiosResponse } from 'axios';
+import type { Article } from '@/type/articles';
+import type { GetArticlesResponse } from '@/type/response';
 
-import { baseApi } from "../api";
+import { baseApi } from '../api';
 
-type getArticlesFunc = (params:{page?:number})=>Promise<AxiosResponse<GetArticlesResponse>>
-export const getArticles:getArticlesFunc = (params:{page?:number})=>baseApi.get('/articles', {params})
+type getArticlesFunc = (params: {
+  page?: number;
+}) => Promise<AxiosResponse<GetArticlesResponse>>;
+export const getArticles: getArticlesFunc = (params: { page?: number }) =>
+  baseApi.get('/articles', { params });
 
-type getSingleArticleFunc = (id:string)=>Promise<AxiosResponse<{article:Article}>>
-export const getSingleArticle:getSingleArticleFunc = (id:string)=>baseApi.get(`/article/${id}`)
+type getSingleArticleFunc = (
+  id: string
+) => Promise<AxiosResponse<{ article: Article }>>;
+export const getSingleArticle: getSingleArticleFunc = (id: string) =>
+  baseApi.get(`/article/${id}`);

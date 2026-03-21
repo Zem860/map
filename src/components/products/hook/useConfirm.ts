@@ -1,61 +1,63 @@
-import { useState, useCallback } from "react"
-import type { ConfirmConfig } from "@/type/product"
+import { useState, useCallback } from 'react';
+import type { ConfirmConfig } from '@/type/product';
 export function useConfirm() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [config, setConfig] = useState<ConfirmConfig & { action: () => Promise<void> } | null>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [config, setConfig] = useState<
+    (ConfirmConfig & { action: () => Promise<void> }) | null
+  >(null);
 
   // 開啟確認 Modal
-  const confirm = useCallback((
-    config: ConfirmConfig,
-    action: () => Promise<void>
-  ) => {
-    setConfig({ ...config, action })
-    setError("")
-    setIsOpen(true)
-  }, [])
+  const confirm = useCallback(
+    (config: ConfirmConfig, action: () => Promise<void>) => {
+      setConfig({ ...config, action });
+      setError('');
+      setIsOpen(true);
+    },
+    []
+  );
 
   // 執行確認
   const handleConfirm = useCallback(async () => {
-    if (!config) return
+    if (!config) return;
 
-    setIsLoading(true)
-    setError("")
+    setIsLoading(true);
+    setError('');
 
     try {
-      await config.action() //api
-      setIsOpen(false)
-      setConfig(null)
-      config.onSuccess?.() //callback
+      await config.action(); //api
+      setIsOpen(false);
+      setConfig(null);
+      config.onSuccess?.(); //callback
     } catch (err: unknown) {
-      let errorMessage = "something went wrong, please try again."
+      let errorMessage = 'something went wrong, please try again.';
       if (err instanceof Error) {
-        errorMessage = err.message
+        errorMessage = err.message;
       }
 
-      setError(errorMessage)
+      setError(errorMessage);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [config])
+  }, [config]);
 
   // 關閉時清除錯誤
   const handleOpenChange = useCallback((open: boolean) => {
-    setIsOpen(open)
+    setIsOpen(open);
     if (!open) {
-      setError("")
+      setError('');
     }
-  }, [])
+  }, []);
 
   return {
     isOpen,
     isLoading,
     error,
-    title: config?.title ?? "",
-    message: config?.message ?? "",
+    title: config?.title ?? '',
+    message: config?.message ?? '',
     confirm,
     handleConfirm,
     handleOpenChange,
-  }
+  };
 }

@@ -129,7 +129,7 @@ const Coupon = () => {
   const filteredCoupons = coupons.filter(
     (c) =>
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.code.toLowerCase().includes(searchQuery.toLowerCase()),
+      c.code.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const [confirmState, setConfirmState] = useState<
@@ -171,7 +171,7 @@ const Coupon = () => {
           addToast(
             `${mode === 'create' ? 'create' : 'modify'}`,
             'coupon',
-            'success',
+            'success'
           ); // 成功後關閉 ProductModal
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中

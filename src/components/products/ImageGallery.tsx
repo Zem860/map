@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import type { ProductImageGalleryProps } from "@/type/product";
+import { useEffect, useMemo, useState } from 'react';
+import type { ProductImageGalleryProps } from '@/type/product';
 
 const ProductImageGallery = ({ images, title }: ProductImageGalleryProps) => {
   const safeImages = useMemo(
@@ -20,7 +20,7 @@ const ProductImageGallery = ({ images, title }: ProductImageGalleryProps) => {
   }, [hasImages, safeImages.length]);
 
   const currentIndex = hasImages ? selectedIndex : 0;
-  const curSrc = hasImages ? safeImages[currentIndex] : "";
+  const curSrc = hasImages ? safeImages[currentIndex] : '';
 
   const prevImage = () => {
     if (!hasMultiple) return;
@@ -37,13 +37,13 @@ const ProductImageGallery = ({ images, title }: ProductImageGalleryProps) => {
     if (!isZoomed) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsZoomed(false);
-      if (e.key === "ArrowLeft") prevImage();
-      if (e.key === "ArrowRight") nextImage();
+      if (e.key === 'Escape') setIsZoomed(false);
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
     };
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isZoomed, safeImages.length]);
 
@@ -128,13 +128,13 @@ const ProductImageGallery = ({ images, title }: ProductImageGalleryProps) => {
                 type="button"
                 onClick={() => setSelectedIndex(index)}
                 className={[
-                  "relative flex-shrink-0 w-20 h-28 rounded-lg overflow-hidden border transition",
+                  'relative flex-shrink-0 w-20 h-28 rounded-lg overflow-hidden border transition',
                   active
-                    ? "border-primary ring-2 ring-primary/25"
-                    : "border-transparent hover:border-muted-foreground/30",
-                ].join(" ")}
+                    ? 'border-primary ring-2 ring-primary/25'
+                    : 'border-transparent hover:border-muted-foreground/30',
+                ].join(' ')}
                 aria-label={`Select image ${index + 1}`}
-                aria-current={active ? "true" : "false"}
+                aria-current={active ? 'true' : 'false'}
               >
                 <img
                   src={src}

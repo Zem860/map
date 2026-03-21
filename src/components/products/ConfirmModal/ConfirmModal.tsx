@@ -1,16 +1,22 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../ui/dialog"
-import { Button } from "../../ui/button"
-import { Alert, AlertDescription } from "../../ui/alert"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Alert, AlertDescription } from '../../ui/alert';
 
 type ConfirmModalProps = {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  title: string
-  message: string
-  isLoading?: boolean
-  error?: string
-  onConfirm: () => void
-}
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  title: string;
+  message: string;
+  isLoading?: boolean;
+  error?: string;
+  onConfirm: () => void;
+};
 
 const ConfirmModal = ({
   isOpen,
@@ -27,7 +33,9 @@ const ConfirmModal = ({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <p id="confirm-dialog-description" className="text-muted-foreground">{message}</p>
+        <p id="confirm-dialog-description" className="text-muted-foreground">
+          {message}
+        </p>
         {error && (
           <Alert variant="destructive">
             <AlertDescription>{error}</AlertDescription>
@@ -35,16 +43,20 @@ const ConfirmModal = ({
         )}
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button onClick={onConfirm} disabled={isLoading}>
-            {isLoading ? "Processing..." : "Confirm"}
+            {isLoading ? 'Processing...' : 'Confirm'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default ConfirmModal
+export default ConfirmModal;

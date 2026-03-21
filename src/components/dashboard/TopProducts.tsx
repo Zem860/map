@@ -17,11 +17,26 @@ interface Product {
 }
 
 const topProducts: Product[] = [
-  { name: 'Ready Player One', sales: 423, maxSales: 500, revenue: 'NT$ 253,800' },
+  {
+    name: 'Ready Player One',
+    sales: 423,
+    maxSales: 500,
+    revenue: 'NT$ 253,800',
+  },
   { name: 'Eragon', sales: 356, maxSales: 500, revenue: 'NT$ 534,000' },
   { name: 'The Fun of It', sales: 289, maxSales: 500, revenue: 'NT$ 115,600' },
-  { name: 'Python For Kids', sales: 218, maxSales: 500, revenue: 'NT$ 327,000' },
-  { name: 'The Little Prince', sales: 176, maxSales: 500, revenue: 'NT$ 158,400' },
+  {
+    name: 'Python For Kids',
+    sales: 218,
+    maxSales: 500,
+    revenue: 'NT$ 327,000',
+  },
+  {
+    name: 'The Little Prince',
+    sales: 176,
+    maxSales: 500,
+    revenue: 'NT$ 158,400',
+  },
 ];
 
 export default function TopProducts() {

@@ -1,17 +1,19 @@
-import { Loader2, Minus, Plus } from "lucide-react"
+import { Loader2, Minus, Plus } from 'lucide-react';
 type Props = {
-  qty: number
-  setQty: (qty: number) => void
-  disable?: boolean
-  loading?: boolean
-}
+  qty: number;
+  setQty: (qty: number) => void;
+  disable?: boolean;
+  loading?: boolean;
+};
 
 const Qtybar = ({ qty, setQty, disable, loading }: Props) => {
-  const selfNum = qty < 1 ? 1 : qty
-  const isDisabled = disable || loading
-  
+  const selfNum = qty < 1 ? 1 : qty;
+  const isDisabled = disable || loading;
+
   return (
-    <div className={`flex items-center border-2 border-border rounded-lg overflow-hidden transition-opacity ${loading ? 'opacity-70' : ''}`}>
+    <div
+      className={`flex items-center border-2 border-border rounded-lg overflow-hidden transition-opacity ${loading ? 'opacity-70' : ''}`}
+    >
       <button
         disabled={isDisabled || selfNum <= 1}
         type="button"
@@ -36,7 +38,7 @@ const Qtybar = ({ qty, setQty, disable, loading }: Props) => {
         <Plus className="h-3 w-3" />
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default Qtybar
+export default Qtybar;

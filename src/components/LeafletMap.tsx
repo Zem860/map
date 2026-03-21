@@ -1,58 +1,58 @@
-import { useEffect, useRef, useCallback } from 'react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import { useEffect, useRef, useCallback } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-import type { productData } from '@/type/product'
-import { useMapStore, MapService } from '@/store/mapStore'
-import type { MapProduct, StoreContext } from '@/store/mapStore'
+import type { productData } from '@/type/product';
+import { useMapStore, MapService } from '@/store/mapStore';
+import type { MapProduct, StoreContext } from '@/store/mapStore';
 
 // Fix Leaflet default marker icon issue in bundlers like Vite/Webpack
 //Leaflet 在 Vite 環境下，預設 marker icon 的處理有問題。
 //所以我們要把它原本內建的 _getIconUrl 邏輯刪掉，改成自己指定 icon 路徑。
 //但因為 TypeScript / lint 會檢查型別，而官方型別沒有明確寫這個屬性，所以要先補一個型別斷言，才可以安全地刪掉它。
-delete (L.Icon.Default.prototype as { _getIconUrl?: () => void })._getIconUrl
+delete (L.Icon.Default.prototype as { _getIconUrl?: () => void })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
-})
+});
 
 function toMapProduct(product: productData): MapProduct {
   const author = (() => {
     try {
-      return JSON.parse(product.content || '{}').author || 'Unknown'
+      return JSON.parse(product.content || '{}').author || 'Unknown';
     } catch {
-      return 'Unknown'
+      return 'Unknown';
     }
-  })()
-  return { title: product.title, imageUrl: product.imageUrl, author }
+  })();
+  return { title: product.title, imageUrl: product.imageUrl, author };
 }
 
-export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) => {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const mapInstanceRef = useRef<L.Map | null>(null)
-  const markerRef = useRef<L.Marker | null>(null)
-  const mapReadyRef = useRef(false)
+export const LeafletMap: React.FC<{ products: productData[] }> = ({
+  products,
+}) => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
+  const mapReadyRef = useRef(false);
 
-  const currentContext = useMapStore((s) => s.currentContext)
-  const currentProduct = useMapStore((s) => s.currentProduct)
-  const isPaused = useMapStore((s) => s.isPaused)
+  const currentContext = useMapStore((s) => s.currentContext);
+  const currentProduct = useMapStore((s) => s.currentProduct);
+  const isPaused = useMapStore((s) => s.isPaused);
   // const isRandom = useMapStore((s) => s.isRandom)
 
   const showPopupOnMap = useCallback(
-    (ctx: StoreContext, product: MapProduct, 
-      isRealPurchase: boolean
-    ) => {
-      const map = mapInstanceRef.current
-      if (!map) return
+    (ctx: StoreContext, product: MapProduct, isRealPurchase: boolean) => {
+      const map = mapInstanceRef.current;
+      if (!map) return;
 
-      const { lat, lng, city, country } = ctx
-      const labelText = 'Someone just bought this in'
-      const labelColor = isRealPurchase ? '#1b5e20' : '#d32f2f'
+      const { lat, lng, city, country } = ctx;
+      const labelText = 'Someone just bought this in';
+      const labelColor = isRealPurchase ? '#1b5e20' : '#d32f2f';
 
       const popupHtml = `
         <div style="font-family: system-ui; min-width: 220px;">
@@ -68,87 +68,97 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
             <span style="color:${labelColor}; font-weight:bold;">${city}, ${country}</span>
           </div>
         </div>
-      `
+      `;
 
       if (!markerRef.current) {
-        markerRef.current = L.marker([lat, lng]).addTo(map)
+        markerRef.current = L.marker([lat, lng]).addTo(map);
       } else {
-        markerRef.current.setLatLng([lat, lng])
+        markerRef.current.setLatLng([lat, lng]);
       }
 
-      L.popup({ maxWidth: 260 }).setLatLng([lat, lng]).setContent(popupHtml).openOn(map)
-      map.flyTo([lat, lng], 6, { duration: 2 })
+      L.popup({ maxWidth: 260 })
+        .setLatLng([lat, lng])
+        .setContent(popupHtml)
+        .openOn(map);
+      map.flyTo([lat, lng], 6, { duration: 2 });
     },
     []
-  )
+  );
 
   // 初始化地圖
   useEffect(() => {
-    if (!mapContainerRef.current || mapInstanceRef.current) return
+    if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    const map = L.map(mapContainerRef.current, { center: [20, 0], zoom: 2 })
+    const map = L.map(mapContainerRef.current, { center: [20, 0], zoom: 2 });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap',
-    }).addTo(map)
+    }).addTo(map);
 
-    mapInstanceRef.current = map
-    mapReadyRef.current = true
+    mapInstanceRef.current = map;
+    mapReadyRef.current = true;
 
     // 如果 store 已經有資料，馬上顯示
-    const { currentContext: ctx, currentProduct: prod, isPaused: paused } = useMapStore.getState()
+    const {
+      currentContext: ctx,
+      currentProduct: prod,
+      isPaused: paused,
+    } = useMapStore.getState();
     if (ctx && prod) {
-      setTimeout(() => showPopupOnMap(ctx, prod, paused), 300)
+      setTimeout(() => showPopupOnMap(ctx, prod, paused), 300);
     }
 
     return () => {
-      map.remove()
-      mapInstanceRef.current = null
-      mapReadyRef.current = false
-    }
-  }, [showPopupOnMap])
+      map.remove();
+      mapInstanceRef.current = null;
+      mapReadyRef.current = false;
+    };
+  }, [showPopupOnMap]);
 
   // ✅ 每 10 秒 random simulation（paused 時直接停掉 interval）
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused) return;
 
-    let isMounted = true
+    let isMounted = true;
 
     const runSimulation = async () => {
-      if (!mapInstanceRef.current || products.length === 0) return
+      if (!mapInstanceRef.current || products.length === 0) return;
 
-      const pickedProduct = products[Math.floor(Math.random() * products.length)]
+      const pickedProduct =
+        products[Math.floor(Math.random() * products.length)];
 
-      const user = await MapService.fetchRandomUser()
-      if (!user || !isMounted) return
+      const user = await MapService.fetchRandomUser();
+      if (!user || !isMounted) return;
 
-      const { city, country } = user.location
-      const coords = await MapService.resolveCoordinates(city, country)
-      if (!coords || !isMounted) return
+      const { city, country } = user.location;
+      const coords = await MapService.resolveCoordinates(city, country);
+      if (!coords || !isMounted) return;
 
       // async 期間可能被 pause，再保險一次
-      if (useMapStore.getState().isPaused) return
+      if (useMapStore.getState().isPaused) return;
 
-      const [lat, lng] = coords
-      const mapProduct = toMapProduct(pickedProduct)
-      useMapStore.getState().updateContext({ city, country, lat, lng }, mapProduct)
-    }
+      const [lat, lng] = coords;
+      const mapProduct = toMapProduct(pickedProduct);
+      useMapStore
+        .getState()
+        .updateContext({ city, country, lat, lng }, mapProduct);
+    };
 
-    runSimulation()
-    const intervalId = setInterval(runSimulation, 10_000)
+    runSimulation();
+    const intervalId = setInterval(runSimulation, 10_000);
 
     return () => {
-      isMounted = false
-      clearInterval(intervalId)
-    }
-  }, [products, isPaused])
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, [products, isPaused]);
 
   // store 變更 → 更新 popup
   useEffect(() => {
-    if (!currentContext || !currentProduct) return
-    if (!mapReadyRef.current) return
-    showPopupOnMap(currentContext, currentProduct, isPaused)
-  }, [currentContext, currentProduct, isPaused, showPopupOnMap])
+    if (!currentContext || !currentProduct) return;
+    if (!mapReadyRef.current) return;
+    showPopupOnMap(currentContext, currentProduct, isPaused);
+  }, [currentContext, currentProduct, isPaused, showPopupOnMap]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -170,7 +180,12 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
             <img
               src={currentProduct.imageUrl}
               alt={currentProduct.title}
-              style={{ width: 24, height: 32, objectFit: 'cover', borderRadius: 3 }}
+              style={{
+                width: 24,
+                height: 32,
+                objectFit: 'cover',
+                borderRadius: 3,
+              }}
             />
             <div>
               <strong style={{ color: '#2e7d32' }}>
@@ -197,7 +212,7 @@ export const LeafletMap: React.FC<{ products: productData[] }> = ({ products }) 
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default LeafletMap
+export default LeafletMap;

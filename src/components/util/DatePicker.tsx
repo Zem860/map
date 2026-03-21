@@ -1,54 +1,60 @@
-import { ChevronDownIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import { useMemo, useState } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ChevronDownIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 // 轉 YYYY-MM-DD（純函式，不需要 hook）
 const toYmd = (d: Date) => {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, "0")
-  const day = String(d.getDate()).padStart(2, "0")
-  return `${y}-${m}-${day}`
-}
-
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 
 // 避免 new Date("YYYY-MM-DD") 時區坑
 const parseYmd = (s?: string) => {
-  if (!s) return undefined
-  const [y, m, d] = s.split("-").map(Number)
-  if (!y || !m || !d) return undefined
-  return new Date(y, m - 1, d)
-}
+  if (!s) return undefined;
+  const [y, m, d] = s.split('-').map(Number);
+  if (!y || !m || !d) return undefined;
+  return new Date(y, m - 1, d);
+};
 
 type DatePickerProps = {
-  label?: string
-  value?: string // "YYYY-MM-DD" | ""
-  onChange?: (value: string) => void
-  id?: string
-  placeholder?: string
-  disabled?: boolean
-  className?: string
-}
+  label?: string;
+  value?: string; // "YYYY-MM-DD" | ""
+  onChange?: (value: string) => void;
+  id?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  className?: string;
+};
 
 const DatePicker = ({
-  label = "Publish Date",
-  value = "",
+  label = 'Publish Date',
+  value = '',
   onChange,
-  id = "publishDate",
-  placeholder = "Pick a date",
+  id = 'publishDate',
+  placeholder = 'Pick a date',
   disabled,
   className,
 }: DatePickerProps) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
-  const selectedDate = useMemo(() => parseYmd(value), [value])
-  const displayValue = useMemo(() => selectedDate ? toYmd(selectedDate) : "", [selectedDate])
+  const selectedDate = useMemo(() => parseYmd(value), [value]);
+  const displayValue = useMemo(
+    () => (selectedDate ? toYmd(selectedDate) : ''),
+    [selectedDate]
+  );
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn('flex flex-col gap-2', className)}>
       {label && (
         <Label htmlFor={id} className="px-1">
           {label}
@@ -62,7 +68,10 @@ const DatePicker = ({
             variant="outline"
             id={id}
             disabled={disabled}
-            className={cn("justify-between font-normal", !selectedDate && "text-muted-foreground")}
+            className={cn(
+              'justify-between font-normal',
+              !selectedDate && 'text-muted-foreground'
+            )}
           >
             {displayValue || placeholder}
             <ChevronDownIcon className="h-4 w-4 opacity-70" />
@@ -75,15 +84,15 @@ const DatePicker = ({
             selected={selectedDate}
             captionLayout="dropdown"
             onSelect={(d) => {
-              const next = d ? toYmd(d) : ""
-              onChange?.(next)
-              setOpen(false)
+              const next = d ? toYmd(d) : '';
+              onChange?.(next);
+              setOpen(false);
             }}
           />
         </PopoverContent>
       </Popover>
     </div>
-  )
-}
+  );
+};
 
-export default DatePicker
+export default DatePicker;

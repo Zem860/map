@@ -1,18 +1,24 @@
-import { useProductStore } from "@/store/productStore";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useProductStore } from '@/store/productStore';
+import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
 
-const CategoryMenu = ({ selected, handleCategoryChange }: { selected: string, handleCategoryChange: (category: string) => void }) => {
-  const books = useProductStore((s) => s.products)
+const CategoryMenu = ({
+  selected,
+  handleCategoryChange,
+}: {
+  selected: string;
+  handleCategoryChange: (category: string) => void;
+}) => {
+  const books = useProductStore((s) => s.products);
   useEffect(() => {
-    useProductStore.getState().fetchAllProduct()
+    useProductStore.getState().fetchAllProduct();
     if (selected) {
-      handleCategoryChange(selected)
+      handleCategoryChange(selected);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-  const allCategory = Array.from(new Set(books.map(book => book.category)));
+  }, []);
+  const allCategory = Array.from(new Set(books.map((book) => book.category)));
   return (
     <aside className="w-full lg:w-64 shrink-0">
       <div className="sticky top-6 bg-card border rounded-lg p-6">
@@ -21,18 +27,21 @@ const CategoryMenu = ({ selected, handleCategoryChange }: { selected: string, ha
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-between text-left font-normal",
-              selected === "" && "bg-accent text-accent-foreground",
+              'w-full justify-between text-left font-normal',
+              selected === '' && 'bg-accent text-accent-foreground'
             )}
-            onClick={() => handleCategoryChange("")}
-          > All</Button>
+            onClick={() => handleCategoryChange('')}
+          >
+            {' '}
+            All
+          </Button>
           {allCategory.map((category) => (
             <Button
               key={category}
               variant="ghost"
               className={cn(
-                "w-full justify-between text-left font-normal",
-                selected === category && "bg-accent text-accent-foreground",
+                'w-full justify-between text-left font-normal',
+                selected === category && 'bg-accent text-accent-foreground'
               )}
               onClick={() => handleCategoryChange(category)}
             >
@@ -41,7 +50,8 @@ const CategoryMenu = ({ selected, handleCategoryChange }: { selected: string, ha
           ))}
         </nav>
       </div>
-    </aside>);
-}
+    </aside>
+  );
+};
 
 export default CategoryMenu;

@@ -1,11 +1,18 @@
-import type { ConfirmedOrder, OrderModalProps, UserInfo } from "@/type/order";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import type { ConfirmedOrder, OrderModalProps, UserInfo } from '@/type/order';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Label } from '@radix-ui/react-label';
 import { Switch } from '@/components/ui/switch';
-import { Input } from "@/components/ui/input";
-import { useState, useEffect, type ChangeEvent } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import { getUnixTimestamp } from '@/helper/tool';
 
 const OrderModal = ({
@@ -28,20 +35,22 @@ const OrderModal = ({
     setFormData((prev) => ({ ...prev, is_paid: checked }));
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     const { name, value } = e.target;
 
     setFormData((prev) => {
       // 防呆：確保 prev 存在
       const currentData = prev || {};
-      const isUserData = currentData.user && name in currentData.user
+      const isUserData = currentData.user && name in currentData.user;
       if (isUserData) {
         return {
           ...currentData,
           user: {
             ...(currentData.user || {}),
             [name]: value,
-          } as UserInfo
+          } as UserInfo,
         };
       }
       //處理userInfo
@@ -56,11 +65,11 @@ const OrderModal = ({
     const createdAt = order?.create_at ?? getUnixTimestamp();
     const finalData = {
       ...formData,
-      create_at: createdAt
+      create_at: createdAt,
     } as ConfirmedOrder;
-    setFormData(finalData)
-    handleAskSave(formData as ConfirmedOrder)
-  }
+    setFormData(finalData);
+    handleAskSave(formData as ConfirmedOrder);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -88,19 +97,18 @@ const OrderModal = ({
             <Input
               id="userName"
               name="name"
-              value={formData?.user?.name || ""}
+              value={formData?.user?.name || ''}
               onChange={handleInputChange}
               placeholder="order buyer"
             />
           </div>
-
 
           <div className="space-y-2">
             <Label htmlFor="userEmail">Email</Label>
             <Input
               id="userEmail"
               name="email"
-              value={formData?.user?.email || ""}
+              value={formData?.user?.email || ''}
               onChange={handleInputChange}
               placeholder="buyer email"
             />
@@ -108,18 +116,21 @@ const OrderModal = ({
 
           <div className="space-y-2">
             <Label htmlFor="userAddress">Address</Label>
-            <Input id="userAddress"
+            <Input
+              id="userAddress"
               name="address"
-              value={formData?.user?.address || ""}
+              value={formData?.user?.address || ''}
               onChange={handleInputChange}
-              placeholder="buyer address" />
+              placeholder="buyer address"
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="telephone">Telephone</Label>
-            <Input id="telephone"
+            <Input
+              id="telephone"
               name="tel"
-              value={formData?.user?.tel || ""}
+              value={formData?.user?.tel || ''}
               placeholder="buyer telephone"
               onChange={handleInputChange}
             />
@@ -127,12 +138,12 @@ const OrderModal = ({
 
           <div>
             <Label htmlFor="msg">Message</Label>
-            <Textarea id="msg"
+            <Textarea
+              id="msg"
               name="message"
               value={formData?.message}
               placeholder="buyer message"
               onChange={handleInputChange}
-
             ></Textarea>
           </div>
         </div>
@@ -140,9 +151,7 @@ const OrderModal = ({
           <Button variant="outline" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>
-            Save
-          </Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

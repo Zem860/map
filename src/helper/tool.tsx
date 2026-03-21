@@ -1,5 +1,5 @@
-import { getAllProducts } from "@/api/folder_admin/products";
-import type { productData, ProductContent } from "@/type/product";
+import { getAllProducts } from '@/api/folder_admin/products';
+import type { productData, ProductContent } from '@/type/product';
 
 export const getCategoryCombos = async (): Promise<string[]> => {
   try {
@@ -14,18 +14,19 @@ export const getCategoryCombos = async (): Promise<string[]> => {
   }
 };
 
-
 export const productContentParser = (product: productData) => {
   const contentObj: ProductContent =
-    typeof product.content === "string"
+    typeof product.content === 'string'
       ? JSON.parse(product.content)
       : product.content;
-  return contentObj
-}
+  return contentObj;
+};
 
 export const getUnixTimestamp = (): number => Math.floor(Date.now() / 1000);
 
-export const thousandSeparator = (num: number | null | undefined | string): string => {
-  if (num === null || num === undefined) return "0";
+export const thousandSeparator = (
+  num: number | null | undefined | string
+): string => {
+  if (num === null || num === undefined) return '0';
   return Number(num).toLocaleString();
 };

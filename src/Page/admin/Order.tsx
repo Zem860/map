@@ -1,7 +1,11 @@
 import type { ConfirmedOrder, Order, Confirmtype } from '@/type/order';
 import { AxiosError } from 'axios';
 import { useEffect, useState, useCallback } from 'react';
-import { deleteAdminOrders, getAdminOrders, editAdminOrders } from '@/api/folder_admin/order';
+import {
+  deleteAdminOrders,
+  getAdminOrders,
+  editAdminOrders,
+} from '@/api/folder_admin/order';
 import {
   Table,
   TableBody,
@@ -34,13 +38,15 @@ const AdminOrder = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [order, setOrder] = useState<Order>();
-  const [confirmState, setConfirmState] = useState<Confirmtype & { error?: string }>({
+  const [confirmState, setConfirmState] = useState<
+    Confirmtype & { error?: string }
+  >({
     isOpen: false,
     title: '',
     message: '',
     isLoading: false,
     error: '', // 用來存错误信息
-    onConfirm: () => { },
+    onConfirm: () => {},
   });
   const confirmModal = useConfirm();
   const addToast = useToastStore((state) => state.addToast);
@@ -106,7 +112,7 @@ const AdminOrder = () => {
           await deleteAdminOrders(id);
         }
         await getData();
-      },
+      }
     );
   }, [selectedIds, confirmModal]);
 
@@ -121,16 +127,16 @@ const AdminOrder = () => {
         async () => {
           await deleteAdminOrders(id);
           await getData();
-        },
+        }
       );
     },
-    [confirmModal],
+    [confirmModal]
   );
 
   const handleOpenModalChange = (order: Order) => {
-    setIsOpen(!isOpen)
-    setOrder(order)
-  }
+    setIsOpen(!isOpen);
+    setOrder(order);
+  };
 
   const closeConfirm = () => {
     // ✅ 加上小括號，明確告訴 TS 這是要回傳一個物件
@@ -148,11 +154,10 @@ const AdminOrder = () => {
         // 真正打 API 的地方
         setConfirmState((prev) => ({ ...prev, isLoading: true, error: '' }));
         try {
-          await editAdminOrders(formData.id, formData)
-          getData()
+          await editAdminOrders(formData.id, formData);
+          getData();
           closeConfirm(); // 關閉確認對話框
           addToast(`Modify`, 'order', 'success'); // 成功後關閉 ProductModal
-
         } catch (err: unknown) {
           // 將後端錯誤信息顯示在 Modal 中
           let errorMsg = 'Modify Failed';
@@ -164,7 +169,11 @@ const AdminOrder = () => {
                 : axiosErr.response.data.message;
             }
           }
-          setConfirmState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+          setConfirmState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: errorMsg,
+          }));
         } finally {
           setIsOpen(false);
         }
@@ -174,8 +183,12 @@ const AdminOrder = () => {
 
   return (
     <>
-      <OrderModal order={order as unknown as ConfirmedOrder} isOpen={isOpen} setIsOpen={setIsOpen}
-        handleAskSave={handleAskSave} />
+      <OrderModal
+        order={order as unknown as ConfirmedOrder}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        handleAskSave={handleAskSave}
+      />
       {isLoading ? (
         <Loader />
       ) : (
@@ -287,7 +300,7 @@ const AdminOrder = () => {
                     {/* 7. Order Date (對應 Order Date 標題) */}
                     <TableCell className="text-center">
                       {new Date(
-                        Number(o.create_at) * 1000,
+                        Number(o.create_at) * 1000
                       ).toLocaleDateString()}
                     </TableCell>
 
@@ -300,7 +313,11 @@ const AdminOrder = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => { handleOpenModalChange(o) }}>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleOpenModalChange(o);
+                            }}
+                          >
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
@@ -345,7 +362,11 @@ const AdminOrder = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => { handleOpenModalChange(o) }}>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleOpenModalChange(o);
+                        }}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>

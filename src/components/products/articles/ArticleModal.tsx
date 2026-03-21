@@ -28,10 +28,9 @@ export const ArticleModal = ({
   mode = 'create',
   handleAskSave,
 }: ArticleModalProps) => {
-
   const [tags, setTags] = useState<string[]>(article?.tag || []);
   const [formData, setFormData] = useState<Partial<Article>>(
-    article ? { ...article } : {},
+    article ? { ...article } : {}
   );
   const [inputValue, setInputValue] = useState('');
 
@@ -47,10 +46,10 @@ export const ArticleModal = ({
   }, [article, isOpen]);
 
   const images = useProductImages({
-    item: article as Article || null,
+    item: (article as Article) || null,
     isOpen,
     maxImages: 1, // 文章只允許一張圖片作為封面
-  })
+  });
 
   // 移除 Tag (使用 prev)
   const removeTag = (tagToRemove: string) => {
@@ -58,7 +57,7 @@ export const ArticleModal = ({
   };
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -86,8 +85,8 @@ export const ArticleModal = ({
   };
 
   const handleSwitchChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, isPublic: checked }))
-  }
+    setFormData((prev) => ({ ...prev, isPublic: checked }));
+  };
 
   const handleSave = async () => {
     // TODO: 這裡呼叫你的 API，並帶上 tags
@@ -104,16 +103,16 @@ export const ArticleModal = ({
     }
     const createdAt = article?.create_at ?? getUnixTimestamp();
     const data = {
-      id: article?.id || '',              // 編輯時使用，建立時後端生成
+      id: article?.id || '', // 編輯時使用，建立時後端生成
       title: formData.title || '',
       description: formData.description || '',
       image: imageUrl || '', // 只取第一張，作為封面
-      author: formData.author || '',       // 需要輸入欄位
-      content: formData.content || '',     // 需要輸入欄位
-      create_at: createdAt,              // 編輯時保留，建立時使用當下時間
+      author: formData.author || '', // 需要輸入欄位
+      content: formData.content || '', // 需要輸入欄位
+      create_at: createdAt, // 編輯時保留，建立時使用當下時間
       isPublic: formData.isPublic ?? true, // 需要新增 isPublic 欄位
       tag: tags,
-      num: article?.num || 0,              // 編輯時保留
+      num: article?.num || 0, // 編輯時保留
     } as Article;
     handleAskSave(data);
   };
@@ -131,7 +130,6 @@ export const ArticleModal = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {/* 1. 稍微加寬 Dialog，並限制最大高度與 Flex 排版 */}
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-6">
-
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Create Article' : 'Modify Article'}
@@ -143,7 +141,6 @@ export const ArticleModal = ({
 
         {/* 2. 將中間的表單內容包裝起來，加入 overflow-y-auto 讓它可捲動 */}
         <div className="flex-1 overflow-y-auto pr-2 space-y-5">
-
           {/* 3. 將 Title, Author 與 Public 開關合併到 Grid 雙欄排版 */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -245,7 +242,9 @@ export const ArticleModal = ({
               </Button>
             </div>
 
-            <Label className="text-xs text-muted-foreground">Image Preview (will be uploaded after saving)</Label>
+            <Label className="text-xs text-muted-foreground">
+              Image Preview (will be uploaded after saving)
+            </Label>
 
             {/* 這裡也可以改成橫向排列 grid-cols-4 節省垂直高度 */}
             <div className="grid grid-cols-1 gap-3 mt-2">
@@ -343,7 +342,6 @@ export const ArticleModal = ({
             {mode === 'create' ? 'Create' : 'Save'}
           </Button>
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );
