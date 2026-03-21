@@ -191,9 +191,13 @@ All components are **accessible**, **keyboard-navigable**, and **fully customiza
 
 ## 📄 License
 
-This project is for **educational purposes**. Inspired by Book Depository's design philosophy.
+This project is for educational and portfolio purposes only.
 
-**Project Author:** [zem860](https://github.com/zem860)
+It is inspired by Book Depository's design, but is not affiliated with, endorsed by, or connected to Book Depository or its parent companies.
+
+All product data and content are for demonstration purposes only.
+
+© 2026 zem860. All rights reserved.
 
 ---
 
