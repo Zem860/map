@@ -1,58 +1,178 @@
-本專案為個人/教學性質之練習與範例作品，僅供學習、展示與測試用途。專案在設計或介面上「向 Book Depository 致敬」，但本專案與 Book Depository 或其關聯公司無任何關係，亦非其官方產品或授權作品。
-# MAP — Admin / Public Frontend
+# MAP — Online Bookstore & Admin Dashboard
 
-簡介
+> A full-featured e-commerce bookstore platform with real-time admin dashboard, built with modern React technologies.
+
+**🔗 Live Demo:** https://zem860.github.io/map/
+
+> **Disclaimer:** This is an educational/personal project inspired by Book Depository's design. This project is not affiliated with or endorsed by Book Depository or its parent companies.
+
 ---
-一個以 React + TypeScript + Vite 建置的前端專案，用於展示書籍與文章，帶有後台管理介面（產品 / 文章 / 地圖即時視覺化）。
 
-主要技術
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [installation](#installation)
+- [Development](#development)
+- [Build & Deployment](#build--deployment)
+- [Project Architecture](#project-architecture)
+- [Key Components](#key-components)
+
 ---
-- React 19 + TypeScript
-- Vite 開發環境（[vite.config.ts](vite.config.ts)）
-- Zustand（狀態管理）
-- Radix UI / shadcn 組件
-- Leaflet 地圖（[src/components/LeafletMap.tsx](src/components/LeafletMap.tsx)）
-- Axios（API 請求： [src/api/api.ts](src/api/api.ts)）
-- Tailwind CSS（樣式在 [src/style/style.css](src/style/style.css)）
 
-功能概況
+## 🎯 Overview
+
+**MAP** is a full-stack bookstore web application featuring:
+- A **public-facing storefront** for browsing and purchasing books
+- A **comprehensive admin dashboard** for managing inventory, orders, and content
+- **Real-time geolocation visualization** using interactive maps
+- **Modern UI/UX** built with Radix UI and Tailwind CSS
+- **Type-safe development** with TypeScript
+- **Optimized performance** with Vite and React 19
+
+The application demonstrates industry best practices in component architecture, state management, API integration, and form handling.
+
 ---
-- 公開端：
-  - 首頁、商品列表與詳情、文章列表與內文（參考 [src/Page/public/ArticlePage.tsx](src/Page/public/ArticlePage.tsx)）
-  - 即時地圖視覺化（Leaflet）：[src/components/LeafletMap.tsx](src/components/LeafletMap.tsx)
-- 後台管理：
-  - 商品管理（新增/編輯/上傳圖片）— 關鍵元件：[ProductModal](src/components/products/ProductModal/ProductModal.tsx)
-  - 文章管理（新增/編輯/標籤/圖片）— 關鍵元件：[ArticleModal](src/components/products/articles/ArticleModal.tsx)
-  - 圖片上傳邏輯抽成 Hook：[useProductImages](src/components/products/ProductModal/hooks/useProductImages.ts)
 
-專案結構重點
+## ✨ Key Features
+
+### 👥 **Public Storefront**
+- **Home Page** — Featured products, categories, and promotional content
+- **Product Catalog** — Browse books by category (Fiction, Sci-Fi, History, Young Adult)
+- **Product Details** — Full product information with image gallery and customer reviews
+- **Shopping Cart** — Add/remove items, persistent cart state
+- **Order Management** — Checkout flow and payment processing
+- **Articles & Blog** — Read book reviews, industry news, and curated content
+- **Real-time Map** — Interactive Leaflet map showing store locations and delivery zones
+- **About Page** — Company information and contact details
+
+### 🛠️ **Admin Dashboard**
+- **Products Management** — Create, edit, delete books with image uploads
+- **Orders Management** — View, track, and manage customer orders
+- **Articles Management** — Create and manage blog content with featured images
+- **Coupon System** — Generate and manage promotional discount codes
+- **Dashboard Analytics** — Revenue charts, top products, and recent orders (currently using mock data)
+- **Real-time Statistics** — Live sales metrics and inventory overview (partially implemented with mock data; some views include basic statistical logic)
 ---
-- 入口：[src/main.tsx](src/main.tsx)、[src/App.tsx](src/App.tsx)
-- API 封裝：[src/api/api.ts](src/api/api.ts) 與各子目錄（/folder_admin, /folder_user）
-- 後台頁面：[src/Page/admin](src/Page/admin)
-  - Article 管理：[`openModal`](src/Page/admin/Article.tsx) → 傳入 [ArticleModal](src/components/products/articles/ArticleModal.tsx)
-- UI 元件： [src/components/ui](src/components/ui)
-- Hook 與 Store： [src/store](src/store)、[src/components/products/ProductModal/hooks/useProductImages.ts](src/components/products/ProductModal/hooks/useProductImages.ts)
 
-快速啟動
+## 🏗️ Technology Stack
+
+### **Frontend Frameworks & Libraries**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **React** | 19.2.0 | UI library and component framework |
+| **TypeScript** | ~5.9.3 | Static type checking and IDE support |
+| **React Router DOM** | 7.10.1 | Client-side routing and navigation |
+| **Vite** | 7.2.4 | Lightning-fast build tool and dev server |
+
+### **State Management**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Zustand** | 5.0.9 | Lightweight global state management |
+
+### **Form Handling & Validation**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **React Hook Form** | 7.69.0 | Performant, flexible form management |
+
+### **UI Components & Styling**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Radix UI** | 1.4.3 | Unstyled, accessible component primitives |
+| **shadcn/ui** | (built-in) | Pre-styled Radix UI components |
+| **Tailwind CSS** | 4.1.17 | Utility-first CSS framework |
+| **Lucide React** | 0.556.0 | Icon library (556+ icons) |
+| **class-variance-authority** | 0.7.1 | CSS class composition |
+| **tailwind-merge** | 3.4.0 | Tailwind class conflict resolver |
+
+### **Data Fetching & API**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Axios** | 1.13.2 | HTTP client with interceptors |
+
+### **Visualization & Geographic Features**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Leaflet** | 1.9.4 | Interactive map library |
+| **Recharts** | 2.15.4 | Composable charting library for analytics |
+
+### **Date & Time**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **date-fns** | 4.1.0 | Modern date utility library |
+| **react-day-picker** | 9.13.0 | Date picker component |
+
+### **Loading & UI Enhancements**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **react-loader-spinner** | 8.0.0 | Loading spinner animations |
+
+### **Build & Development Tools**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **ESLint** | 9.39.1 | Code quality and linting |
+| **PostCSS** | 8.5.6 | CSS transformation tool |
+| **Autoprefixer** | 10.4.22 | Vendor prefix automation |
+| **@vitejs/plugin-react** | 5.1.1 | Vite React plugin with Fast Refresh |
+| **@tailwindcss/vite** | 4.1.17 | Tailwind CSS Vite plugin |
+
+### **Deployment**
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **gh-pages** | 6.3.0 | GitHub Pages deployment tool |
+
 ---
-```sh
-# 安裝
-npm install
 
-# 開發
-npm run dev
+## 📝 Scripts Reference
 
-# 建置
-npm run build
-```
+| Script | Command | Purpose |
+|--------|---------|---------|
+| **dev** | `npm run dev` | Start development server with HMR |
+| **build** | `npm run build` | Compile TypeScript and build production bundle |
+| **lint** | `npm run lint` | Run ESLint code quality checks |
+| **preview** | `npm run preview` | Preview production build locally |
+| **deploy** | `npm run deploy` | Build and deploy to GitHub Pages |
 
-重要檔案與參考
 ---
-- [src/main.tsx](src/main.tsx) — 應用入口
-- [vite.config.ts](vite.config.ts) — Vite 設定
-- [package.json](package.json) — 指令與相依套件
-- [src/api/api.ts](src/api/api.ts) — Axios 實例與攔截器
-- [src/components/products/articles/ArticleModal.tsx](src/components/products/articles/ArticleModal.tsx) — 文章 Modal
-- [src/components/products/ProductModal/hooks/useProductImages.ts](src/components/products/ProductModal/hooks/useProductImages.ts) — 圖片 Hook
-- [src/Page/admin/Article.tsx](src/Page/admin/Article.tsx) — Article 管理頁（openModal）
+
+## 🎨 UI Components Library
+
+The project includes **25+ pre-built shadcn/ui components**:
+
+**Form Components:**
+- Button, Input, Textarea, Select, Checkbox, Switch, Label
+
+**Layout Components:**
+- Card, Dialog, Sheet, Popover, Dropdown Menu
+
+**Data Display:**
+- Table, Pagination, Progress, Badge
+
+**Date/Time:**
+- Calendar (react-day-picker integration)
+
+**Chart/Analytics:**
+- Chart (Recharts-powered)
+
+All components are **accessible**, **keyboard-navigable**, and **fully customizable** via Tailwind CSS.
+
+---
+
+## 📄 License
+
+This project is for **educational purposes**. Inspired by Book Depository's design philosophy.
+
+**Project Author:** [zem860](https://github.com/zem860)
+
+---
+
+## 🙏 Acknowledgments
+
+- **React Team** — For the powerful UI library
+- **Vite Team** — For the blazing-fast build tool
+- **Radix UI Team** — For accessible component primitives
+- **Tailwind Labs** — For the utility-first CSS framework
+- **Zustand Creator** — For lightweight state management
+- **Hexschool** — For API and Teaching Resources
