@@ -209,4 +209,3 @@ All product data and content are for demonstration purposes only.
 - **Tailwind Labs** — For the utility-first CSS framework
 - **Zustand Creator** — For lightweight state management
 - **Hexschool** — For API and Teaching Resources
-```
