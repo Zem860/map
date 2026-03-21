@@ -8,7 +8,7 @@ import { useToastStore } from '@/store/toastStore';
 
 
 export const useProducts = () => {
-  	const addToast = useToastStore((state) => state.addToast);
+  const addToast = useToastStore((state) => state.addToast);
   const [products, setProducts] = useState<productData[] | undefined>(undefined)
   const [pagination, setPagination] = useState<PaginationData | undefined>(undefined)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -30,7 +30,7 @@ export const useProducts = () => {
         const list = await getCategoryCombos()
         setCategories(list)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
     fetchCategories()
@@ -84,7 +84,7 @@ export const useProducts = () => {
 
       setPagination(data.pagination)
     } catch (err) {
-      console.log(err)
+      console.error(err)
     } finally {
       setIsLoading(false)
     }
@@ -133,8 +133,10 @@ export const useProducts = () => {
         message: isCreate
           ? `Do you want to create「${product.title}」?`
           : `Do you want to modify「${product.title}」?`,
-        onSuccess: () => {setIsModalOpen(false);
-          addToast(`${isCreate ? 'create' : 'modify'}`, 'book', 'success');}, // 成功後關閉 ProductModal
+        onSuccess: () => {
+          setIsModalOpen(false);
+          addToast(`${isCreate ? 'create' : 'modify'}`, 'book', 'success');
+        }, // 成功後關閉 ProductModal
       },
       () => saveProduct(product)
     )

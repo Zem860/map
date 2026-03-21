@@ -85,13 +85,10 @@ const Coupon = () => {
       setIsOpen(true);
       return;
     }
-
     setCoupon({
       ...item,
       due_date: timestampToYmd(Number(item.due_date)),
     });
-    console.log('Opening edit modal for item:', item);
-
     setMode('edit');
     setIsOpen(true);
   };

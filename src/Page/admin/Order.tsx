@@ -138,7 +138,6 @@ const AdminOrder = () => {
   };
 
   const handleAskSave = (formData: ConfirmedOrder) => {
-    console.log(formData)
     setConfirmState({
       isOpen: true,
       title: 'Confirmed Save',

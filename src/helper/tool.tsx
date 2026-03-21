@@ -9,7 +9,7 @@ export const getCategoryCombos = async (): Promise<string[]> => {
     const categories = [...new Set(products.map((p) => p.category))];
     return categories;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return [];
   }
 };
@@ -25,7 +25,7 @@ export const productContentParser = (product: productData) => {
 
 export const getUnixTimestamp = (): number => Math.floor(Date.now() / 1000);
 
-export const thousandSeparator = (num: number|null|undefined|string): string => {
+export const thousandSeparator = (num: number | null | undefined | string): string => {
   if (num === null || num === undefined) return "0";
   return Number(num).toLocaleString();
 };

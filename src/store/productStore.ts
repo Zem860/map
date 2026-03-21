@@ -24,9 +24,7 @@ export const useProductStore = create<ProductStore>((set) => ({
         set({ isCategoryLoading: true, error: undefined })
         try {
             const res = await getAllProducts();
-            console.log(res)
-            set({ products: Object.values(res.data.products), 
-                
+            set({ products: Object.values(res.data.products),                
                  isCategoryLoading: false })
         } catch (err) {
             set({ error: err, isCategoryLoading: false })

@@ -22,7 +22,6 @@ export function AdminHeader() {
     try {
       // 向後端發送登出請求，讓後端知道用戶已經登出，可以在後端進行相應的處理，例如清除伺服器上的 session 或 token
       await apiUserLogout();
-      console.log("登出成功");
     } catch (error) {
       console.error("登出失敗:", error);
     } finally {

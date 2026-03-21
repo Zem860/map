@@ -88,7 +88,6 @@ const Payment = () => {
         try {
             await orderStore.fetchOrder(orderNum);
             userStore.clearUserInfo();
-            console.log("Fetched order data:", orderStore.orderData);
         } catch (error) {
             console.error("Failed to fetch order details:", error);
         }
