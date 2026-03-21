@@ -46,6 +46,7 @@ export function AdminHeader() {
           variant="ghost"
           size="icon"
           className="h-9 w-9 lg:hidden"
+          type="button"
           onClick={() => setSidebarOpen(true)}
         >
           <Menu className="h-5 w-5" />
@@ -59,7 +60,7 @@ export function AdminHeader() {
 
         <div className="ml-auto flex items-center gap-1 md:gap-2">
           <Link to="/admin/settings" className="md:hidden">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
+            <Button variant="ghost" size="icon" className="h-9 w-9" type="button">
               <Settings className="h-5 w-5" />
             </Button>
           </Link>
@@ -70,6 +71,7 @@ export function AdminHeader() {
                 variant="ghost"
                 size="icon"
                 className="h-9 w-9 md:h-10 md:w-10"
+                type="button"
               >
                 <User className="h-5 w-5" />
               </Button>
