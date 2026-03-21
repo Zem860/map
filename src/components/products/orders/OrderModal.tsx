@@ -61,6 +61,12 @@ const OrderModal = ({
     });
   };
 
+  const handleCancel = () => {
+    setIsOpen(false);
+    // 2. 點擊取消時，重置 formData 為初始 order 資料，避免下次開啟時帶入未保存的修改
+    setFormData(order ? { ...order } : undefined);
+  };
+
   const handleSave = async () => {
     const createdAt = order?.create_at ?? getUnixTimestamp();
     const finalData = {
@@ -148,10 +154,12 @@ const OrderModal = ({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave} type="button">
+            Save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

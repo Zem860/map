@@ -222,6 +222,7 @@ const AdminOrder = () => {
           </div>
           <div className="mb-4 md:block hidden">
             <Button
+              type="button"
               variant="destructive"
               disabled={selectedIds.length === 0}
               onClick={handleDeleteOrders}
@@ -308,7 +309,7 @@ const AdminOrder = () => {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" type="button">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -357,7 +358,7 @@ const AdminOrder = () => {
                   <p className="text-lg font-bold">${o.total}</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" type="button">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>

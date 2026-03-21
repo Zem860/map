@@ -192,6 +192,7 @@ const Cart = () => {
                             onClick={() => removeItem(item.id)}
                             className="text-muted-foreground hover:text-destructive transition-colors p-1"
                             aria-label="Remove item from cart"
+                            type="button"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -318,6 +319,7 @@ const Cart = () => {
                           onClick={() => removeItem(item.id)}
                           className="text-muted-foreground hover:text-destructive transition-colors p-1"
                           aria-label="Remove item"
+                          type="button"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -332,6 +334,7 @@ const Cart = () => {
                   <Button
                     variant="ghost"
                     className="text-muted-foreground hover:text-foreground"
+                    type="button"
                   >
                     Continue Shopping
                   </Button>
@@ -368,6 +371,7 @@ const Cart = () => {
                       className="flex-1 border-border"
                     />
                     <Button
+                      type="button"
                       disabled={isApplyingCoupon}
                       onClick={() => {
                         applyDiscount();
@@ -442,6 +446,7 @@ const Cart = () => {
                   </div>
                   <Button
                     className="w-full mt-6"
+                    type="button"
                     size="lg"
                     disabled={cart.data.carts.length === 0 || isApplyingCoupon}
                     onClick={() => navigate('../form')}

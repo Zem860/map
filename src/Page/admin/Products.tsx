@@ -52,6 +52,7 @@ const Products = () => {
           categories={categories}
         />
         <Button
+          type="button"
           onClick={openCreateModal}
           className="ml-auto bg-primary hover:bg-primary/90"
         >
@@ -98,6 +99,7 @@ const Products = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 shrink-0"
+                            type="button"
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
@@ -189,6 +191,7 @@ const Products = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 shrink-0"
+                            type="button"
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>

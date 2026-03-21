@@ -263,6 +263,7 @@ const Coupon = () => {
             setMode('create'); // ✅ 設定為新增模式
             setIsOpen(true); // ✅ 打開 Modal
           }}
+          type="button"
           className="ml-auto bg-primary hover:bg-primary/90"
         >
           <Plus className="size-4" />
@@ -338,6 +339,7 @@ const Coupon = () => {
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <button
+                    type="button"
                     onClick={() => copyCode(item.code)}
                     className="flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1 text-xs font-mono text-secondary-foreground hover:bg-accent transition-colors"
                     title="Click to copy"
@@ -357,6 +359,7 @@ const Coupon = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 shrink-0"
@@ -418,6 +421,7 @@ const Coupon = () => {
                 </TableCell>
                 <TableCell>
                   <button
+                    type="button"
                     onClick={() => copyCode(item.code)}
                     className="flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1 text-xs font-mono text-secondary-foreground hover:bg-accent transition-colors"
                     title="Click to copy"
@@ -457,7 +461,12 @@ const Coupon = () => {
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        type="button"
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                         <span className="sr-only">Actions</span>
                       </Button>

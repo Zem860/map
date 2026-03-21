@@ -151,10 +151,14 @@ export const CouponModal = ({
         </div>
 
         <DialogFooter className="gap-2 pt-4 mt-auto">
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            type="button"
+          >
             Cancel
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} type="button">
             {mode === 'create' ? 'Create Coupon' : 'Save Changes'}
           </Button>
         </DialogFooter>

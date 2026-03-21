@@ -165,6 +165,7 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {featuredCategories.map((c) => (
               <Button
+                type="button"
                 onClick={() => navigate(`/shop?category=${c.category}`)}
                 key={c.label}
                 variant="outline"
@@ -200,6 +201,7 @@ const Home = () => {
               variant="ghost"
               onClick={() => navigate('/shop')}
               className="hidden md:flex cursor-pointer"
+              type="button"
             >
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -213,8 +215,8 @@ const Home = () => {
                   <BookCard
                     title={item.title}
                     author={contentData.author}
-                    price={String(item.price)}
-                    originalPrice={String(item.origin_price)}
+                    price={item.price}
+                    originalPrice={item.origin_price}
                     imageQuery={item.imageUrl}
                     rating={item.rating}
                   />

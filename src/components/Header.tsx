@@ -60,7 +60,12 @@ export function AdminHeader() {
 
         <div className="ml-auto flex items-center gap-1 md:gap-2">
           <Link to="/admin/settings" className="md:hidden">
-            <Button variant="ghost" size="icon" className="h-9 w-9" type="button">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              type="button"
+            >
               <Settings className="h-5 w-5" />
             </Button>
           </Link>

@@ -58,6 +58,7 @@ export function BookCard({
           size="icon"
           variant="outline"
           className="h-9 w-9 bg-transparent"
+          type="button"
         >
           <ShoppingCart className="h-4 w-4" />
         </Button>

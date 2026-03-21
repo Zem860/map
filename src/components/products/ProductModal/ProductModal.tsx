@@ -383,14 +383,15 @@ export const ProductModal = ({
 
         <DialogFooter className="gap-2">
           <Button
+            type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
           >
             Cancel
           </Button>
-
           <Button
+            type="button"
             onClick={handleSave}
             className="bg-primary hover:bg-primary/90"
             disabled={isSaving}

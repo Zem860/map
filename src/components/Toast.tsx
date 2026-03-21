@@ -31,7 +31,11 @@ const ToastItem = ({
         className={`flex items-center justify-between px-4 py-2 ${bgColor} text-white`}
       >
         <span className="font-bold">{title}</span>
-        <button onClick={() => removeToast(id)} className="hover:opacity-80">
+        <button
+          onClick={() => removeToast(id)}
+          className="hover:opacity-80"
+          type="button"
+        >
           <X size={16} />
         </button>
       </div>

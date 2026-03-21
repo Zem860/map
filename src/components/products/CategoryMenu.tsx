@@ -25,6 +25,7 @@ const CategoryMenu = ({
         <h2 className="font-serif font-bold text-lg mb-4">Categories</h2>
         <nav className="space-y-1">
           <Button
+            type="button"
             variant="ghost"
             className={cn(
               'w-full justify-between text-left font-normal',
@@ -37,6 +38,7 @@ const CategoryMenu = ({
           </Button>
           {allCategory.map((category) => (
             <Button
+              type="button"
               key={category}
               variant="ghost"
               className={cn(

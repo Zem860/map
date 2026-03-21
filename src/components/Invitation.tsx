@@ -39,7 +39,7 @@ const Invatation = () => {
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
                 asChild
-                type='button'
+                type="button"
               >
                 <a href="mailto:hello@literaryhaven.com">
                   <Mail className="mr-2 h-5 w-5" />

@@ -36,7 +36,7 @@ const NotFound = () => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
           <Link to="/">
-            <Button size="lg" className="min-w-[180px]">
+            <Button size="lg" className="min-w-[180px]" type="button">
               <Home className="h-4 w-4 mr-2" />
               Back to Home
             </Button>
@@ -46,6 +46,7 @@ const NotFound = () => {
               variant="outline"
               size="lg"
               className="min-w-[180px] bg-transparent"
+              type="button"
             >
               <BookOpen className="h-4 w-4 mr-2" />
               Browse Books

@@ -105,6 +105,7 @@ const ProductDetail = () => {
                 </div>
                 <div className="space-y-3">
                   <Button
+                    type="button"
                     size="lg"
                     className="w-full"
                     disabled={isCartLoading}

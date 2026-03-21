@@ -273,6 +273,7 @@ const Payment = () => {
               {/* 確認按鈕 */}
               {!orderNum ? (
                 <button
+                  type="button"
                   onClick={() => {
                     handleSubmitOrder();
                   }}

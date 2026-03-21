@@ -335,7 +335,11 @@ export const ArticleModal = ({
         </div>
 
         <DialogFooter className="gap-2 pt-4 mt-auto">
-          <Button variant="outline" onClick={() => setIsOpen(false)} type="button">
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            type="button"
+          >
             Cancel
           </Button>
           <Button onClick={handleSave} type="button">

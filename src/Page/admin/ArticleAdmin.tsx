@@ -208,6 +208,7 @@ const ArticleAdmin = () => {
         <>
           <div className="space-y-4 mb-4 flex items-center justify-between">
             <Button
+              type="button"
               onClick={() => {
                 setArticle(null); // ✅ 清空 article
                 setMode('create'); // ✅ 設定為新增模式
@@ -249,6 +250,7 @@ const ArticleAdmin = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 shrink-0"
+                            type="button"
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
@@ -330,6 +332,7 @@ const ArticleAdmin = () => {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
+                            type="button"
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 shrink-0"
