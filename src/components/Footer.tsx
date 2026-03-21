@@ -31,7 +31,15 @@ const Footer = () => {
           <div className="flex flex-col space-y-4">
             <h3 className="font-semibold text-sm uppercase tracking-wider">Contact Us</h3>
             <div className="text-sm text-muted-foreground space-y-2">
-              <p>Email: hello@books.com</p>
+              <p>
+                Email:{" "}
+                <a
+                  href="mailto:hello@books.com"
+                  className="hover:text-primary transition-colors underline"
+                >
+                  hello@books.com
+                </a>
+              </p>
               <div className="flex justify-center md:justify-start space-x-4 pt-2">
                 <a href="#" className="hover:text-primary">Instagram</a>
                 <a href="#" className="hover:text-primary">Facebook</a>
