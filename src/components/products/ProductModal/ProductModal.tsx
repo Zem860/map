@@ -336,12 +336,12 @@ export const ProductModal = ({
 
                       <img
                         src={p}
-                        alt={`待上傳圖片 ${i + 1}`}
+                        alt={`Image Ready to Upload ${i + 1}`}
                         className="w-full h-full object-cover"
                       />
 
                       <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                        待上傳
+                        Ready to Upload
                       </div>
 
                       <Button
