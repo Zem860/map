@@ -1,9 +1,5 @@
 import axios from 'axios';
-import type {
-  UserLoginInput,
-  UserLoginResponse,
-  CheckResponse,
-} from '@/type/user';
+import type { UserLoginInput, CheckResponse } from '@/type/user';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -39,7 +35,7 @@ adminApi.interceptors.response.use(
 );
 
 export const apiUserLogin = (params: UserLoginInput) =>
-  adminApi.post<UserLoginResponse>('admin/signin', params);
+  adminApi.post('admin/signin', params);
 
 export const apiUserLogout = () => adminApi.post('logout');
 
