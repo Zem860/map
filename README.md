@@ -141,6 +141,7 @@ To format the project:
 ```bash
 npx prettier . --write
 ```
+
 ### **Deployment**
 
 | Technology   | Version | Purpose                      |

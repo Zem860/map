@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useProductStore } from '@/store/productStore';
-import type { PaginationParam } from '@/type/product';
 import BreadCrumb from '@/components/BreadCrumbs';
 import CategoryMenu from '@/components/products/CategoryMenu';
 import { PaginationDemo } from '@/components/util/Pagination';
@@ -10,11 +9,11 @@ import { Loader } from '@/components/Loader';
 import { Link, useSearchParams } from 'react-router-dom';
 
 const Shop = () => {
-  const [searchParams] = useSearchParams();
-  const [pageData, setPageData] = useState<PaginationParam>({
-    page: 1,
-    category: searchParams.get('category') || '',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const category = searchParams.get('category') || '';
+  const rawPage = searchParams.get('page');
+  const page = rawPage ? Number(rawPage) : 1;
 
   const flexProducts = useProductStore((state) => state.flexProducts);
   const isLoading = useProductStore((state) => state.isLoading);
@@ -22,22 +21,38 @@ const Shop = () => {
 
   useEffect(() => {
     useProductStore.getState().fetchByCategory({
-      category: pageData.category,
-      page: pageData.page,
+      category,
+      page,
     });
-  }, [pageData.category, pageData.page]);
+  }, [category, page]);
 
   const handleCategoryChange = (newCategory: string) => {
-    setPageData({
-      category: newCategory,
-      page: 1, // 切換分類時通常會回到第一頁
-    });
+    const next = new URLSearchParams(searchParams);
+
+    if (newCategory) {
+      next.set('category', newCategory);
+    } else {
+      next.delete('category');
+    }
+
+    next.set('page', '1');
+    setSearchParams(next);
   };
-  const handlePageChange = (newPage: number) => {
-    setPageData((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
+
+  const handlePageChange = (newPage: number | string) => {
+    const pageNum = Number(newPage);
+    if (Number.isNaN(pageNum)) return;
+
+    const next = new URLSearchParams(searchParams);
+
+    if (category) {
+      next.set('category', category);
+    } else {
+      next.delete('category');
+    }
+
+    next.set('page', String(pageNum));
+    setSearchParams(next);
   };
 
   return (
@@ -50,7 +65,7 @@ const Shop = () => {
             <BreadCrumb />
             <div className="flex flex-col lg:flex-row gap-8">
               <CategoryMenu
-                selected={pageData.category}
+                selected={category}
                 handleCategoryChange={handleCategoryChange}
               />
 
@@ -72,7 +87,11 @@ const Shop = () => {
 
             {pagination && (
               <PaginationDemo
-                pagination={pagination}
+                pagination={{
+                  ...pagination,
+                  current_page: Number(pagination.current_page),
+                  total_pages: Number(pagination.total_pages),
+                }}
                 onPageChange={handlePageChange}
               />
             )}

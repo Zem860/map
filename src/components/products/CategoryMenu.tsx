@@ -13,9 +13,6 @@ const CategoryMenu = ({
   const books = useProductStore((s) => s.products);
   useEffect(() => {
     useProductStore.getState().fetchAllProduct();
-    if (selected) {
-      handleCategoryChange(selected);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const allCategory = Array.from(new Set(books.map((book) => book.category)));
