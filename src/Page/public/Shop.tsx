@@ -27,32 +27,32 @@ const Shop = () => {
   }, [category, page]);
 
   const handleCategoryChange = (newCategory: string) => {
-    const next = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams);
 
     if (newCategory) {
-      next.set('category', newCategory);
+      newParams.set('category', newCategory);
     } else {
-      next.delete('category');
+      newParams.delete('category');
     }
 
-    next.set('page', '1');
-    setSearchParams(next);
+    newParams.set('page', '1');
+    setSearchParams(newParams);
   };
 
   const handlePageChange = (newPage: number | string) => {
     const pageNum = Number(newPage);
     if (Number.isNaN(pageNum)) return;
 
-    const next = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', String(pageNum));
 
     if (category) {
-      next.set('category', category);
+      newParams.set('category', category);
     } else {
-      next.delete('category');
+      newParams.delete('category');
     }
 
-    next.set('page', String(pageNum));
-    setSearchParams(next);
+    setSearchParams(newParams);
   };
 
   return (
@@ -68,38 +68,40 @@ const Shop = () => {
                 selected={category}
                 handleCategoryChange={handleCategoryChange}
               />
+              <div className="flex-1 flex flex-col min-h-[70vh]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {flexProducts.map((book) => (
+                    <Link
+                      key={book.id}
+                      to={`/shop/${book.id}`}
+                      className="block"
+                    >
+                      <BookCard
+                        title={book.title}
+                        author={productContentParser(book).author || 'Unknown'}
+                        price={book.price}
+                        originalPrice={book.origin_price}
+                        imageQuery={book.imageUrl}
+                        rating={book.rating}
+                      />
+                    </Link>
+                  ))}
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {flexProducts.map((book) => (
-                  <Link key={book.id} to={`/shop/${book.id}`} className="block">
-                    <BookCard
-                      title={book.title}
-                      author={productContentParser(book).author || 'Unknown'}
-                      price={book.price}
-                      originalPrice={book.origin_price}
-                      imageQuery={book.imageUrl}
-                      rating={book.rating}
+                {pagination && (
+                  <div className="mt-auto pt-10">
+                    <PaginationDemo
+                      pagination={pagination}
+                      onPageChange={handlePageChange}
                     />
-                  </Link>
-                ))}
+                  </div>
+                )}
               </div>
             </div>
-
-            {pagination && (
-              <PaginationDemo
-                pagination={{
-                  ...pagination,
-                  current_page: Number(pagination.current_page),
-                  total_pages: Number(pagination.total_pages),
-                }}
-                onPageChange={handlePageChange}
-              />
-            )}
           </div>
         </div>
       )}
     </>
   );
 };
-
 export default Shop;
