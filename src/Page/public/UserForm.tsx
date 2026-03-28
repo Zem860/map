@@ -145,7 +145,7 @@ const UserForm = () => {
                       {...field}
                       placeholder="Telephone"
                       id="tel"
-                      type="text"
+                      type="tel"
                     />
                   </FormControl>
                   <FormMessage />
