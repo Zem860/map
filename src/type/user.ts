@@ -17,3 +17,9 @@ export type UserData = {
   tel: string;
   address: string;
 };
+
+export type CheckResponse = {
+  success: boolean;
+  uid?: string;
+  message?: string;
+};

@@ -1,6 +1,7 @@
 // routes/AdminRoute.tsx
 import { Navigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
+import { isTokenValid } from '@/api/folder_admin/admin';
 
 const getCookie = (name: string) => {
   return document.cookie.replace(
@@ -12,9 +13,7 @@ const getCookie = (name: string) => {
 export default function AdminRoute({ children }: { children: ReactElement }) {
   const hexToken = getCookie('hexToken');
   //   const role = localStorage.getItem("role") // 你如果目前是教學存 role，就先保留
-
-  if (!hexToken) return <Navigate to="/login" replace />;
+  if (!hexToken || !isTokenValid()) return <Navigate to="/login" replace />;
   //   if (role !== "admin") return <Navigate to="/login" replace />
-
   return children;
 }
